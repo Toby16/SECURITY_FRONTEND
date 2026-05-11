@@ -1,6 +1,6 @@
 // ── Ghostroute Auth + User Service ───────────────────────────────────────────
-const BASE_URL  = 'http://0.0.0.0:9000/api/v1.0/auth'
-const USER_URL  = 'http://0.0.0.0:9000/api/v1.0/user'
+const BASE_URL  = 'https://security.appcardy.com/api/v1.0/auth'
+const USER_URL  = 'https://security.appcardy.com/api/v1.0/user'
 const TOKEN_KEY = 'ghostroute_token'
 
 // ── Token helpers ─────────────────────────────────────────────────────────────
@@ -8,35 +8,6 @@ export const saveToken       = (t) => localStorage.setItem(TOKEN_KEY, t)
 export const getToken        = ()  => localStorage.getItem(TOKEN_KEY)
 export const clearToken      = ()  => localStorage.removeItem(TOKEN_KEY)
 export const isAuthenticated = ()  => Boolean(getToken())
-
-// ── Token expiry signals ──────────────────────────────────────────────────────
-// These are the exact strings the backend sends when a JWT is invalid/expired.
-const EXPIRED_SIGNALS = [
-  'kindly input new token',
-  'invalid token',
-  'token has expired',
-  'could not validate credentials',
-  'not authenticated',
-]
-
-/**
- * Returns true if the error message matches a known token-expiry pattern.
- * Case-insensitive.
- */
-export function isTokenExpiredError(err) {
-  if (!err?.message) return false
-  const msg = err.message.toLowerCase()
-  return EXPIRED_SIGNALS.some(s => msg.includes(s))
-}
-
-/**
- * Clears the stored token and fires a browser custom event so any mounted
- * component can react (e.g. redirect to /auth) without needing React context.
- */
-export function signalTokenExpired() {
-  clearToken()
-  window.dispatchEvent(new CustomEvent('ghostroute:token-expired'))
-}
 
 // ── Temp credentials ──────────────────────────────────────────────────────────
 export const storeTempCredentials = (email, password) =>
@@ -47,7 +18,7 @@ export function getTempCredentials() {
 }
 export const clearTempCredentials = () => sessionStorage.removeItem('gr_tmp')
 
-// ── Error helper — handles both string and object `detail` ────────────────────
+// ── Error helper ──────────────────────────────────────────────────────────────
 function buildError(data, fallback = 'Request failed.') {
   const detail = data?.detail
   let message, errorField, messageField
@@ -68,15 +39,30 @@ function buildError(data, fallback = 'Request failed.') {
   return err
 }
 
-/**
- * Wraps buildError: if the resulting error is a token-expiry signal,
- * automatically clears the token and fires the expiry event so the
- * UI can redirect without the caller needing to know about it.
- */
 function buildAndCheckError(data, fallback) {
   const err = buildError(data, fallback)
   if (isTokenExpiredError(err)) signalTokenExpired()
   return err
+}
+
+// ── Token expiry detection ────────────────────────────────────────────────────
+const EXPIRED_SIGNALS = [
+  'kindly input new token',
+  'invalid token',
+  'token has expired',
+  'could not validate credentials',
+  'not authenticated',
+]
+
+export function isTokenExpiredError(err) {
+  if (!err?.message) return false
+  const msg = err.message.toLowerCase()
+  return EXPIRED_SIGNALS.some(s => msg.includes(s))
+}
+
+export function signalTokenExpired() {
+  clearToken()
+  window.dispatchEvent(new CustomEvent('ghostroute:token-expired'))
 }
 
 // ── Sign up ───────────────────────────────────────────────────────────────────
@@ -109,9 +95,9 @@ export async function loginUser({ email, password }) {
   return { ok: true, token, data }
 }
 
-// ── Google SSO ────────────────────────────────────────────────────────────────
+// ── Google SSO — opens popup to live backend ──────────────────────────────────
 export function initiateGoogleSSO() {
-  window.location.href = 'http://127.0.0.1:9000/api/v1.0/auth/google/'
+  window.location.href = 'https://security.appcardy.com/api/v1.0/auth/google/'
 }
 
 // ── Refresh token ─────────────────────────────────────────────────────────────
