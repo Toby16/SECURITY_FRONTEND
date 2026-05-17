@@ -344,3 +344,23 @@
   .navBalances { display: none; }
   .appsGrid { grid-template-columns: 1fr; }
 }
+
+/* ── Deposit button (append to Dashboard.module.css) ─────── */
+.depositBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #7c3aed, #9333ea);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 6px 13px;
+  border-radius: 7px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(124, 58, 237, 0.35);
+  transition: opacity 0.15s, transform 0.12s;
+  white-space: nowrap;
+}
+.depositBtn:hover  { opacity: 0.88; transform: translateY(-1px); }
+.depositBtn:active { transform: translateY(0); }

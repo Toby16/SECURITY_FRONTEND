@@ -7,6 +7,7 @@ import {
 import { useAuthGuard } from '../hooks/useAuthGuard.js'
 import { useTokenRefresh } from '../hooks/useTokenRefresh.js'
 import GhostLogo from '../components/GhostLogo.jsx'
+import DepositModal from './DepositModal.jsx'          // ← ADD 1
 import styles from './Dashboard.module.css'
 
 function usePageTitle(t) { useEffect(() => { document.title = t }, [t]) }
@@ -222,9 +223,9 @@ export default function Dashboard() {
   useAuthGuard()
   useTokenRefresh()
 
-  const navigate             = useNavigate()
+  const navigate                 = useNavigate()
   const { toasts, push, remove } = useToast()
-  const photoInputRef        = useRef(null)
+  const photoInputRef            = useRef(null)
 
   const [user,           setUser]           = useState(null)
   const [loading,        setLoading]        = useState(true)
@@ -233,6 +234,7 @@ export default function Dashboard() {
   const [savingName,     setSavingName]     = useState(false)
   const [uploadingPhoto, setUploadingPhoto] = useState(false)
   const [photoPreview,   setPhotoPreview]   = useState(null)
+  const [showDeposit,    setShowDeposit]    = useState(false)  // ← ADD 2
 
   useEffect(() => {
     const token = getToken()
@@ -271,6 +273,12 @@ export default function Dashboard() {
     finally { setUploadingPhoto(false) }
   }
 
+  // ← ADD 3: update balances in-place after a successful deposit
+  const handleBalanceUpdate = useCallback(({ naira_balance, dollar_balance }) => {
+    setUser(u => ({ ...u, naira_balance, dollar_balance }))
+    push('Balance updated successfully!', 'success')
+  }, [push])
+
   const handleLogout = () => { clearToken(); navigate('/auth', { replace: true }) }
 
   if (loading) return (
@@ -288,6 +296,14 @@ export default function Dashboard() {
       <ToastStack toasts={toasts} remove={remove} />
       <ParticleBg />
 
+      {/* ← ADD 4: render modal */}
+      {showDeposit && (
+        <DepositModal
+          onClose={() => setShowDeposit(false)}
+          onBalanceUpdate={handleBalanceUpdate}
+        />
+      )}
+
       {/* Nav */}
       <nav className={styles.nav}>
         <GhostLogo size={34} showText showSub={false} />
@@ -303,6 +319,13 @@ export default function Dashboard() {
             <span className={styles.balanceVal}>{(user?.dollar_balance ?? 0).toLocaleString()}</span>
             <span className={styles.balanceLbl}>USD</span>
           </div>
+          {/* ← deposit trigger sits right next to the balance pills */}
+          <button className={styles.depositBtn} onClick={() => setShowDeposit(true)}>
+            <svg viewBox="0 0 16 16" fill="currentColor" width="12" height="12">
+              <path d="M8 .25a.75.75 0 01.75.75v6.19l1.72-1.72a.75.75 0 111.06 1.06l-3 3a.75.75 0 01-1.06 0l-3-3A.75.75 0 015.53 5.47L7.25 7.19V1A.75.75 0 018 .25zM1.75 13a.75.75 0 000 1.5h12.5a.75.75 0 000-1.5H1.75z"/>
+            </svg>
+            Deposit
+          </button>
         </div>
         <button className={styles.logoutBtn} onClick={handleLogout}>Sign out</button>
       </nav>
