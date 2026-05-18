@@ -433,3 +433,38 @@
   .donateBanner { flex-direction: column; align-items: flex-start; }
   .donateBannerBtn { width: 100%; text-align: center; }
 }
+
+/* ── Sidebar account actions (append to Dashboard.module.css) ── */
+.sideAccountActions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+  width: 100%;
+}
+.sideActionBtn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 7px;
+  color: #52526a;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 7px 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.sideActionBtn:hover {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(139,92,246,0.25);
+  color: #a090d0;
+}
+.sideActionDanger:hover {
+  background: rgba(239,68,68,0.06);
+  border-color: rgba(239,68,68,0.22);
+  color: #f87171;
+}

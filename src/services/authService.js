@@ -212,3 +212,38 @@ export async function forgotPassword(verificationToken, newPassword) {
   if (data.token) saveToken(data.token)
   return { ok: true, message: data.message, userId: data.user_id, token: data.token }
 }
+
+
+// ── Append these two functions to your existing authService.js ───────────────
+
+export async function changePassword(token, current_password, new_password) {
+  const res = await fetch('https://security.appcardy.com/api/v1.0/user/change/password', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({ current_password, new_password }),
+  })
+  const json = await res.json()
+  if (!res.ok || (json.statusCode && json.statusCode !== 200)) {
+    throw new Error(json?.detail?.message || json?.message || 'Failed to change password.')
+  }
+  return json // contains { token } — caller saves it
+}
+
+export async function deleteAccount(token) {
+  const res = await fetch('https://security.appcardy.com/api/v1.0/user/delete/profile/', {
+    method: 'DELETE',
+    headers: {
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  })
+  const json = await res.json()
+  if (!res.ok || (json.statusCode && json.statusCode !== 200)) {
+    throw new Error(json?.detail?.message || json?.message || 'Failed to delete account.')
+  }
+  return json
+}

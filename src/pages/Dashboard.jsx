@@ -2,13 +2,15 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   getUserProfile, updateUsername, updateProfilePhoto,
-  getToken, clearToken,
+  changePassword, deleteAccount,
+  getToken, clearToken, saveToken,
 } from '../services/authService.js'
 import { useAuthGuard } from '../hooks/useAuthGuard.js'
 import { useTokenRefresh } from '../hooks/useTokenRefresh.js'
 import GhostLogo from '../components/GhostLogo.jsx'
 import DepositModal from './DepositModal.jsx'          // ← ADD 1
 import DonateModal  from './DonateModal.jsx'
+import { ChangePwModal, DeleteAccModal } from './AccountModals.jsx'
 import styles from './Dashboard.module.css'
 
 function usePageTitle(t) { useEffect(() => { document.title = t }, [t]) }
@@ -235,6 +237,8 @@ export default function Dashboard() {
   const [savingName,     setSavingName]     = useState(false)
   const [uploadingPhoto, setUploadingPhoto] = useState(false)
   const [photoPreview,   setPhotoPreview]   = useState(null)
+  const [showChangePw,   setShowChangePw]   = useState(false)
+  const [showDeleteAcc,  setShowDeleteAcc]  = useState(false)
   const [showDeposit,    setShowDeposit]    = useState(false)  // ← ADD 2
   const [showDonate,     setShowDonate]     = useState(false)
 
@@ -275,6 +279,19 @@ export default function Dashboard() {
     finally { setUploadingPhoto(false) }
   }
 
+  const handleChangePassword = async (currentPw, newPw) => {
+    const r = await changePassword(getToken(), currentPw, newPw)
+    // backend returns a fresh token — swap it in silently
+    if (r.token) saveToken(r.token)
+    return r
+  }
+
+  const handleDeleteAccount = async () => {
+    await deleteAccount(getToken())
+    clearToken()
+    navigate('/auth', { replace: true })
+  }
+
   // ← ADD 3: update balances in-place after a successful deposit
   const handleBalanceUpdate = useCallback(({ naira_balance, dollar_balance }) => {
     setUser(u => ({ ...u, naira_balance, dollar_balance }))
@@ -306,6 +323,21 @@ export default function Dashboard() {
         />
       )}
       {showDonate && <DonateModal onClose={() => setShowDonate(false)} />}
+      {showChangePw  && (
+        <ChangePwModal
+          onClose={() => setShowChangePw(false)}
+          onSubmit={handleChangePassword}
+          push={push}
+        />
+      )}
+      {showDeleteAcc && (
+        <DeleteAccModal
+          onClose={() => setShowDeleteAcc(false)}
+          onConfirm={handleDeleteAccount}
+          username={user?.username}
+          push={push}
+        />
+      )}
 
       {/* Nav */}
       <nav className={styles.nav}>
@@ -391,6 +423,20 @@ export default function Dashboard() {
             )}
             <p className={styles.sideEmail}>{user?.email}</p>
             <span className={styles.activePill}>● Active</span>
+            <div className={styles.sideAccountActions}>
+              <button className={styles.sideActionBtn} onClick={() => setShowChangePw(true)}>
+                <svg viewBox="0 0 16 16" fill="currentColor" width="11" height="11">
+                  <path d="M4 4v1.5h-.5A1.5 1.5 0 002 7v6.5A1.5 1.5 0 003.5 15h9a1.5 1.5 0 001.5-1.5V7a1.5 1.5 0 00-1.5-1.5H12V4a4 4 0 10-8 0zm1.5 0a2.5 2.5 0 015 0v1.5h-5V4zM8 10a1 1 0 110-2 1 1 0 010 2z"/>
+                </svg>
+                Change password
+              </button>
+              <button className={`${styles.sideActionBtn} ${styles.sideActionDanger}`} onClick={() => setShowDeleteAcc(true)}>
+                <svg viewBox="0 0 16 16" fill="currentColor" width="11" height="11">
+                  <path d="M11 1.75V3h2.25a.75.75 0 010 1.5H2.75a.75.75 0 010-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75zM4.496 6.559a.75.75 0 10-1.492.141l.66 6.941A1.75 1.75 0 005.405 15h5.19c.9 0 1.652-.681 1.741-1.559l.66-6.94a.75.75 0 00-1.492-.142l-.66 6.941a.25.25 0 01-.249.2h-5.19a.25.25 0 01-.249-.2l-.66-6.941z"/>
+                </svg>
+                Delete account
+              </button>
+            </div>
           </div>
 
           <nav className={styles.sideNav}>
