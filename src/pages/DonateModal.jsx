@@ -8,8 +8,8 @@ const fmt = (n, cur) =>
 const PRESETS = [500, 1000, 2500, 5000, 10000, 25000]
 
 const IMPACT_ITEMS = [
-  { emoji: '🏠', label: 'Orphanages in Lagos', value: '12+', sub: 'supported across the state' },
-  { emoji: '🛠️', label: 'Tools in development', value: '8',   sub: 'being built for Nigerians' },
+  { emoji: '🏠', label: 'Orphanages in Lagos', value: '19+', sub: 'supported across Lagos state' },
+  { emoji: '🛠️', label: 'Tools in development', value: '8+',   sub: 'being built for Nigerians' },
   { emoji: '🌍', label: 'Goal', value: 'Free access',         sub: 'for every Nigerian, worldwide' },
 ]
 
