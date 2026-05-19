@@ -416,46 +416,164 @@
 
 /* ── Responsive ── */
 @media (max-width: 700px) {
+  .page {
+    padding: 16px 12px;
+    align-items: flex-start;
+    padding-top: 24px;
+  }
+
+  /* Keep the two-column grid — shrink it to fit narrow screens */
   .wrapper {
-    grid-template-columns: 1fr;
-    max-width: 420px;
+    grid-template-columns: 1fr 1fr;
+    max-width: 100%;
+    width: 100%;
+    min-height: unset;
     border-radius: 12px;
   }
 
+  /* Brand panel: stay visible but compact */
   .brand {
+    display: flex;
+    padding: 28px 20px;
+    gap: 20px;
+  }
+
+  .brandDesc {
+    font-size: 11px;
+    line-height: 1.6;
+  }
+
+  .brandFeatures {
+    gap: 10px;
+  }
+
+  .brandFeature {
+    font-size: 10px;
+    gap: 8px;
+  }
+
+  /* Card panel: tighten padding */
+  .card {
+    padding: 28px 20px 24px;
+    gap: 16px;
+  }
+
+  /* Keep mobile logo hidden — brand panel is now showing */
+  .cardLogoMobile {
     display: none;
   }
 
-  .card {
-    padding: 32px 24px 28px;
+  /* Tabs: adjust negative margins to match new card padding */
+  .tabs {
+    margin: 0 -20px;
+    padding: 0 20px;
   }
 
-  .cardLogoMobile {
-    display: flex;
+  /* Social buttons: keep horizontal row like desktop */
+  .socialRow {
+    flex-direction: row;
+    gap: 6px;
+  }
+
+  .socialBtn {
+    flex: 1;
+    padding: 7px 4px;
+    font-size: 10px;
+    gap: 4px;
     justify-content: center;
-    margin-bottom: 4px;
+  }
+
+  /* Footer: match new padding */
+  .cardFooter {
+    margin: 0 -20px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+/* Very small screens: scale everything a bit more */
+@media (max-width: 480px) {
+  .page {
+    padding: 12px 8px;
+    padding-top: 16px;
+  }
+
+  .wrapper {
+    /* On very small phones, switch brand to top strip instead of hiding it */
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  /* Brand becomes a horizontal top strip */
+  .brand {
+    border-right: none;
+    border-bottom: 1px solid #21262d;
+    padding: 20px 20px 16px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+
+  /* Hide feature list in strip mode — just show logo + desc */
+  .brandFeatures {
+    display: none;
+  }
+
+  .brandDesc {
+    font-size: 11px;
+    margin: 0;
+    color: #7d8590;
+    flex: 1;
+    min-width: 140px;
+  }
+
+  .card {
+    padding: 24px 20px 20px;
   }
 
   .tabs {
-    margin: 0 -24px;
-    padding: 0 24px;
+    margin: 0 -20px;
+    padding: 0 20px;
+  }
+
+  /* Social row: stay horizontal even on tiny screens */
+  .socialRow {
+    flex-direction: row;
+    gap: 6px;
+  }
+
+  .socialBtn {
+    font-size: 10px;
+    padding: 7px 4px;
   }
 
   .cardFooter {
-    margin: 0 -24px;
-    padding-left: 24px;
-    padding-right: 24px;
+    margin: 0 -20px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
-
-  .socialRow { flex-direction: column; }
-
-  .socialBtn { justify-content: center; padding: 8px; }
 }
 
-@media (max-width: 380px) {
-  .card { padding: 24px 18px 22px; }
-  .tabs { margin: 0 -18px; padding: 0 18px; }
-  .cardFooter { margin: 0 -18px; padding-left: 18px; padding-right: 18px; }
+@media (max-width: 360px) {
+  .brand {
+    padding: 16px;
+  }
+
+  .card {
+    padding: 20px 16px 18px;
+  }
+
+  .tabs {
+    margin: 0 -16px;
+    padding: 0 16px;
+  }
+
+  .cardFooter {
+    margin: 0 -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
 }
 
 .socialBtnDisabled {
@@ -469,4 +587,27 @@
   cursor: not-allowed;
   pointer-events: none;
   user-select: none;
+}
+
+/* Loading hint for SSO popup */
+.popupHint {
+  font-size: 11px;
+  color: #7d8590;
+  text-align: center;
+  margin-top: -8px;
+}
+
+/* SSO social loading state */
+.socialLoading {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.socialSpinner {
+  width: 11px; height: 11px;
+  border: 2px solid rgba(255,255,255,0.2);
+  border-top-color: #e6edf3;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
 }
