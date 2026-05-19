@@ -207,15 +207,18 @@ function AppCard({ app, onClick }) {
       tabIndex={app.live ? 0 : undefined}
       onKeyDown={e => app.live && e.key === 'Enter' && onClick?.()}
     >
-      <div className={styles.appIconWrap} data-color={app.color}>{app.icon}</div>
+      <div className={styles.appIconWrap} data-color={app.color}>
+        {app.icon}
+      </div>
       <div className={styles.appText}>
         <p className={styles.appName}>{app.name}</p>
         <p className={styles.appDesc}>{app.desc}</p>
       </div>
-      {app.live
-        ? <span className={styles.appArrow}>→</span>
-        : <span className={styles.appBadge}>Soon</span>
-      }
+      {app.live ? (
+        <span className={styles.appArrow}>→</span>
+      ) : (
+        <span className={styles.appBadge}>SOON</span>
+      )}
     </div>
   )
 }
