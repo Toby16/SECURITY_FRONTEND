@@ -15,7 +15,6 @@ export default function IPLookup() {
   usePageTitle('SCANORACLE — IP Lookup | Ghostroute')
   useAuthGuard()
   useTokenRefresh()
-
   const navigate = useNavigate()
   const [result,  setResult]  = useState(null)
   const [loading, setLoading] = useState(false)
@@ -35,7 +34,7 @@ export default function IPLookup() {
     <div className={styles.page}>
       <div className={styles.grid} aria-hidden="true" />
 
-      {/* Mini-app nav bar */}
+      {/* Nav */}
       <nav className={styles.nav}>
         <button className={styles.navBack} onClick={() => navigate('/')}>
           ← Dashboard
@@ -46,12 +45,16 @@ export default function IPLookup() {
         </div>
         <div className={styles.navRight}>
           <GhostLogo size={26} showText={false} />
-          <button className={styles.signOutBtn} onClick={() => { clearToken(); navigate('/auth') }}>
+          <button
+            className={styles.signOutBtn}
+            onClick={() => { clearToken(); navigate('/auth') }}
+          >
             Sign out
           </button>
         </div>
       </nav>
 
+      {/* Header */}
       <header className={styles.header}>
         <h1 className={styles.title}>
           <span className={styles.titleAccent}>SCAN</span>ORACLE
@@ -59,27 +62,29 @@ export default function IPLookup() {
         <p className={styles.tagline}>IP Lookup Intelligence</p>
       </header>
 
+      {/* Main content */}
       <section className={styles.content}>
         <IPLookupForm onLookup={handleLookup} loading={loading} />
-
         {error && (
           <div className={styles.error} role="alert">
             <span>⚠</span> {error}
           </div>
         )}
-
         {loading && (
           <div className={styles.loadingState}>
             <div className={styles.spinner} />
             <p>Scanning target…</p>
           </div>
         )}
-
         {result && !loading && <IPResultCard data={result} />}
       </section>
 
       <footer className={styles.footer}>
-        <p>SCANORACLE · Part of <span className={styles.footerAccent}>Ghostroute</span> Security Mega App · {new Date().getFullYear()}</p>
+        <p>
+          SCANORACLE · Part of{' '}
+          <span className={styles.footerAccent}>Ghostroute</span>{' '}
+          Security Mega App · {new Date().getFullYear()}
+        </p>
       </footer>
     </div>
   )

@@ -1,111 +1,224 @@
-/* ── SCANORACLE IP Lookup ─────────────────────────────────────────────────── */
+/* ── SCANORACLE IP Lookup — Dashboard-unified dark theme ─────────────────── */
+
+/* ── Page shell ── */
 .page {
   min-height: 100vh;
   display: flex; flex-direction: column; align-items: center;
-  padding: 0 0 40px;
-  position: relative; overflow: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: var(--color-bg, #050c1a);
+  padding: 0 0 48px;
+  position: relative; overflow-x: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', sans-serif;
+  background: #010409;
 }
 
+/* ── Subtle grid overlay (tighter, purple-tinted like dashboard glow) ── */
 .grid {
   position: fixed; inset: 0;
   background-image:
-    linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
+    linear-gradient(rgba(124,58,237,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124,58,237,0.035) 1px, transparent 1px);
+  background-size: 36px 36px;
   pointer-events: none; z-index: 0;
 }
 
-/* Nav */
+/* Ambient glow — mirrors dashboard glowBg */
+.page::before {
+  content: '';
+  position: fixed;
+  width: 700px; height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(124,58,237,0.07) 0%, transparent 68%);
+  top: -120px; left: -120px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Second ambient glow, bottom-right */
+.page::after {
+  content: '';
+  position: fixed;
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(56,139,253,0.04) 0%, transparent 70%);
+  bottom: -100px; right: -80px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Nav ── */
 .nav {
-  width: 100%; display: flex; align-items: center;
-  padding: 12px 24px; gap: 16px;
-  border-bottom: 1px solid rgba(0,212,255,0.1);
-  background: rgba(5,12,26,0.9); backdrop-filter: blur(12px);
-  position: relative; z-index: 10;
+  width: 100%;
+  display: flex; align-items: center;
+  padding: 12px 28px; gap: 16px;
+  border-bottom: 1px solid rgba(33,38,45,0.8);
+  background: rgba(1,4,9,0.88);
+  backdrop-filter: blur(16px);
+  position: sticky; top: 0; z-index: 20;
+  box-sizing: border-box;
 }
 
 .navBack {
-  background: none; border: 1px solid rgba(0,212,255,0.2); border-radius: 6px;
-  padding: 5px 12px; font-size: 11px; color: #5a7fa8;
-  font-family: inherit; cursor: pointer; transition: color 150ms, border-color 150ms;
+  background: rgba(13,17,23,0.9);
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 11.5px; font-weight: 500;
+  color: #7d8590;
+  font-family: inherit; cursor: pointer;
+  transition: color 150ms, border-color 150ms, background 150ms;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
-.navBack:hover { color: #00d4ff; border-color: rgba(0,212,255,0.4); }
+.navBack:hover { color: #a78bfa; border-color: rgba(124,58,237,0.4); background: rgba(124,58,237,0.06); }
 
 .navBrand {
-  font-family: 'Courier New', monospace; font-size: 13px; font-weight: 700;
-  color: #e0eaff; letter-spacing: 0.1em;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px; font-weight: 700;
+  color: #c9d1d9; letter-spacing: 0.1em;
   display: flex; align-items: center; gap: 8px;
+  white-space: nowrap;
 }
-.navBrandScan { color: #00d4ff; }
+.navBrandScan { color: #a78bfa; }
+
 .navBrandSub {
-  font-size: 9px; color: #5a7fa8; letter-spacing: 0.2em;
-  text-transform: uppercase; background: rgba(0,212,255,0.08);
-  border: 1px solid rgba(0,212,255,0.15); border-radius: 4px; padding: 2px 7px;
+  font-size: 9px; color: #484f58;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  background: rgba(124,58,237,0.08);
+  border: 1px solid rgba(124,58,237,0.18);
+  border-radius: 4px; padding: 2px 7px;
+  font-family: inherit;
 }
 
-.navRight { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.navRight {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 12px;
+  flex-shrink: 0;
+}
 
 .signOutBtn {
-  background: none; border: 1px solid rgba(0,212,255,0.15); border-radius: 6px;
-  padding: 4px 11px; font-size: 11px; color: #5a7fa8;
-  font-family: inherit; cursor: pointer; transition: color 150ms, border-color 150ms;
+  background: none;
+  border: 1px solid #30363d;
+  border-radius: 6px; padding: 4px 12px;
+  font-size: 11px; font-weight: 600; color: #7d8590;
+  font-family: inherit; cursor: pointer;
+  transition: color 150ms, border-color 150ms;
+  white-space: nowrap;
 }
-.signOutBtn:hover { color: #ff4757; border-color: rgba(255,71,87,0.3); }
+.signOutBtn:hover { color: #ff7b72; border-color: rgba(255,71,87,0.35); }
 
-/* Header */
+/* ── Header ── */
 .header {
-  text-align: center; padding: 48px 16px 24px;
+  text-align: center;
+  padding: 52px 20px 20px;
   position: relative; z-index: 1;
 }
+
 .title {
-  font-family: 'Courier New', monospace;
-  font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 700;
-  color: #e0eaff; letter-spacing: 0.15em;
-  text-shadow: 0 0 40px rgba(0,212,255,0.25);
-  margin-bottom: 8px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: clamp(1.9rem, 5vw, 3.2rem);
+  font-weight: 700; color: #e6edf3;
+  letter-spacing: 0.18em;
+  text-shadow: 0 0 48px rgba(167,139,250,0.2);
+  margin: 0 0 10px;
 }
-.titleAccent { color: #00d4ff; }
+.titleAccent { color: #a78bfa; }
+
 .tagline {
-  font-family: 'Courier New', monospace;
-  font-size: 0.7rem; letter-spacing: 0.4em;
-  text-transform: uppercase; color: #5a7fa8;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.67rem; letter-spacing: 0.42em;
+  text-transform: uppercase; color: #484f58;
 }
 
-/* Content */
+/* ── Content ── */
 .content {
-  width: 100%; max-width: 680px;
-  display: flex; flex-direction: column; gap: 20px;
-  padding: 0 16px; position: relative; z-index: 1;
+  width: 100%; max-width: 700px;
+  display: flex; flex-direction: column; gap: 18px;
+  padding: 0 20px;
+  position: relative; z-index: 1;
+  box-sizing: border-box;
 }
 
-/* Error */
+/* ── Error ── */
 .error {
-  background: rgba(255,71,87,0.1); border: 1px solid rgba(255,71,87,0.3);
+  background: rgba(255,71,87,0.08);
+  border: 1px solid rgba(255,71,87,0.25);
   border-radius: 8px; padding: 12px 16px;
-  color: #ff4757; font-size: 0.88rem;
+  color: #ff7b72; font-size: 0.86rem;
   display: flex; align-items: center; gap: 8px;
 }
 
-/* Loading */
+/* ── Loading ── */
 .loadingState {
   display: flex; flex-direction: column; align-items: center;
-  gap: 12px; color: #5a7fa8; font-family: 'Courier New', monospace;
-  font-size: 0.8rem; padding: 32px 0;
+  gap: 12px; color: #484f58;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.78rem; padding: 40px 0;
 }
+
 .spinner {
-  width: 36px; height: 36px;
-  border: 2px solid rgba(0,212,255,0.15); border-top-color: #00d4ff;
-  border-radius: 50%; animation: spin 0.8s linear infinite;
+  width: 34px; height: 34px;
+  border: 2px solid rgba(124,58,237,0.15);
+  border-top-color: #a78bfa;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Footer */
+/* ── Footer ── */
 .footer {
-  margin-top: auto; padding-top: 40px;
-  font-size: 0.72rem; color: #5a7fa8;
-  font-family: 'Courier New', monospace; text-align: center;
+  margin-top: auto; padding-top: 48px;
+  font-size: 0.7rem; color: #30363d;
+  font-family: 'Courier New', Courier, monospace;
+  text-align: center;
   position: relative; z-index: 1;
+  letter-spacing: 0.04em;
 }
 .footerAccent { color: #a78bfa; }
+
+/* ════════════════════════════════════════════════════════
+   MOBILE
+   ════════════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+
+  /* Nav: tighter, no wrapping */
+  .nav {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .navBack {
+    font-size: 10.5px;
+    padding: 4px 9px;
+  }
+
+  /* Brand: hide the "IP LOOKUP" sub-badge on very small screens */
+  .navBrandSub {
+    display: none;
+  }
+
+  .navBrand {
+    font-size: 11.5px;
+    letter-spacing: 0.07em;
+  }
+
+  .signOutBtn {
+    font-size: 10.5px;
+    padding: 4px 8px;
+  }
+
+  /* Header */
+  .header {
+    padding: 36px 16px 16px;
+  }
+
+  /* Content: full bleed with comfortable padding */
+  .content {
+    padding: 0 14px;
+  }
+}
+
+@media (max-width: 380px) {
+  .nav { padding: 8px 10px; gap: 6px; }
+  .navBrand { font-size: 10.5px; }
+  .navBack, .signOutBtn { font-size: 10px; padding: 4px 7px; }
+  .content { padding: 0 10px; }
+}
