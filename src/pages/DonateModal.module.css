@@ -362,9 +362,26 @@
 
 /* ── Mobile ──────────────────────────────────────────────── */
 @media (max-width: 500px) {
-  .modal { border-radius: 16px; max-height: 88vh; }
+  .modal { border-radius: 16px; max-height: 92vh; }  /* was 88vh — give more room */
+
+  /* Keep impact row horizontal on mobile — stacking kills space */
+  .impactRow { flex-direction: row; gap: 6px; }
+  .impactItem { padding: 7px 4px; }
+  .impactEmoji { font-size: 0.9rem; }
+  .impactVal { font-size: 0.72rem; }
+  .impactSub { font-size: 0.56rem; }
+
+  /* Hero: tighter on mobile */
+  .hero { padding: 14px 16px 12px; }
+  .heroTitle { font-size: 0.95rem; }
+  .heroSub { font-size: 0.72rem; }
+  .heroContent { gap: 10px; margin-bottom: 12px; }
+  .heroHeartWrap { width: 36px; height: 36px; border-radius: 9px; }
+
+  /* Body: make sure it scrolls */
+  .body { padding: 4px 16px 8px; }
+
   .presetGrid { grid-template-columns: repeat(2, 1fr); }
-  .impactRow { flex-direction: column; }
   .footer { flex-direction: column-reverse; }
   .cancelBtn, .donateBtn { width: 100%; justify-content: center; }
 }
