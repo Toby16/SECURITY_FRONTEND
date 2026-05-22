@@ -344,8 +344,7 @@ function DataSelectorPanel({ lookups, lookupsLoading, lookupsError, token, onPur
     return lookups.find?.(l => l.field_name === key || l.key === key || l.name === key) || null
   }
 
-  // Blinking Fix: Only display loading spinner container if data hasn't already loaded successfully once
-  if (lookupsLoading && (!lookups || lookups.length === 0)) {
+  if (lookupsLoading) {
     return (
       <div className={styles.selectorLoading}>
         <div className={styles.selectorSpinner} />
@@ -353,14 +352,7 @@ function DataSelectorPanel({ lookups, lookupsLoading, lookupsError, token, onPur
       </div>
     )
   }
-
-  if (lookupsError && (!lookups || lookups.length === 0)) {
-    return (
-      <div className={styles.selectorError}>
-        <span>⚠</span> {lookupsError}
-      </div>
-    )
-  }
+  // errors are non-fatal — panel renders without pricing if API failed
 
   if (txId) return (
     <div className={styles.successPanel}>
@@ -563,11 +555,16 @@ export default function IPLookup() {
   const [liveLoading, setLiveLoading] = useState(true)
   const [liveError, setLiveError]     = useState(null)
   const [lookups, setLookups]         = useState(null)
-  const [lookupsLoading, setLookupsLoading] = useState(true)
+  const [lookupsLoading, setLookupsLoading] = useState(() => !!getToken())
   const [lookupsError, setLookupsError]     = useState(null)
 
-  const token = getToken()
+  const [token, setToken] = useState(() => getToken())
 
+  useEffect(() => {
+    const t = getToken()
+    if (t !== token) setToken(t)
+  }, [])
+	
   // Fetch user profile
   useEffect(() => {
     if (!token) return
@@ -589,21 +586,45 @@ export default function IPLookup() {
 
   // Fetch all_lookups (requires auth)
   useEffect(() => {
-    if (!token) { setLookupsError('Authentication required.'); setLookupsLoading(false); return }
+    if (!token) {
+      setLookupsLoading(false)
+      return
+    }
+
+    let cancelled = false
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 8000)
+
     setLookupsLoading(true)
+
     fetch('https://security.appcardy.com/api/v1.0/scanoracle/get/all_lookups', {
-      headers: { 'accept': 'application/json', 'Authorization': `Bearer ${token}` }
+      signal: controller.signal,
+      headers: { 'accept': 'application/json', 'Authorization': `Bearer ${token}` },
     })
       .then(r => {
-        if (!r.ok) throw new Error(r.status === 401 ? 'Session expired. Please log in again.' : `Server error (${r.status})`)
+        if (!r.ok) throw new Error(r.status === 401 ? 'Session expired.' : `Server error (${r.status})`)
         return r.json()
       })
       .then(json => {
+        if (cancelled) return
         const data = json.data || json.lookups || json.fields || json
-        setLookups(Array.isArray(data) ? data : null)
+        setLookups(Array.isArray(data) ? data : [])
+      })
+      .catch(() => {
+        if (cancelled) return
+        setLookups([]) // unblock UI — pricing just won't show
+      })
+      .finally(() => {
+        if (cancelled) return
+        clearTimeout(timeout)
         setLookupsLoading(false)
       })
-      .catch(e => { setLookupsError(e.message); setLookupsLoading(false) })
+
+    return () => {
+      cancelled = true
+      clearTimeout(timeout)
+      controller.abort()
+    }
   }, [token])
 
   const handleLogout = () => { clearToken(); navigate('/auth') }
