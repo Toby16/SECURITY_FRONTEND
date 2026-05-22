@@ -527,7 +527,7 @@ export default function IPLookup() {
       </main>
 
       <footer className={styles.footer}>
-        ScanOracle™ - <span className={styles.footerAccent}>Ghostroute</span> Security - {new Date().getFullYear()} 📡
+        ScanOracle™ - <span className={styles.footerAccent}>Ghostroute</span> Security™ - {new Date().getFullYear()} 📡
       </footer>
     </div>
   )
