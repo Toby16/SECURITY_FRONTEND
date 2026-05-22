@@ -604,7 +604,7 @@
 .daysInput,
 .heroStatNum,
 .heroSub {
-  font-family: var(--mono);
+  font-family: var(--sans);
 }
 
 /* Make nav brand cleaner like dashboard */
@@ -617,7 +617,7 @@
 .footer {
   margin-top: auto; padding: 24px 20px;
   font-size: 0.68rem; color: var(--text4);
-  font-family: var(--mono); letter-spacing: 0.06em; text-align: center;
+  font-family: var(--sans); letter-spacing: 0.06em; text-align: center;
   position: relative; z-index: 1;
 }
 .footerAccent { color: var(--purple); }
