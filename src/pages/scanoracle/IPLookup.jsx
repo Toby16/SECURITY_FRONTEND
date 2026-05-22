@@ -26,7 +26,7 @@ function GhostIPLogo({ size = 120, animated = true }) {
       <rect x="0" y="0" width="120" height="120" rx="26" fill="#0d1117" />
 
       {/* Single cyan circle ring */}
-      <circle cx="60" cy="60" r="25" stroke="#22c7e0" strokeWidth="4" />
+      <circle cx="60" cy="60" r="29" stroke="#22c7e0" strokeWidth="4" />
 
       {/* Plus cross — vertical bar */}
       <line x1="60" y1="48" x2="60" y2="72" stroke="#22c7e0" strokeWidth="5" strokeLinecap="round" />
