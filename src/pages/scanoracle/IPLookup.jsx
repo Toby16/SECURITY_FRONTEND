@@ -29,9 +29,9 @@ function GhostIPLogo({ size = 120, animated = true }) {
       <circle cx="60" cy="60" r="32" stroke="#22c7e0" strokeWidth="1.8" />
 
       {/* Plus cross — vertical bar */}
-      <line x1="60" y1="48" x2="60" y2="72" stroke="#22c7e0" strokeWidth="4" strokeLinecap="round" />
+      <line x1="60" y1="48" x2="60" y2="72" stroke="#22c7e0" strokeWidth="5" strokeLinecap="round" />
       {/* Plus cross — horizontal bar */}
-      <line x1="48" y1="55" x2="72" y2="55" stroke="#22c7e0" strokeWidth="4" strokeLinecap="round" />
+      <line x1="48" y1="57" x2="72" y2="57" stroke="#22c7e0" strokeWidth="5" strokeLinecap="round" />
     </svg>
   )
 }
