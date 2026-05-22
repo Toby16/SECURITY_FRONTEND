@@ -183,7 +183,7 @@ function LiveIPPanel({ data, loading, error }) {
         })}
       </div>
       <div className={styles.liveDisclaimer}>
-        <span>🔒</span> This is a live scan of your current IP — demonstrating real-time accuracy.
+        <span>🔒</span> A live scan of your current IP address — everything we say is facts!.
       </div>
     </div>
   )
