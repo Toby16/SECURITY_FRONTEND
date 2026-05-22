@@ -96,7 +96,7 @@ function ParticleBg() {
 const APPS = [
   {
     name: 'SCANORACLE — IP Lookup',
-    desc: 'Geolocate any IP address or domain with full intelligence.',
+    desc: 'Geolocate any IP address with full intelligence.',
     color: 'blue', live: true,
     route: '/scanoracle/iplookup',
     icon: (
