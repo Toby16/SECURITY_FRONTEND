@@ -183,7 +183,7 @@ function LiveIPPanel({ data, loading, error }) {
         })}
       </div>
       <div className={styles.liveDisclaimer}>
-        <span>🔒</span> Everything we say is facts!. 💯
+        <span>🔒</span> Everything we say is facts!.
       </div>
     </div>
   )
