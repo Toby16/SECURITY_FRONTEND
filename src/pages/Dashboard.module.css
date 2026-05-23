@@ -515,3 +515,17 @@
 
 /* Hide the mobile toggle on desktop */
 .mobileProfileMenu { display: none; }
+
+.footer {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  color: #888;
+  font-size: 0.9rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  margin-top: auto;
+}
+
+.footerAccent {
+  color: #7c3aed;
+  font-weight: 600;
+}
