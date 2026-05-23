@@ -96,7 +96,7 @@ function ParticleBg() {
 const APPS = [
   {
     name: 'SCANORACLE — IP Lookup',
-    desc: 'Geolocate any IP address with full intelligence.',
+    desc: 'Geolocate any IP address with full intelligence. 📡',
     color: 'blue', live: true,
     route: '/scanoracle/iplookup',
     icon: (
@@ -107,7 +107,7 @@ const APPS = [
   },
   {
     name: 'SCANORACLE — Email Scanner',
-    desc: 'Validate, score and investigate any email address.',
+    desc: 'Validate, score and investigate any email address. 📨',
     color: 'purple', live: false,
     icon: (
       <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
@@ -117,7 +117,7 @@ const APPS = [
   },
   {
     name: 'SCANORACLE — Phone Lookup',
-    desc: 'Look up carrier, location and validity of any phone number.',
+    desc: 'Look up carrier, location and validity of any phone number. 🔎',
     color: 'teal', live: false,
     icon: (
       <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
@@ -127,7 +127,7 @@ const APPS = [
   },
   {
     name: 'SCANORACLE — User-Agent Lookup',
-    desc: 'Parse and fingerprint any browser or device user-agent string.',
+    desc: 'Parse and fingerprint any browser or device user-agent string. 🌐',
     color: 'green', live: false,
     icon: (
       <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
@@ -137,7 +137,7 @@ const APPS = [
   },
   {
     name: 'SCANORACLE — MAC Lookup',
-    desc: 'Identify device vendors from any MAC address.',
+    desc: 'Identify device vendors from any MAC address. 🖧',
     color: 'blue', live: false,
     icon: (
       <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
@@ -147,7 +147,7 @@ const APPS = [
   },
   {
     name: 'Ghostroute VPN',
-    desc: 'Private, fast, encrypted browsing powered by Ghostroute.',
+    desc: 'Private, fast, encrypted browsing powered by Ghostroute. 🔒',
     color: 'purple', live: false,
     icon: (
       <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
@@ -157,7 +157,7 @@ const APPS = [
   },
   {
     name: 'Pixel Pirate',
-    desc: 'Download media from anywhere on the web instantly.',
+    desc: 'Download media from anywhere on the web instantly. 🌧️',
     color: 'coral', live: false,
     icon: (
       <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
@@ -167,7 +167,7 @@ const APPS = [
   },
   {
     name: 'Speed Metrics',
-    desc: 'Real-time internet speed and network quality diagnostics.',
+    desc: 'Real-time internet speed and network quality diagnostics. 📶',
     color: 'amber', live: false,
     icon: (
       <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
@@ -177,7 +177,7 @@ const APPS = [
   },
   {
     name: 'Mechanic Finder',
-    desc: 'Find vetted mechanics near you, instantly.',
+    desc: 'Find vetted mechanics near you, instantly. 🧰',
     color: 'teal', live: false,
     icon: (
       <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
@@ -187,7 +187,7 @@ const APPS = [
   },
   {
     name: 'Device & Browser Detect',
-    desc: 'Instantly identify any mobile device or browser from your session.',
+    desc: 'Instantly identify any mobile device or browser from your session. 💻',
     color: 'green', live: false,
     icon: (
       <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
@@ -430,7 +430,7 @@ export default function Dashboard() {
                   </button>
                 </div>
               )}
-              <p className={styles.sideEmail}>{user?.email}</p>
+              <p className={styles.sideEmail}>📧 {user?.email}</p>
               <span className={styles.activePill}>● Active</span>
             </div>
 
