@@ -490,7 +490,7 @@ export default function Dashboard() {
           </div>
 
           <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>Mini Apps</h2>
+            <h2 className={styles.sectionTitle}>Mini Apps </h2>
             <div className={styles.appsGrid}>
               {APPS.map(app => (
                 <AppCard
@@ -503,6 +503,10 @@ export default function Dashboard() {
           </section>
         </main>
       </div>
+      {/* ← Added Footer */}
+      <footer className={styles.footer}>
+        <span className={styles.footerAccent}>Ghostroute</span> Security™ - 2026 ⚡
+      </footer>
     </div>
   )
 }
