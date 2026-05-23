@@ -520,90 +520,121 @@ function SubscriptionLedger({ token, refreshTrigger }) {
   }
 
   function EntryRow({ entry }) {
-    const isOpen    = expanded === entry.category_id
-    const hasKeys   = entry.keys && entry.keys.length > 0
-    const hasPrice  = entry.dollar_price_per_day > 0
+    const isOpen     = expanded === entry.category_id
+    const hasKeys    = entry.keys && entry.keys.length > 0
+    const hasPrice   = entry.dollar_price_per_day > 0
     const isDeleting = deletingId === entry.category_id
     const expandable = hasKeys || hasPrice
+    const [confirmOpen, setConfirmOpen] = useState(false)
 
     return (
-      <div
-        className={`${styles.ledgerRow} ${isOpen ? styles.ledgerRowOpen : ''} ${!hasKeys && !hasPrice ? styles.ledgerRowEmpty : ''}`}
-        onClick={() => expandable ? setExpanded(isOpen ? null : entry.category_id) : null}
-        style={{ cursor: expandable ? 'pointer' : 'default' }}
-      >
-        <div className={styles.ledgerRowMain}>
-          <div className={styles.ledgerRowLeft}>
-            <StatusBadge ok={entry.transaction_status} />
-            <code className={styles.ledgerTxId}>{entry.category_id}</code>
-            {entry.auto_renew && <span className={styles.ledgerAutoRenew}>↺ Auto</span>}
-          </div>
-          <div className={styles.ledgerRowRight}>
-            {hasKeys && (
-              <span className={styles.ledgerKeyCount}>{entry.keys.length} field{entry.keys.length !== 1 ? 's' : ''}</span>
-            )}
-            {hasPrice ? (
-              <div className={styles.ledgerPriceWrap}>
-                <span className={styles.ledgerPriceUsd}>${entry.dollar_price_per_day.toFixed(2)}/day</span>
-                <span className={styles.ledgerPriceNgn}>₦{Number(entry.naira_price_per_day).toLocaleString()}/day</span>
+      <>
+        {/* ── Delete confirmation modal ── */}
+        {confirmOpen && (
+          <div className={styles.deleteOverlay} onClick={() => setConfirmOpen(false)}>
+            <div className={styles.deleteModal} onClick={e => e.stopPropagation()}>
+              <div className={styles.deleteModalIcon}>⚠</div>
+              <h4 className={styles.deleteModalTitle}>Delete Subscription?</h4>
+              <p className={styles.deleteModalSub}>
+                Permanently remove <code className={styles.deleteModalId}>{entry.category_id}</code>.
+                This cannot be undone.
+              </p>
+              <div className={styles.deleteModalActions}>
+                <button className={styles.deleteModalCancel} onClick={() => setConfirmOpen(false)}>
+                  Cancel
+                </button>
+                <button
+                  className={`${styles.deleteModalConfirm} ${isDeleting ? styles.ledgerDeleteBtnBusy : ''}`}
+                  disabled={isDeleting}
+                  onClick={() => { handleDelete(entry.category_id); setConfirmOpen(false) }}
+                >
+                  {isDeleting ? <span className={styles.ledgerDeleteSpinner} /> : 'Yes, Delete'}
+                </button>
               </div>
-            ) : (
-              <span className={styles.ledgerFree}>FREE</span>
-            )}
-            <div className={styles.ledgerDays}>
-              <span className={styles.ledgerDaysLeft}>{entry.days_left}d left</span>
-              {entry.days_for > 0 && <span className={styles.ledgerDaysFor}>of {entry.days_for}d</span>}
             </div>
-            {expandable && (
-              <span className={`${styles.ledgerChevron} ${isOpen ? styles.ledgerChevronOpen : ''}`}>›</span>
-            )}
-            <button
-              className={`${styles.ledgerDeleteBtn} ${isDeleting ? styles.ledgerDeleteBtnBusy : ''}`}
-              onClick={e => { e.stopPropagation(); if (!isDeleting) handleDelete(entry.category_id) }}
-              title="Delete this entry"
-              disabled={isDeleting}
-            >
-              {isDeleting ? <span className={styles.ledgerDeleteSpinner} /> : '🗑️'}
-            </button>
-          </div>
-        </div>
-
-        {isOpen && (
-          <div className={styles.ledgerRowDetail} onClick={e => e.stopPropagation()}>
-            {hasKeys && (
-              <div className={styles.ledgerKeyList}>
-                <span className={styles.ledgerKeyListLabel}>Subscribed Fields</span>
-                <div className={styles.ledgerKeyPills}>
-                  {entry.keys.map(k => (
-                    <span key={k} className={styles.ledgerKeyPill}>
-                      {FIELD_META[k]?.label ?? k}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-            {hasPrice && (
-              <div className={styles.ledgerTotals}>
-                <div className={styles.ledgerTotalRow}>
-                  <span>Total Cost</span>
-                  <span className={styles.ledgerTotalUsd}>${entry.dollar_total_price.toFixed(2)}</span>
-                  <span className={styles.ledgerTotalNgn}>₦{Number(entry.naira_total_price).toLocaleString()}</span>
-                </div>
-                <div className={styles.ledgerTotalRow}>
-                  <span>Rate</span>
-                  <span>$1 = ₦{Number(entry.rate).toLocaleString()}</span>
-                </div>
-              </div>
-            )}
-            {entry.api_key && (
-              <div className={styles.ledgerApiKey}>
-                <span className={styles.ledgerApiKeyLabel}>API Key</span>
-                <code className={styles.ledgerApiKeyVal}>{entry.api_key}</code>
-              </div>
-            )}
           </div>
         )}
-      </div>
+
+        <div
+          className={`${styles.ledgerRow} ${isOpen ? styles.ledgerRowOpen : ''} ${!hasKeys && !hasPrice ? styles.ledgerRowEmpty : ''}`}
+          onClick={() => expandable ? setExpanded(isOpen ? null : entry.category_id) : null}
+          style={{ cursor: expandable ? 'pointer' : 'default' }}
+        >
+          <div className={styles.ledgerRowMain}>
+            {/* Left: status + id */}
+            <div className={styles.ledgerRowLeft}>
+              <StatusBadge ok={entry.transaction_status} />
+              <code className={styles.ledgerTxId}>{entry.category_id}</code>
+              {entry.auto_renew && <span className={styles.ledgerAutoRenew}>↺ Auto</span>}
+            </div>
+            {/* Right: meta + delete — always stays right even on mobile */}
+            <div className={styles.ledgerRowRight}>
+              {hasKeys && (
+                <span className={styles.ledgerKeyCount}>{entry.keys.length} field{entry.keys.length !== 1 ? 's' : ''}</span>
+              )}
+              {hasPrice ? (
+                <div className={styles.ledgerPriceWrap}>
+                  <span className={styles.ledgerPriceUsd}>${entry.dollar_price_per_day.toFixed(2)}/day</span>
+                  <span className={styles.ledgerPriceNgn}>₦{Number(entry.naira_price_per_day).toLocaleString()}/day</span>
+                </div>
+              ) : (
+                <span className={styles.ledgerFree}>FREE</span>
+              )}
+              <div className={styles.ledgerDays}>
+                <span className={styles.ledgerDaysLeft}>{entry.days_left}d left</span>
+                {entry.days_for > 0 && <span className={styles.ledgerDaysFor}>of {entry.days_for}d</span>}
+              </div>
+              {expandable && (
+                <span className={`${styles.ledgerChevron} ${isOpen ? styles.ledgerChevronOpen : ''}`}>›</span>
+              )}
+              <button
+                className={`${styles.ledgerDeleteBtn} ${isDeleting ? styles.ledgerDeleteBtnBusy : ''}`}
+                onClick={e => { e.stopPropagation(); if (!isDeleting) setConfirmOpen(true) }}
+                title="Delete this subscription"
+                disabled={isDeleting}
+              >
+                {isDeleting ? <span className={styles.ledgerDeleteSpinner} /> : '🗑️'}
+              </button>
+            </div>
+          </div>
+
+          {isOpen && (
+            <div className={styles.ledgerRowDetail} onClick={e => e.stopPropagation()}>
+              {hasKeys && (
+                <div className={styles.ledgerKeyList}>
+                  <span className={styles.ledgerKeyListLabel}>Subscribed Fields</span>
+                  <div className={styles.ledgerKeyPills}>
+                    {entry.keys.map(k => (
+                      <span key={k} className={styles.ledgerKeyPill}>
+                        {FIELD_META[k]?.label ?? k}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {hasPrice && (
+                <div className={styles.ledgerTotals}>
+                  <div className={styles.ledgerTotalRow}>
+                    <span>Total Cost</span>
+                    <span className={styles.ledgerTotalUsd}>${entry.dollar_total_price.toFixed(2)}</span>
+                    <span className={styles.ledgerTotalNgn}>₦{Number(entry.naira_total_price).toLocaleString()}</span>
+                  </div>
+                  <div className={styles.ledgerTotalRow}>
+                    <span>Rate</span>
+                    <span>$1 = ₦{Number(entry.rate).toLocaleString()}</span>
+                  </div>
+                </div>
+              )}
+              {entry.api_key && (
+                <div className={styles.ledgerApiKey}>
+                  <span className={styles.ledgerApiKeyLabel}>API Key</span>
+                  <code className={styles.ledgerApiKeyVal}>{entry.api_key}</code>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </>
     )
   }
 
