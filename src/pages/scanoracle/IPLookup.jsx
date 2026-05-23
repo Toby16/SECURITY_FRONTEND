@@ -29,43 +29,42 @@ const FIELD_META = {
   hostname:                   { label: 'Hostname',            cat: 'Network',  icon: '⬡' },
   city:                       { label: 'City',                cat: 'Location', icon: '◎' },
   region:                     { label: 'Region',              cat: 'Location', icon: '◎' },
-  country:                    { label: 'Country Code',        cat: 'Location', icon: '◎' },
+  country:                    { label: 'Country',        cat: 'Location', icon: '◎' },
   country_name:               { label: 'Country Name',        cat: 'Location', icon: '◎' },
   latitude:                   { label: 'Latitude',            cat: 'Location', icon: '◎' },
   longitude:                  { label: 'Longitude',           cat: 'Location', icon: '◎' },
   organization:               { label: 'Organization',        cat: 'Network',  icon: '⬡' },
   timezone:                   { label: 'Timezone',            cat: 'Location', icon: '◎' },
-  continent:                  { label: 'Continent Code',      cat: 'Location', icon: '◎' },
+  continent:                  { label: 'Continent',      cat: 'Location', icon: '◎' },
   continent_name:             { label: 'Continent Name',      cat: 'Location', icon: '◎' },
   ip_version:                 { label: 'IP Version',          cat: 'Network',  icon: '⬡' },
-  country_alpha_3:            { label: 'Alpha-3 Code',        cat: 'Country',  icon: '⊞' },
+  country_alpha_3:            { label: 'Country Alpha-3',        cat: 'Country',  icon: '⊞' },
   postal_code:                { label: 'Postal Code',         cat: 'Location', icon: '◎' },
-  country_currency_code:      { label: 'Currency Code',       cat: 'Country',  icon: '⊞' },
-  country_currency_symbol:    { label: 'Currency Symbol',     cat: 'Country',  icon: '⊞' },
-  european_union_member:      { label: 'EU Member',           cat: 'Country',  icon: '⊞' },
-  country_current_time:       { label: 'Local Time',          cat: 'Time',     icon: '◷' },
-  country_current_time_24hr:  { label: 'Time (24hr)',         cat: 'Time',     icon: '◷' },
-  country_current_time_12hr:  { label: 'Time (12hr)',         cat: 'Time',     icon: '◷' },
-  country_current_time_iso:   { label: 'Time (ISO)',          cat: 'Time',     icon: '◷' },
-  country_flag_icon:          { label: 'Flag Icon URL',       cat: 'Country',  icon: '⊞' },
+  country_currency_code:      { label: 'Country Currency Code',       cat: 'Country',  icon: '⊞' },
+  country_currency_symbol:    { label: 'Country Currency Symbol',     cat: 'Country',  icon: '⊞' },
+  european_union_member:      { label: 'EU Member?',           cat: 'Country',  icon: '⊞' },
+  country_current_time:       { label: 'Country Local Time',          cat: 'Time',     icon: '◷' },
+  country_current_time_24hr:  { label: 'Country Local Time (24hr)',         cat: 'Time',     icon: '◷' },
+  country_current_time_12hr:  { label: 'Country Local Time (12hr)',         cat: 'Time',     icon: '◷' },
+  country_current_time_iso:   { label: 'Country Local Time (ISO)',          cat: 'Time',     icon: '◷' },
+  country_flag_icon:          { label: 'Country Flag Icon',       cat: 'Country',  icon: '⊞' },
   network_status:             { label: 'Network Status',      cat: 'Network',  icon: '⬡' },
   network_range:              { label: 'Network Range',       cat: 'Network',  icon: '⬡' },
-  network_start_address:      { label: 'Range Start',         cat: 'Network',  icon: '⬡' },
-  network_end_address:        { label: 'Range End',           cat: 'Network',  icon: '⬡' },
-  network_registration:       { label: 'Registered',          cat: 'Network',  icon: '⬡' },
-  network_last_changed:       { label: 'Last Changed',        cat: 'Network',  icon: '⬡' },
+  network_start_address:      { label: 'Network Start Address',         cat: 'Network',  icon: '⬡' },
+  network_end_address:        { label: 'Network End Address',           cat: 'Network',  icon: '⬡' },
+  network_registration:       { label: 'Network Registered',          cat: 'Network',  icon: '⬡' },
+  network_last_changed:       { label: 'Network Last Changed',        cat: 'Network',  icon: '⬡' },
   contact_email:              { label: 'Contact Email',       cat: 'Contact',  icon: '✉' },
   contact_phone:              { label: 'Contact Phone',       cat: 'Contact',  icon: '✉' },
   contact_address:            { label: 'Contact Address',     cat: 'Contact',  icon: '✉' },
-  is_tor:                     { label: 'TOR Exit Node',       cat: 'Threat',   icon: '⚑' },
-  is_blacklisted:             { label: 'Blacklisted',         cat: 'Threat',   icon: '⚑' },
+  is_tor:                     { label: 'TOR Exit Node?',       cat: 'Threat',   icon: '⚑' },
+  is_blacklisted:             { label: 'Is Blacklisted?',         cat: 'Threat',   icon: '⚑' },
   threat_score:               { label: 'Threat Score',        cat: 'Threat',   icon: '⚑' },
-  detectable_port:            { label: 'Detectable Ports',    cat: 'Threat',   icon: '⚑' },
   language:                   { label: 'Language',            cat: 'Country',  icon: '⊞' },
-  mobile_calling_code:        { label: 'Calling Code',        cat: 'Country',  icon: '⊞' },
+  mobile_calling_code:        { label: 'Country Mobile Calling Code',        cat: 'Country',  icon: '⊞' },
   tld:                        { label: 'TLD',                 cat: 'Country',  icon: '⊞' },
-  fifa:                       { label: 'FIFA Code',           cat: 'Country',  icon: '⊞' },
-  map:                        { label: 'Maps Link',           cat: 'Location', icon: '◎' }, // API key is "map" not "maps"
+  fifa:                       { label: 'FIFA Country Code',           cat: 'Country',  icon: '⊞' },
+  map:                        { label: 'Map Link',           cat: 'Location', icon: '◎' }, // API key is "map" not "maps"
   population:                 { label: 'Population',          cat: 'Country',  icon: '⊞' },
 }
 
@@ -331,7 +330,7 @@ function DataSelectorPanel({ lookupMeta, rate, lookupsLoading, token, onPurchase
       <div className={styles.selectorHeader}>
         <div className={styles.selectorTitle}>
           <span className={styles.selectorTitleIcon}>⊛</span>
-          Build Your Data Package
+          Build Your Data Package 👨‍🔧
         </div>
         <div className={styles.selectorCount}>
           <span className={styles.selectorCountNum}>{selectedCount}</span>
@@ -606,7 +605,7 @@ export default function IPLookup() {
         <div className={styles.leftCol}>
           <div className={styles.panelLabel}>
             <span className={styles.panelLabelDot} style={{ background: '#a78bfa' }} />
-            Data Package Builder
+            🚧 Data Package Builder
           </div>
           <DataSelectorPanel
             lookupMeta={lookupMeta}
@@ -620,7 +619,7 @@ export default function IPLookup() {
         <div className={styles.rightCol}>
           <div className={styles.panelLabel}>
             <span className={styles.panelLabelDot} style={{ background: '#38bdf8' }} />
-            Your IP Address
+            Your IP Address 🪐
             <span className={styles.panelLabelBadge}>live scan</span>
           </div>
           <div className={styles.livePanelWrap}>
