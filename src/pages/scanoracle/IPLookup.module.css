@@ -609,11 +609,7 @@
 .ledgerHeaderLeft { display: flex; align-items: center; gap: 9px; }
 .ledgerHeaderIcon { font-size: 1rem; color: var(--purple); }
 .ledgerHeaderTitle { font-size: 0.82rem; font-weight: 700; color: var(--text); font-family: var(--sans); }
-.ledgerHeaderSub {
-  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
-  color: var(--blue); background: var(--blue-dim); border: 1px solid rgba(56,189,248,0.28);
-  border-radius: 4px; padding: 2px 7px;
-}
+
 .ledgerHeaderRight { display: flex; align-items: center; gap: 14px; }
 .ledgerStat { display: flex; align-items: center; gap: 5px; font-size: 0.73rem; font-weight: 600; color: var(--text2); }
 .ledgerTotal {
@@ -742,7 +738,7 @@
   display: inline-flex; align-items: center; justify-content: center;
   width: 24px; height: 24px; border-radius: 5px; flex-shrink: 0;
   background: transparent; border: 1px solid transparent;
-  font-size: 0.65rem; font-weight: 700; color: var(--text4);
+  font-size: 60%; font-weight: 700; color: var(--text4);
   cursor: pointer; font-family: var(--sans);
   transition: color 150ms, border-color 150ms, background 150ms;
 }

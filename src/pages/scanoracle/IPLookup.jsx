@@ -563,7 +563,7 @@ function SubscriptionLedger({ token, refreshTrigger }) {
               title="Delete this entry"
               disabled={isDeleting}
             >
-              {isDeleting ? <span className={styles.ledgerDeleteSpinner} /> : '✕'}
+              {isDeleting ? <span className={styles.ledgerDeleteSpinner} /> : '🗑️'}
             </button>
           </div>
         </div>
@@ -613,7 +613,6 @@ function SubscriptionLedger({ token, refreshTrigger }) {
         <div className={styles.ledgerHeaderLeft}>
           <span className={styles.ledgerHeaderIcon}>⊟</span>
           <span className={styles.ledgerHeaderTitle}>Subscription Ledger</span>
-          <span className={styles.ledgerHeaderSub}>IP_ADDRESS</span>
         </div>
         <div className={styles.ledgerHeaderRight}>
           <span className={styles.ledgerStat}><span style={{ color: '#34d399' }}>●</span> {paid.length} paid</span>
