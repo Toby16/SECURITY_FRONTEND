@@ -23,48 +23,50 @@ function GhostIPLogo({ size = 120, animated = true }) {
   )
 }
 
+// Keys here must exactly match the API's IP_ADDRESS object keys
 const FIELD_META = {
-  asn:                      { label: 'ASN',                cat: 'Network',  icon: '⬡' },
-  hostname:                 { label: 'Hostname',            cat: 'Network',  icon: '⬡' },
-  city:                     { label: 'City',                cat: 'Location', icon: '◎' },
-  region:                   { label: 'Region',              cat: 'Location', icon: '◎' },
-  country:                  { label: 'Country Code',        cat: 'Location', icon: '◎' },
-  country_name:             { label: 'Country Name',        cat: 'Location', icon: '◎' },
-  latitude:                 { label: 'Latitude',            cat: 'Location', icon: '◎' },
-  longitude:                { label: 'Longitude',           cat: 'Location', icon: '◎' },
-  organization:             { label: 'Organization',        cat: 'Network',  icon: '⬡' },
-  timezone:                 { label: 'Timezone',            cat: 'Location', icon: '◎' },
-  continent:                { label: 'Continent Code',      cat: 'Location', icon: '◎' },
-  continent_name:           { label: 'Continent Name',      cat: 'Location', icon: '◎' },
-  ip_version:               { label: 'IP Version',          cat: 'Network',  icon: '⬡' },
-  country_alpha_3:          { label: 'Alpha-3 Code',        cat: 'Country',  icon: '⊞' },
-  postal_code:              { label: 'Postal Code',         cat: 'Location', icon: '◎' },
-  country_currency_code:    { label: 'Currency Code',       cat: 'Country',  icon: '⊞' },
-  country_currency_symbol:  { label: 'Currency Symbol',     cat: 'Country',  icon: '⊞' },
-  european_union_member:    { label: 'EU Member',           cat: 'Country',  icon: '⊞' },
-  country_current_time:     { label: 'Local Time',          cat: 'Time',     icon: '◷' },
-  country_current_time_24hr:{ label: 'Time (24hr)',         cat: 'Time',     icon: '◷' },
-  country_current_time_12hr:{ label: 'Time (12hr)',         cat: 'Time',     icon: '◷' },
-  country_current_time_iso: { label: 'Time (ISO)',          cat: 'Time',     icon: '◷' },
-  country_flag_icon:        { label: 'Flag Icon URL',       cat: 'Country',  icon: '⊞' },
-  network_status:           { label: 'Network Status',      cat: 'Network',  icon: '⬡' },
-  network_range:            { label: 'Network Range',       cat: 'Network',  icon: '⬡' },
-  network_start_address:    { label: 'Range Start',         cat: 'Network',  icon: '⬡' },
-  network_end_address:      { label: 'Range End',           cat: 'Network',  icon: '⬡' },
-  network_registration:     { label: 'Registered',          cat: 'Network',  icon: '⬡' },
-  network_last_changed:     { label: 'Last Changed',        cat: 'Network',  icon: '⬡' },
-  contact_email:            { label: 'Contact Email',       cat: 'Contact',  icon: '✉' },
-  contact_phone:            { label: 'Contact Phone',       cat: 'Contact',  icon: '✉' },
-  contact_address:          { label: 'Contact Address',     cat: 'Contact',  icon: '✉' },
-  is_tor:                   { label: 'TOR Exit Node',       cat: 'Threat',   icon: '⚑' },
-  is_blacklisted:           { label: 'Blacklisted',         cat: 'Threat',   icon: '⚑' },
-  threat_score:             { label: 'Threat Score',        cat: 'Threat',   icon: '⚑' },
-  language:                 { label: 'Language',            cat: 'Country',  icon: '⊞' },
-  mobile_calling_code:      { label: 'Calling Code',        cat: 'Country',  icon: '⊞' },
-  tld:                      { label: 'TLD',                 cat: 'Country',  icon: '' },
-  fifa:                     { label: 'FIFA Code',           cat: 'Country',  icon: '' },
-  population:               { label: 'Population',          cat: 'Country',  icon: '' },
-  maps:                     { label: 'Maps Link',           cat: 'Location', icon: '◎' },
+  asn:                        { label: 'ASN',                cat: 'Network',  icon: '⬡' },
+  hostname:                   { label: 'Hostname',            cat: 'Network',  icon: '⬡' },
+  city:                       { label: 'City',                cat: 'Location', icon: '◎' },
+  region:                     { label: 'Region',              cat: 'Location', icon: '◎' },
+  country:                    { label: 'Country Code',        cat: 'Location', icon: '◎' },
+  country_name:               { label: 'Country Name',        cat: 'Location', icon: '◎' },
+  latitude:                   { label: 'Latitude',            cat: 'Location', icon: '◎' },
+  longitude:                  { label: 'Longitude',           cat: 'Location', icon: '◎' },
+  organization:               { label: 'Organization',        cat: 'Network',  icon: '⬡' },
+  timezone:                   { label: 'Timezone',            cat: 'Location', icon: '◎' },
+  continent:                  { label: 'Continent Code',      cat: 'Location', icon: '◎' },
+  continent_name:             { label: 'Continent Name',      cat: 'Location', icon: '◎' },
+  ip_version:                 { label: 'IP Version',          cat: 'Network',  icon: '⬡' },
+  country_alpha_3:            { label: 'Alpha-3 Code',        cat: 'Country',  icon: '⊞' },
+  postal_code:                { label: 'Postal Code',         cat: 'Location', icon: '◎' },
+  country_currency_code:      { label: 'Currency Code',       cat: 'Country',  icon: '⊞' },
+  country_currency_symbol:    { label: 'Currency Symbol',     cat: 'Country',  icon: '⊞' },
+  european_union_member:      { label: 'EU Member',           cat: 'Country',  icon: '⊞' },
+  country_current_time:       { label: 'Local Time',          cat: 'Time',     icon: '◷' },
+  country_current_time_24hr:  { label: 'Time (24hr)',         cat: 'Time',     icon: '◷' },
+  country_current_time_12hr:  { label: 'Time (12hr)',         cat: 'Time',     icon: '◷' },
+  country_current_time_iso:   { label: 'Time (ISO)',          cat: 'Time',     icon: '◷' },
+  country_flag_icon:          { label: 'Flag Icon URL',       cat: 'Country',  icon: '⊞' },
+  network_status:             { label: 'Network Status',      cat: 'Network',  icon: '⬡' },
+  network_range:              { label: 'Network Range',       cat: 'Network',  icon: '⬡' },
+  network_start_address:      { label: 'Range Start',         cat: 'Network',  icon: '⬡' },
+  network_end_address:        { label: 'Range End',           cat: 'Network',  icon: '⬡' },
+  network_registration:       { label: 'Registered',          cat: 'Network',  icon: '⬡' },
+  network_last_changed:       { label: 'Last Changed',        cat: 'Network',  icon: '⬡' },
+  contact_email:              { label: 'Contact Email',       cat: 'Contact',  icon: '✉' },
+  contact_phone:              { label: 'Contact Phone',       cat: 'Contact',  icon: '✉' },
+  contact_address:            { label: 'Contact Address',     cat: 'Contact',  icon: '✉' },
+  is_tor:                     { label: 'TOR Exit Node',       cat: 'Threat',   icon: '⚑' },
+  is_blacklisted:             { label: 'Blacklisted',         cat: 'Threat',   icon: '⚑' },
+  threat_score:               { label: 'Threat Score',        cat: 'Threat',   icon: '⚑' },
+  detectable_port:            { label: 'Detectable Ports',    cat: 'Threat',   icon: '⚑' },
+  language:                   { label: 'Language',            cat: 'Country',  icon: '⊞' },
+  mobile_calling_code:        { label: 'Calling Code',        cat: 'Country',  icon: '⊞' },
+  tld:                        { label: 'TLD',                 cat: 'Country',  icon: '⊞' },
+  fifa:                       { label: 'FIFA Code',           cat: 'Country',  icon: '⊞' },
+  map:                        { label: 'Maps Link',           cat: 'Location', icon: '◎' }, // API key is "map" not "maps"
+  population:                 { label: 'Population',          cat: 'Country',  icon: '⊞' },
 }
 
 const CATEGORIES = ['All', 'Network', 'Location', 'Country', 'Time', 'Contact', 'Threat']
@@ -83,15 +85,23 @@ function formatValue(key, val) {
   if (typeof val === 'boolean') return val ? 'Yes' : 'No'
   if (key === 'population') return Number(val).toLocaleString()
   if (key === 'country_flag_icon') return null
-  if (key === 'maps') return null
+  if (key === 'map') return null
   return String(val)
 }
 
-// ─── Pricing helpers ────────────────────────────────────────────────────────
-function PriceBadge({ usdPrice, rate, isFree }) {
-  if (isFree) return <span className={styles.priceFree}>FREE</span>
-  const usd = parseFloat(usdPrice)
-  if (isNaN(usd)) return null
+// ─── Price helpers ────────────────────────────────────────────────────────────
+// A field is only free if price is explicitly "0.00" AND the key exists in lookupMeta.
+// If lookupMeta doesn't have the key yet (still loading), we render nothing.
+function parsePriceUSD(info) {
+  if (!info) return null          // meta not loaded yet
+  const n = parseFloat(info.price)
+  return isNaN(n) ? null : n
+}
+
+function PriceBadge({ info, rate }) {
+  const usd = parsePriceUSD(info)
+  if (usd === null) return null   // not loaded
+  if (usd === 0) return <span className={styles.priceFree}>FREE</span>
   const ngn = Math.round(usd * parseFloat(rate || 1200))
   return (
     <div className={styles.priceBadge}>
@@ -102,30 +112,36 @@ function PriceBadge({ usdPrice, rate, isFree }) {
   )
 }
 
-// ─── Tooltip for description ─────────────────────────────────────────────────
+function tierColor(usd) {
+  if (usd === null) return '#2d3550'
+  if (usd === 0)    return '#34d399'
+  if (usd <= 0.10)  return '#38bdf8'
+  if (usd <= 0.20)  return '#a78bfa'
+  if (usd <= 0.30)  return '#fbbf24'
+  if (usd <= 0.35)  return '#fb7185'
+  return '#ef4444'
+}
+
+// ─── Tooltip for description ──────────────────────────────────────────────────
 function DescTooltip({ text }) {
   const [visible, setVisible] = useState(false)
-  const ref = useRef(null)
   if (!text) return null
   return (
     <span
       className={styles.descTooltipWrap}
-      ref={ref}
       onMouseEnter={() => setVisible(true)}
       onMouseLeave={() => setVisible(false)}
     >
       <span className={styles.descTooltipIcon}>?</span>
-      {visible && (
-        <span className={styles.descTooltipBox}>{text}</span>
-      )}
+      {visible && <span className={styles.descTooltipBox}>{text}</span>}
     </span>
   )
 }
 
-// ─── Pricing tier strip (shown in selector header) ───────────────────────────
+// ─── Pricing tier legend ──────────────────────────────────────────────────────
 function PricingTierLegend({ rate }) {
   const tiers = [
-    { label: 'Free', usd: 0,    color: '#34d399' },
+    { label: 'Free',  usd: 0,    color: '#34d399' },
     { label: '$0.10', usd: 0.10, color: '#38bdf8' },
     { label: '$0.20', usd: 0.20, color: '#a78bfa' },
     { label: '$0.30', usd: 0.30, color: '#fbbf24' },
@@ -134,10 +150,12 @@ function PricingTierLegend({ rate }) {
   ]
   return (
     <div className={styles.pricingLegend}>
-      <span className={styles.pricingLegendTitle}>PRICING TIERS</span>
-      <div className={styles.pricingLegendRate}>
-        <span className={styles.rateIcon}>↔</span>
-        $1 = ₦{Number(rate || 1200).toLocaleString()} NGN
+      <div className={styles.pricingLegendTop}>
+        <span className={styles.pricingLegendTitle}>PRICING TIERS</span>
+        <div className={styles.pricingLegendRate}>
+          <span className={styles.rateIcon}>↔</span>
+          $1 = ₦{Number(rate || 1200).toLocaleString()} NGN
+        </div>
       </div>
       <div className={styles.pricingTiers}>
         {tiers.map(t => (
@@ -222,7 +240,7 @@ function LiveIPPanel({ data, loading, error, lookupMeta }) {
                 if (raw === undefined) return null
                 if (key === 'country_flag_icon') return null
                 const desc = lookupMeta?.[key]?.description || null
-                if (key === 'maps') return (
+                if (key === 'map') return (
                   <div key={key} className={styles.liveRow}>
                     <span className={styles.liveRowKey}>
                       {meta.label}
@@ -254,7 +272,7 @@ function LiveIPPanel({ data, loading, error, lookupMeta }) {
 }
 
 // ─── Data Selector Panel ──────────────────────────────────────────────────────
-function DataSelectorPanel({ lookupMeta, rate, lookupsLoading, lookupsError, token, onPurchaseSuccess, userBalances }) {
+function DataSelectorPanel({ lookupMeta, rate, lookupsLoading, token, onPurchaseSuccess }) {
   const [selected, setSelected] = useState({})
   const [daysFor, setDaysFor] = useState(30)
   const [autoRenew, setAutoRenew] = useState(false)
@@ -276,13 +294,14 @@ function DataSelectorPanel({ lookupMeta, rate, lookupsLoading, lookupsError, tok
   const selectedCount = Object.values(selected).filter(Boolean).length
   const totalFields   = Object.keys(FIELD_META).length
 
-  // Total cost in USD × rate = NGN per day
-  const totalCostUSD = lookupMeta ? Object.entries(selected).reduce((sum, [key, on]) => {
-    if (!on) return sum
-    const entry = lookupMeta[key]
-    if (!entry) return sum
-    return sum + parseFloat(entry.price || 0)
-  }, 0) : 0
+  // Accumulate cost only from fields with a known, non-null price
+  const totalCostUSD = lookupMeta
+    ? Object.entries(selected).reduce((sum, [key, on]) => {
+        if (!on) return sum
+        const usd = parsePriceUSD(lookupMeta[key])
+        return usd !== null ? sum + usd : sum
+      }, 0)
+    : 0
   const totalCostNGN = Math.round(totalCostUSD * Number(rate || 1200))
 
   const handleSubmit = async () => {
@@ -337,7 +356,6 @@ function DataSelectorPanel({ lookupMeta, rate, lookupsLoading, lookupsError, tok
         </div>
       </div>
 
-      {/* Pricing tier legend */}
       <PricingTierLegend rate={rate} />
 
       <div className={styles.selectorActions}>
@@ -357,18 +375,10 @@ function DataSelectorPanel({ lookupMeta, rate, lookupsLoading, lookupsError, tok
         {Object.entries(FIELD_META)
           .filter(([, m]) => activeTab === 'All' || m.cat === activeTab)
           .map(([key, meta]) => {
-            const info = lookupMeta?.[key]
+            const info = lookupMeta?.[key]          // { price, description } or undefined
+            const usd = parsePriceUSD(info)         // null = not loaded, 0 = free, >0 = paid
             const isOn = selected[key] || false
-            const usdPrice = parseFloat(info?.price || 0)
-            const isFree = usdPrice === 0
-
-            // tier color for dot
-            const tierColor = isFree ? '#34d399'
-              : usdPrice <= 0.10 ? '#38bdf8'
-              : usdPrice <= 0.20 ? '#a78bfa'
-              : usdPrice <= 0.30 ? '#fbbf24'
-              : usdPrice <= 0.35 ? '#fb7185'
-              : '#ef4444'
+            const dot = tierColor(usd)
 
             return (
               <label
@@ -384,8 +394,11 @@ function DataSelectorPanel({ lookupMeta, rate, lookupsLoading, lookupsError, tok
                 </div>
                 <input type="checkbox" checked={isOn} onChange={() => toggleField(key)} className={styles.hiddenCheck} />
 
-                {/* Tier dot */}
-                <span className={styles.tierDot} style={{ background: tierColor }} title={isFree ? 'Free' : `$${usdPrice.toFixed(2)}/day`} />
+                <span
+                  className={styles.tierDot}
+                  style={{ background: dot }}
+                  title={usd === null ? 'Loading…' : usd === 0 ? 'Free' : `$${usd.toFixed(2)}/day`}
+                />
 
                 <div className={styles.fieldInfo}>
                   <span className={styles.fieldLabel}>{meta.label}</span>
@@ -394,7 +407,7 @@ function DataSelectorPanel({ lookupMeta, rate, lookupsLoading, lookupsError, tok
                   )}
                 </div>
 
-                <PriceBadge usdPrice={info?.price} rate={rate} isFree={isFree} />
+                <PriceBadge info={info} rate={rate} />
               </label>
             )
           })}
@@ -438,9 +451,9 @@ function DataSelectorPanel({ lookupMeta, rate, lookupsLoading, lookupsError, tok
         <div className={styles.costSummary}>
           <div className={styles.costRow}><span>Fields selected</span><span>{selectedCount}</span></div>
           <div className={styles.costRow}><span>Duration</span><span>{daysFor} days</span></div>
-          {totalCostUSD > 0 && (
+          <div className={styles.costDivider} />
+          {totalCostUSD > 0 ? (
             <>
-              <div className={styles.costDivider} />
               <div className={styles.costRow}>
                 <span>Per day (USD)</span>
                 <span className={styles.costUsdVal}>${totalCostUSD.toFixed(2)}</span>
@@ -458,15 +471,11 @@ function DataSelectorPanel({ lookupMeta, rate, lookupsLoading, lookupsError, tok
                 </div>
               </div>
             </>
-          )}
-          {totalCostUSD === 0 && selectedCount > 0 && (
-            <>
-              <div className={styles.costDivider} />
-              <div className={`${styles.costRow} ${styles.costTotal}`}>
-                <span>Total ({daysFor}d)</span>
-                <span className={styles.priceFree}>FREE</span>
-              </div>
-            </>
+          ) : (
+            <div className={`${styles.costRow} ${styles.costTotal}`}>
+              <span>Total ({daysFor}d)</span>
+              <span className={styles.priceFree}>FREE</span>
+            </div>
           )}
         </div>
       )}
@@ -497,11 +506,9 @@ export default function IPLookup() {
   const [liveData, setLiveData]             = useState(null)
   const [liveLoading, setLiveLoading]       = useState(true)
   const [liveError, setLiveError]           = useState(null)
-  // lookupMeta = { asn: { price, description }, ... }  (IP_ADDRESS object from API)
   const [lookupMeta, setLookupMeta]         = useState(null)
   const [rate, setRate]                     = useState('1200')
   const [lookupsLoading, setLookupsLoading] = useState(() => !!getToken())
-  const [lookupsError, setLookupsError]     = useState(null)
   const [token, setToken]                   = useState(() => getToken())
 
   useEffect(() => { const t = getToken(); if (t !== token) setToken(t) }, [])
@@ -516,7 +523,7 @@ export default function IPLookup() {
     fetch('https://security.appcardy.com/api/v1.0/scanoracle/get/ip_address', { headers: { 'accept': 'application/json' } })
       .then(r => r.json())
       .then(json => { setLiveData(json); setLiveLoading(false) })
-      .catch(() => { setLiveError('Failed to fetch your IP data.'); setLiveLoading(false) })
+      .catch(() => { setLiveLoading(false) })
   }, [])
 
   useEffect(() => {
@@ -535,14 +542,10 @@ export default function IPLookup() {
       })
       .then(json => {
         if (cancelled) return
-        // API shape: { data: { currency, rate, IP_ADDRESS: { asn: { price, description }, ... } } }
-        const data = json?.data
-        if (data?.IP_ADDRESS) {
-          setLookupMeta(data.IP_ADDRESS)
-          setRate(data.rate || '1200')
-        } else {
-          setLookupMeta({})
-        }
+        // Shape: { data: { currency, rate, IP_ADDRESS: { asn: { price, description }, map: {...}, ... } } }
+        const d = json?.data
+        setLookupMeta(d?.IP_ADDRESS ?? {})
+        setRate(d?.rate ?? '1200')
       })
       .catch(() => { if (cancelled) return; setLookupMeta({}) })
       .finally(() => { if (cancelled) return; clearTimeout(timeout); setLookupsLoading(false) })
@@ -626,7 +629,6 @@ export default function IPLookup() {
             lookupMeta={lookupMeta}
             rate={rate}
             lookupsLoading={lookupsLoading}
-            lookupsError={lookupsError}
             token={token}
             onPurchaseSuccess={() => {}}
             userBalances={{ naira: user?.naira_balance, dollar: user?.dollar_balance }}
@@ -642,7 +644,7 @@ export default function IPLookup() {
             <LiveIPPanel
               data={liveData}
               loading={liveLoading}
-              error={liveError}
+              error={null}
               lookupMeta={lookupMeta}
             />
           </div>
