@@ -23,8 +23,6 @@ function GhostIPLogo({ size = 120, animated = true }) {
   )
 }
 
-// Keys here must exactly match the API's IP_ADDRESS object keys
-// NOTE: API POST body uses "maps" (not "map") — key corrected below
 const FIELD_META = {
   asn:                        { label: 'ASN',                cat: 'Network',  icon: '⬡' },
   hostname:                   { label: 'Hostname',            cat: 'Network',  icon: '⬡' },
@@ -65,7 +63,7 @@ const FIELD_META = {
   mobile_calling_code:        { label: 'Country Mobile Calling Code', cat: 'Country',  icon: '⊞' },
   tld:                        { label: 'TLD',                 cat: 'Country',  icon: '⊞' },
   fifa:                       { label: 'FIFA Country Code',   cat: 'Country',  icon: '⊞' },
-  maps:                       { label: 'Map Link',            cat: 'Location', icon: '◎' }, // API key is "maps"
+  maps:                       { label: 'Map Link',            cat: 'Location', icon: '◎' },
   population:                 { label: 'Population',          cat: 'Country',  icon: '⊞' },
 }
 
@@ -89,7 +87,6 @@ function formatValue(key, val) {
   return String(val)
 }
 
-// ─── Price helpers ────────────────────────────────────────────────────────────
 function parsePriceUSD(info) {
   if (!info) return null
   const n = parseFloat(info.price)
@@ -120,7 +117,6 @@ function tierColor(usd) {
   return '#ef4444'
 }
 
-// ─── Pricing tier legend ──────────────────────────────────────────────────────
 function PricingTierLegend({ rate }) {
   const tiers = [
     { label: 'Free',  usd: 0,    color: '#34d399' },
@@ -469,14 +465,158 @@ function DataSelectorPanel({ lookupMeta, rate, lookupsLoading, token, onPurchase
   )
 }
 
+// ─── Verify Payment Modal ─────────────────────────────────────────────────────
+function VerifyPaymentModal({ entry, token, onClose, onVerified }) {
+  const isFree = entry.dollar_price_per_day === 0
+  const [verifying, setVerifying] = useState(false)
+  const [error, setError]         = useState(null)
+  const [done, setDone]           = useState(false)
+  const [result, setResult]       = useState(null)
+
+  const handleVerify = async () => {
+    setVerifying(true); setError(null)
+    try {
+      const res = await fetch('https://security.appcardy.com/api/v1.0/scanoracle/verify/payment/ip', {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ transaction_id: entry.category_id }),
+      })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.message || json.detail || 'Verification failed.')
+      setResult(json.data)
+      setDone(true)
+      onVerified?.()
+    } catch (e) { setError(e.message) }
+    finally { setVerifying(false) }
+  }
+
+  return (
+    <div className={styles.deleteOverlay} onClick={onClose}>
+      <div className={styles.verifyModal} onClick={e => e.stopPropagation()}>
+
+        {/* ── Success state ── */}
+        {done ? (
+          <>
+            <div className={styles.verifySuccessIcon}>✓</div>
+            <h4 className={styles.verifyModalTitle}>Subscription Activated!</h4>
+            <p className={styles.verifyModalSub}>
+              Your subscription <code className={styles.verifyModalId}>{entry.category_id}</code> is now active.
+            </p>
+            {result?.api_key && (
+              <div className={styles.verifyApiKeyWrap}>
+                <span className={styles.verifyApiKeyLabel}>API KEY</span>
+                <code className={styles.verifyApiKeyVal}>{result.api_key}</code>
+              </div>
+            )}
+            <button className={styles.verifyCloseBtn} onClick={onClose}>Done</button>
+          </>
+        ) : (
+          <>
+            {/* ── Icon & header ── */}
+            <div className={isFree ? styles.verifyIconFree : styles.verifyIconPaid}>
+              {isFree ? '⊛' : '₦'}
+            </div>
+            <h4 className={styles.verifyModalTitle}>
+              {isFree ? 'Activate Free Subscription' : 'Confirm Payment & Activate'}
+            </h4>
+
+            {/* ── Transaction ID ── */}
+            <p className={styles.verifyModalSub}>
+              Transaction <code className={styles.verifyModalId}>{entry.category_id}</code>
+            </p>
+
+            {/* ── Info banner ── */}
+            {isFree ? (
+              <div className={styles.verifyInfoBannerFree}>
+                <span className={styles.verifyInfoIcon}>🛡️</span>
+                <span>
+                  This subscription is <strong>completely free</strong>. Your balance will{' '}
+                  <strong>not be affected</strong> — this step only confirms what you selected
+                  and activates access.
+                </span>
+              </div>
+            ) : (
+              <div className={styles.verifyInfoBannerPaid}>
+                <span className={styles.verifyInfoIcon}>⚠️</span>
+                <div className={styles.verifyInfoBannerPaidBody}>
+                  <span>
+                    Clicking <strong>Confirm &amp; Pay</strong> will deduct the total cost from
+                    your balance to activate this subscription.
+                  </span>
+                  <div className={styles.verifyPriceBreakdown}>
+                    <div className={styles.verifyPriceRow}>
+                      <span>Per day</span>
+                      <span>
+                        <strong className={styles.verifyPriceUsd}>${entry.dollar_price_per_day.toFixed(2)}</strong>
+                        <span className={styles.verifyPriceNgn}> / ₦{Number(entry.naira_price_per_day).toLocaleString()}</span>
+                      </span>
+                    </div>
+                    <div className={styles.verifyPriceRow}>
+                      <span>Duration</span>
+                      <span>{entry.days_for} days</span>
+                    </div>
+                    <div className={`${styles.verifyPriceRow} ${styles.verifyPriceTotal}`}>
+                      <span>Total deduction</span>
+                      <span>
+                        <strong className={styles.verifyPriceUsd}>
+                          ${(entry.dollar_price_per_day * entry.days_for).toFixed(2)}
+                        </strong>
+                        <span className={styles.verifyPriceNgn}>
+                          {' '}/ ₦{(Number(entry.naira_price_per_day) * entry.days_for).toLocaleString()}
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ── Error ── */}
+            {error && (
+              <div className={styles.verifyError}><span>⚠</span> {error}</div>
+            )}
+
+            {/* ── Actions ── */}
+            <div className={styles.verifyActions}>
+              <button className={styles.deleteModalCancel} onClick={onClose} disabled={verifying}>
+                Cancel
+              </button>
+              <button
+                className={`${styles.verifyConfirmBtn} ${isFree ? styles.verifyConfirmFree : styles.verifyConfirmPaid} ${verifying ? styles.ledgerDeleteBtnBusy : ''}`}
+                onClick={handleVerify}
+                disabled={verifying}
+              >
+                {verifying
+                  ? <><span className={styles.btnSpinner} /> Verifying…</>
+                  : isFree
+                    ? '⊛ Activate Now'
+                    : '₦ Confirm & Pay'
+                }
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ─── Subscription Ledger ──────────────────────────────────────────────────────
 function SubscriptionLedger({ token, refreshTrigger }) {
-  const [entries, setEntries] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError]     = useState(null)
-  const [expanded, setExpanded] = useState(null)
+  const [entries, setEntries]     = useState([])
+  const [loading, setLoading]     = useState(true)
+  const [error, setError]         = useState(null)
+  const [expanded, setExpanded]   = useState(null)
+  const [deletingId, setDeletingId]   = useState(null)
+  const [deleteError, setDeleteError] = useState(null)
+  // verify modal state
+  const [verifyEntry, setVerifyEntry] = useState(null)
 
-  useEffect(() => {
+  const loadEntries = () => {
     if (!token) { setLoading(false); return }
     setLoading(true); setError(null)
     fetch('https://security.appcardy.com/api/v1.0/scanoracle/get/categories/ip', {
@@ -488,10 +628,9 @@ function SubscriptionLedger({ token, refreshTrigger }) {
       })
       .then(json => { setEntries(json?.data ?? []); setLoading(false) })
       .catch(e => { setError(e.message); setLoading(false) })
-  }, [token, refreshTrigger])
+  }
 
-  const [deletingId, setDeletingId]   = useState(null)
-  const [deleteError, setDeleteError] = useState(null)
+  useEffect(loadEntries, [token, refreshTrigger])
 
   const handleDelete = async (categoryId) => {
     setDeletingId(categoryId); setDeleteError(null)
@@ -503,7 +642,6 @@ function SubscriptionLedger({ token, refreshTrigger }) {
       })
       const json = await res.json()
       if (!res.ok) throw new Error(json.message || json.detail || 'Delete failed.')
-      // Remove from local list immediately for snappy UX
       setEntries(prev => prev.filter(e => e.category_id !== categoryId))
       if (expanded === categoryId) setExpanded(null)
     } catch (e) { setDeleteError(e.message) }
@@ -524,6 +662,8 @@ function SubscriptionLedger({ token, refreshTrigger }) {
     const hasKeys    = entry.keys && entry.keys.length > 0
     const hasPrice   = entry.dollar_price_per_day > 0
     const isDeleting = deletingId === entry.category_id
+    const isPaid     = entry.transaction_status
+    const isFree     = entry.dollar_price_per_day === 0
     const expandable = hasKeys || hasPrice
     const [confirmOpen, setConfirmOpen] = useState(false)
 
@@ -563,11 +703,12 @@ function SubscriptionLedger({ token, refreshTrigger }) {
           <div className={styles.ledgerRowMain}>
             {/* Left: status + id */}
             <div className={styles.ledgerRowLeft}>
-              <StatusBadge ok={entry.transaction_status} />
+              <StatusBadge ok={isPaid} />
               <code className={styles.ledgerTxId}>{entry.category_id}</code>
               {entry.auto_renew && <span className={styles.ledgerAutoRenew}>↺ Auto</span>}
             </div>
-            {/* Right: meta + delete — always stays right even on mobile */}
+
+            {/* Right: meta + verify (unpaid only) + delete */}
             <div className={styles.ledgerRowRight}>
               {hasKeys && (
                 <span className={styles.ledgerKeyCount}>{entry.keys.length} field{entry.keys.length !== 1 ? 's' : ''}</span>
@@ -584,6 +725,18 @@ function SubscriptionLedger({ token, refreshTrigger }) {
                 <span className={styles.ledgerDaysLeft}>{entry.days_left}d left</span>
                 {entry.days_for > 0 && <span className={styles.ledgerDaysFor}>of {entry.days_for}d</span>}
               </div>
+
+              {/* ── Verify button — only for unpaid entries ── */}
+              {!isPaid && (
+                <button
+                  className={`${styles.verifyBtn} ${isFree ? styles.verifyBtnFree : styles.verifyBtnPaid}`}
+                  onClick={e => { e.stopPropagation(); setVerifyEntry(entry) }}
+                  title={isFree ? 'Activate this free subscription' : 'Pay & activate this subscription'}
+                >
+                  {isFree ? '⊛ Activate' : '₦ Pay'}
+                </button>
+              )}
+
               {expandable && (
                 <span className={`${styles.ledgerChevron} ${isOpen ? styles.ledgerChevronOpen : ''}`}>›</span>
               )}
@@ -639,45 +792,56 @@ function SubscriptionLedger({ token, refreshTrigger }) {
   }
 
   return (
-    <section className={styles.ledgerSection}>
-      <div className={styles.ledgerHeader}>
-        <div className={styles.ledgerHeaderLeft}>
-          <span className={styles.ledgerHeaderIcon}>⊟</span>
-          <span className={styles.ledgerHeaderTitle}>Subscription Ledger</span>
-        </div>
-        <div className={styles.ledgerHeaderRight}>
-          <span className={styles.ledgerStat}><span style={{ color: '#34d399' }}>●</span> {paid.length} paid</span>
-          <span className={styles.ledgerStat}><span style={{ color: '#fb7185' }}>○</span> {unpaid.length} pending</span>
-          <span className={styles.ledgerTotal}>{entries.length} total</span>
-        </div>
-      </div>
+    <>
+      {/* ── Verify Payment Modal (rendered outside the row so z-index is clean) ── */}
+      {verifyEntry && (
+        <VerifyPaymentModal
+          entry={verifyEntry}
+          token={token}
+          onClose={() => setVerifyEntry(null)}
+          onVerified={() => {
+            setVerifyEntry(null)
+            loadEntries()
+          }}
+        />
+      )}
 
-      <div className={styles.ledgerBody}>
-        {loading && (
-          <div className={styles.ledgerLoading}>
-            <div className={styles.selectorSpinner} />
-            <span>Fetching subscriptions…</span>
+      <section className={styles.ledgerSection}>
+        <div className={styles.ledgerHeader}>
+          <div className={styles.ledgerHeaderLeft}>
+            <span className={styles.ledgerHeaderIcon}>⊟</span>
+            <span className={styles.ledgerHeaderTitle}>Subscription Ledger</span>
           </div>
-        )}
-        {error && (
-          <div className={styles.ledgerError}><span>⚠</span> {error}</div>
-        )}
-        {!loading && !error && entries.length === 0 && (
-          <div className={styles.ledgerEmpty}>
-            <span className={styles.ledgerEmptyIcon}>⊘</span>
-            <p>No subscriptions yet. Build a data package above to get started.</p>
+          <div className={styles.ledgerHeaderRight}>
+            <span className={styles.ledgerStat}><span style={{ color: '#34d399' }}>●</span> {paid.length} paid</span>
+            <span className={styles.ledgerStat}><span style={{ color: '#fb7185' }}>○</span> {unpaid.length} pending</span>
+            <span className={styles.ledgerTotal}>{entries.length} total</span>
           </div>
-        )}
-        {deleteError && (
-          <div className={styles.ledgerError}><span>⚠</span> {deleteError}</div>
-        )}
-        {!loading && !error && entries.length > 0 && (
-          <div className={styles.ledgerList}>
-            {entries.map(entry => <EntryRow key={entry.category_id} entry={entry} />)}
-          </div>
-        )}
-      </div>
-    </section>
+        </div>
+
+        <div className={styles.ledgerBody}>
+          {loading && (
+            <div className={styles.ledgerLoading}>
+              <div className={styles.selectorSpinner} />
+              <span>Fetching subscriptions…</span>
+            </div>
+          )}
+          {error && <div className={styles.ledgerError}><span>⚠</span> {error}</div>}
+          {!loading && !error && entries.length === 0 && (
+            <div className={styles.ledgerEmpty}>
+              <span className={styles.ledgerEmptyIcon}>⊘</span>
+              <p>No subscriptions yet. Build a data package above to get started.</p>
+            </div>
+          )}
+          {deleteError && <div className={styles.ledgerError}><span>⚠</span> {deleteError}</div>}
+          {!loading && !error && entries.length > 0 && (
+            <div className={styles.ledgerList}>
+              {entries.map(entry => <EntryRow key={entry.category_id} entry={entry} />)}
+            </div>
+          )}
+        </div>
+      </section>
+    </>
   )
 }
 
@@ -739,11 +903,7 @@ export default function IPLookup() {
   }, [token])
 
   const handleLogout = () => { clearToken(); navigate('/auth') }
-
-  const handlePurchaseSuccess = () => {
-    // Refresh the ledger after a successful purchase
-    setLedgerRefresh(n => n + 1)
-  }
+  const handlePurchaseSuccess = () => setLedgerRefresh(n => n + 1)
 
   return (
     <div className={styles.page}>

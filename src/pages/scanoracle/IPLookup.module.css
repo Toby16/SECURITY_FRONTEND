@@ -870,3 +870,305 @@
     gap: 6px;
   }
 }
+
+/* ══════════════════════════════════════
+   VERIFY PAYMENT BLOCK
+   ══════════════════════════════════════ */
+.verifyBlock {
+  display: flex; flex-direction: column; gap: 10px;
+  border-top: 1px solid var(--border);
+  padding-top: 12px; margin-top: 2px;
+}
+
+/* ── Notice banners ── */
+.verifyNotice {
+  display: flex; align-items: flex-start; gap: 10px;
+  border-radius: 7px; padding: 10px 13px;
+  font-size: 0.75rem; line-height: 1.5; color: var(--text2);
+}
+.verifyNoticeInfo {
+  background: rgba(56,189,248,0.06);
+  border: 1px solid rgba(56,189,248,0.22);
+}
+.verifyNoticeWarn {
+  background: rgba(251,191,36,0.06);
+  border: 1px solid rgba(251,191,36,0.25);
+}
+.verifyNoticeIcon {
+  font-size: 0.85rem; flex-shrink: 0; margin-top: 1px;
+  color: var(--blue);
+}
+.verifyNoticeWarn .verifyNoticeIcon { color: #fbbf24; }
+.verifyAmount {
+  font-weight: 700; color: var(--green);
+}
+.verifyConfirmHint {
+  display: block; margin-top: 4px;
+  font-size: 0.7rem; color: var(--text3); font-style: italic;
+}
+
+/* ── Confirmed state label ── */
+.verifyConfirmState {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 0.72rem; font-weight: 600; color: #fbbf24;
+}
+.verifyConfirmDot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #fbbf24; flex-shrink: 0;
+  box-shadow: 0 0 6px #fbbf24;
+  animation: confirmPulse 1.4s ease-in-out infinite;
+}
+@keyframes confirmPulse {
+  0%, 100% { box-shadow: 0 0 4px #fbbf24; }
+  50%       { box-shadow: 0 0 10px #fbbf24, 0 0 18px rgba(251,191,36,0.35); }
+}
+
+/* ── Error inside verify block ── */
+.verifyError {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.25);
+  border-radius: 6px; padding: 8px 12px;
+  color: var(--red); font-size: 0.76rem;
+}
+
+/* ── Verify buttons ── */
+.verifyBtn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  border: none; border-radius: 7px;
+  padding: 9px 16px; width: 100%;
+  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.03em;
+  font-family: var(--sans); cursor: pointer;
+  transition: filter 150ms, opacity 150ms;
+}
+.verifyBtn:hover:not(:disabled) { filter: brightness(1.12); }
+.verifyBtnBusy { opacity: 0.5; cursor: not-allowed; }
+
+/* "Review & Verify" — neutral/blue for pending/free */
+.verifyBtnReview {
+  background: rgba(56,189,248,0.12);
+  border: 1px solid rgba(56,189,248,0.35);
+  color: var(--blue);
+}
+.verifyBtnReview:hover:not(:disabled) {
+  background: rgba(56,189,248,0.2);
+}
+
+/* "Confirm & Verify" — amber for paid+priced (money involved) */
+.verifyBtnConfirm {
+  background: rgba(251,191,36,0.1);
+  border: 1px solid rgba(251,191,36,0.35);
+  color: #fbbf24;
+}
+/* Override to blue/green for free or pending confirm */
+.verifyBtnReview.verifyBtnConfirm,
+.verifyNoticeInfo ~ .verifyBtn.verifyBtnConfirm {
+  background: rgba(56,189,248,0.12);
+  border: 1px solid rgba(56,189,248,0.35);
+  color: var(--blue);
+}
+.verifyBtnConfirm:hover:not(:disabled) {
+  background: rgba(251,191,36,0.2);
+}
+
+/* ── Success state ── */
+.verifySuccess {
+  display: flex; align-items: center; gap: 9px;
+  background: rgba(52,211,153,0.08);
+  border: 1px solid rgba(52,211,153,0.3);
+  border-radius: 7px; padding: 10px 14px;
+  font-size: 0.78rem; font-weight: 600; color: var(--green);
+  border-top: 1px solid var(--border);
+  margin-top: 2px;
+}
+.verifySuccessIcon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: rgba(52,211,153,0.15); border: 1px solid rgba(52,211,153,0.4);
+  font-size: 0.7rem; flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════
+   VERIFY PAYMENT BUTTON (ledger row)
+   ══════════════════════════════════════ */
+.verifyBtn {
+  display: inline-flex; align-items: center; gap: 4px;
+  border-radius: 5px; padding: 3px 10px;
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.06em;
+  font-family: var(--sans); cursor: pointer; white-space: nowrap;
+  border: 1px solid; flex-shrink: 0;
+  transition: filter 150ms, opacity 150ms;
+}
+.verifyBtn:hover { filter: brightness(1.15); }
+
+/* Free variant — green */
+.verifyBtnFree {
+  color: var(--green);
+  background: rgba(52,211,153,0.1);
+  border-color: rgba(52,211,153,0.4);
+}
+/* Paid variant — amber/orange */
+.verifyBtnPaid {
+  color: #fbbf24;
+  background: rgba(251,191,36,0.08);
+  border-color: rgba(251,191,36,0.4);
+}
+
+/* ══════════════════════════════════════
+   VERIFY PAYMENT MODAL
+   ══════════════════════════════════════ */
+.verifyModal {
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 14px; padding: 28px 24px;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  max-width: 380px; width: 100%; text-align: center;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.7);
+  animation: modalPop 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* Icons */
+.verifyIconFree {
+  width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  background: rgba(52,211,153,0.1);
+  border: 1.5px solid rgba(52,211,153,0.4);
+  color: var(--green);
+}
+.verifyIconPaid {
+  width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  background: rgba(251,191,36,0.1);
+  border: 1.5px solid rgba(251,191,36,0.4);
+  color: #fbbf24;
+}
+.verifySuccessIcon {
+  width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+  background: rgba(52,211,153,0.12);
+  border: 2px solid rgba(52,211,153,0.45);
+  color: var(--green);
+  animation: successPop 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.verifyModalTitle {
+  font-size: 0.95rem; font-weight: 700; color: var(--text); margin: 0;
+}
+.verifyModalSub {
+  font-size: 0.78rem; color: var(--text2); margin: 0; line-height: 1.5;
+}
+.verifyModalId {
+  font-family: var(--sans); font-size: 0.72rem; color: var(--purple);
+  background: var(--purple-dim); border: 1px solid rgba(167,139,250,0.2);
+  border-radius: 4px; padding: 1px 6px;
+}
+
+/* Info banners */
+.verifyInfoBannerFree {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: rgba(52,211,153,0.06);
+  border: 1px solid rgba(52,211,153,0.2);
+  border-radius: 8px; padding: 12px 14px;
+  font-size: 0.76rem; color: var(--text2); line-height: 1.5;
+  text-align: left; width: 100%;
+}
+.verifyInfoBannerPaid {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: rgba(251,191,36,0.05);
+  border: 1px solid rgba(251,191,36,0.2);
+  border-radius: 8px; padding: 12px 14px;
+  font-size: 0.76rem; color: var(--text2); line-height: 1.5;
+  text-align: left; width: 100%;
+}
+.verifyInfoBannerPaidBody {
+  display: flex; flex-direction: column; gap: 10px; flex: 1;
+}
+.verifyInfoIcon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+/* Price breakdown inside paid banner */
+.verifyPriceBreakdown {
+  display: flex; flex-direction: column; gap: 4px;
+  background: var(--surface3); border: 1px solid var(--border2);
+  border-radius: 6px; padding: 8px 10px;
+}
+.verifyPriceRow {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.72rem; color: var(--text2);
+}
+.verifyPriceTotal {
+  border-top: 1px solid var(--border); margin-top: 4px; padding-top: 4px;
+  font-weight: 700; color: var(--text);
+}
+.verifyPriceUsd { color: var(--green); font-weight: 700; }
+.verifyPriceNgn { color: var(--text3); font-size: 0.67rem; }
+
+/* Actions row */
+.verifyActions {
+  display: flex; gap: 8px; width: 100%; margin-top: 2px;
+}
+
+/* Confirm button variants */
+.verifyConfirmBtn {
+  flex: 1;
+  border-radius: 7px; padding: 9px 0; font-size: 0.8rem; font-weight: 700;
+  font-family: var(--sans); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: filter 150ms, background 150ms, border-color 150ms;
+  border: 1px solid;
+}
+.verifyConfirmBtn:hover:not(:disabled) { filter: brightness(1.12); }
+
+.verifyConfirmFree {
+  color: var(--green);
+  background: rgba(52,211,153,0.12);
+  border-color: rgba(52,211,153,0.45);
+}
+.verifyConfirmFree:hover:not(:disabled) {
+  background: rgba(52,211,153,0.2);
+  border-color: rgba(52,211,153,0.65);
+}
+
+.verifyConfirmPaid {
+  color: #fbbf24;
+  background: rgba(251,191,36,0.1);
+  border-color: rgba(251,191,36,0.4);
+}
+.verifyConfirmPaid:hover:not(:disabled) {
+  background: rgba(251,191,36,0.18);
+  border-color: rgba(251,191,36,0.65);
+}
+
+/* API key reveal on success */
+.verifyApiKeyWrap {
+  display: flex; flex-direction: column; gap: 4px;
+  width: 100%; text-align: left;
+}
+.verifyApiKeyLabel {
+  font-size: 0.63rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--text3);
+}
+.verifyApiKeyVal {
+  font-family: var(--sans); font-size: 0.75rem; color: var(--purple);
+  background: var(--purple-dim); border: 1px solid rgba(167,139,250,0.2);
+  border-radius: 5px; padding: 7px 12px; word-break: break-all;
+  text-align: left;
+}
+
+/* Close button (success state) */
+.verifyCloseBtn {
+  background: var(--surface3); border: 1px solid var(--border2);
+  border-radius: 7px; padding: 9px 28px;
+  font-size: 0.8rem; font-weight: 600; color: var(--text2);
+  cursor: pointer; font-family: var(--sans);
+  transition: color 150ms, border-color 150ms;
+}
+.verifyCloseBtn:hover { color: var(--green); border-color: rgba(52,211,153,0.4); }
+
+/* Error inside verify modal */
+.verifyError {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.25);
+  border-radius: 7px; padding: 9px 12px; width: 100%;
+  color: var(--red); font-size: 0.76rem; text-align: left;
+}
