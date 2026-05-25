@@ -466,7 +466,7 @@ function DataSelectorPanel({ lookupMeta, rate, lookupsLoading, token, onPurchase
 }
 
 // ─── Verify Payment Modal ─────────────────────────────────────────────────────
-function VerifyPaymentModal({ entry, token, onClose, onVerified }) {
+function VerifyPaymentModal({ entry, token, onClose, onVerified, onRefreshUser  }) {
   const isFree = entry.dollar_price_per_day === 0
   const [verifying, setVerifying] = useState(false)
   const [error, setError]         = useState(null)
@@ -490,6 +490,7 @@ function VerifyPaymentModal({ entry, token, onClose, onVerified }) {
       setResult(json.data)
       setDone(true)
       onVerified?.()
+      onRefreshUser?.()   // ← refresh balance after payment
     } catch (e) { setError(e.message) }
     finally { setVerifying(false) }
   }
@@ -606,7 +607,7 @@ function VerifyPaymentModal({ entry, token, onClose, onVerified }) {
 }
 
 // ─── Subscription Ledger ──────────────────────────────────────────────────────
-function SubscriptionLedger({ token, refreshTrigger }) {
+function SubscriptionLedger({ token, refreshTrigger, onRefreshUser }) {
   const [entries, setEntries]     = useState([])
   const [loading, setLoading]     = useState(true)
   const [error, setError]         = useState(null)
@@ -795,16 +796,17 @@ function SubscriptionLedger({ token, refreshTrigger }) {
     <>
       {/* ── Verify Payment Modal (rendered outside the row so z-index is clean) ── */}
       {verifyEntry && (
-        <VerifyPaymentModal
-          entry={verifyEntry}
-          token={token}
-          onClose={() => setVerifyEntry(null)}
+    	<VerifyPaymentModal
+	  entry={verifyEntry}
+      	  token={token}
+      	  onClose={() => setVerifyEntry(null)}
           onVerified={() => {
             setVerifyEntry(null)
             loadEntries()
-	    getUserProfile(token).then(r => setUser(r.user)).catch(() => {})
-          }}
-        />
+            // ← DELETE the broken getUserProfile line that was here
+      	  }}
+      	  onRefreshUser={onRefreshUser}   // ← forward it
+    	/>
       )}
 
       <section className={styles.ledgerSection}>
@@ -905,6 +907,11 @@ export default function IPLookup() {
 
   const handleLogout = () => { clearToken(); navigate('/auth') }
   const handlePurchaseSuccess = () => setLedgerRefresh(n => n + 1)
+
+  const handleRefreshUser = () => {
+    if (!token) return
+    getUserProfile(token).then(r => setUser(r.user)).catch(() => {})
+  }
 
   return (
     <div className={styles.page}>
@@ -1021,7 +1028,7 @@ export default function IPLookup() {
 	      ⊛ Open Categories 🏷️
 	    </button>
     	  </div>
-    	  <SubscriptionLedger token={token} refreshTrigger={ledgerRefresh} />
+    	  <SubscriptionLedger token={token} refreshTrigger={ledgerRefresh} onRefreshUser={handleRefreshUser} />
   	</div>
       )}
 
