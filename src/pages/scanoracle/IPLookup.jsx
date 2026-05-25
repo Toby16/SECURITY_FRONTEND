@@ -63,7 +63,7 @@ const FIELD_META = {
   mobile_calling_code:        { label: 'Country Mobile Calling Code', cat: 'Country',  icon: '⊞' },
   tld:                        { label: 'TLD',                 cat: 'Country',  icon: '⊞' },
   fifa:                       { label: 'FIFA Country Code',   cat: 'Country',  icon: '⊞' },
-  maps:                       { label: 'Map Link',            cat: 'Location', icon: '◎' },
+  map:                       { label: 'Map Link',            cat: 'Location', icon: '◎' },
   population:                 { label: 'Population',          cat: 'Country',  icon: '⊞' },
 }
 
