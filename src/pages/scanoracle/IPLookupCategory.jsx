@@ -409,7 +409,7 @@ export default function IPLookupCategory() {
           <GhostIPLogo size={72} animated={true} />
         </div>
         <div className={styles.heroText}>
-          <h1 className={styles.heroTitle}><span className={styles.heroAccent}>SCAN</span> ORACLE</h1>
+          <h1 className={styles.heroTitle}><span className={styles.heroAccent}>SCAN</span>ORACLE</h1>
           <p className={styles.heroSub}>Test your subscribed IP data packages 🔬</p>
         </div>
         <div className={styles.heroStats}>
