@@ -125,7 +125,7 @@
 .heroText  { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .heroTitle {
   font-family: var(--sans); font-size: clamp(1.7rem, 4.5vw, 2.7rem);
-  font-weight: 700; color: var(--text); margin: 0;
+  font-weight: 700; color: var(--text); letter-spacing: 0.15em; margin: 0;
 }
 .heroAccent { color: var(--purple); }
 .heroSub {
