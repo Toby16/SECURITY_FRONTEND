@@ -508,13 +508,54 @@
 }
 
 @media (max-width: 600px) {
-  .nav { padding: 0 12px; }
+  /* ── Nav: two-row layout — back buttons top-left, brand centre, sign out top-right ── */
+  .nav {
+    height: auto;
+    flex-wrap: wrap;
+    padding: 8px 12px;
+    gap: 6px;
+    row-gap: 6px;
+  }
+  .navLeft {
+    flex: 1;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
   .navBalances { display: none; }
   .navPill { display: none; }
-  .navBrandText { font-size: 11.5px; }
-  .hero { padding: 30px 16px 20px; }
+  .navSep { display: none; }
+
+  /* Tighter back buttons — keep full label text */
+  .navBack {
+    padding: 5px 9px;
+    font-size: 10.5px;
+    gap: 4px;
+  }
+  /* navBackLabel stays visible — no hiding */
+
+  /* Brand: hide the SVG logo to save space, keep text */
+  .navBrand svg { display: none; }
+  .navBrandText { font-size: 11.5px; letter-spacing: 0.01em; }
+
+  /* Sign out stays right-aligned */
+  .signOutBtn { padding: 5px 9px; font-size: 10.5px; }
+
+  /* ── Hero ── */
+  .hero { padding: 24px 16px 18px; gap: 10px; }
   .heroStats { display: none; }
-  .mainLayout { padding: 0 10px 36px; gap: 14px; }
+  .heroTitle { font-size: 1.6rem; letter-spacing: 0.1em; }
+  .heroSub { font-size: 0.58rem; letter-spacing: 0.28em; }
+
+  /* ── Layout ── */
+  .mainLayout { padding: 0 10px 36px; gap: 12px; }
   .catList { max-height: 280px; }
   .resultFields { max-height: 360px; }
+
+  /* ── Cards ── */
+  .catCard { padding: 10px 12px; }
+  .catCardId { font-size: 0.72rem; }
+
+  /* ── Input card ── */
+  .inputCard { padding: 12px 14px; }
+  .scanBtn { padding: 10px 14px; font-size: 0.75rem; }
 }
