@@ -486,7 +486,7 @@ function VerifyPaymentModal({ entry, token, onClose, onVerified, onRefreshUser  
         body: JSON.stringify({ transaction_id: entry.category_id }),
       })
       const json = await res.json()
-      if (!res.ok) throw new Error(json.message || json.detail || 'Verification failed.')
+      if (!res.ok) throw new Error(json.detail?.error || json.message || 'Verification failed.')
       setResult(json.data)
       setDone(true)
       onVerified?.()
