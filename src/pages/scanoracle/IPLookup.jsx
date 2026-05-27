@@ -121,10 +121,11 @@ function PricingTierLegend({ rate }) {
   const tiers = [
     { label: 'Free',  usd: 0,    color: '#34d399' },
     { label: '$0.10', usd: 0.10, color: '#38bdf8' },
+	{ label: '$0.15', usd: 0.15, color: '#ef4444' },
     { label: '$0.20', usd: 0.20, color: '#a78bfa' },
+	{ label: '$0.25', usd: 0.25, color: '#fb7185' },
     { label: '$0.30', usd: 0.30, color: '#fbbf24' },
-    { label: '$0.35', usd: 0.35, color: '#fb7185' },
-    { label: '$0.40', usd: 0.40, color: '#ef4444' },
+    
   ]
   return (
     <div className={styles.pricingLegend}>
