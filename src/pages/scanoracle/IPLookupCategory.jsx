@@ -362,7 +362,14 @@ export default function IPLookupCategory() {
         body: JSON.stringify({ category_id: selectedCat.category_id, ip_address: ip }),
       })
       const json = await res.json()
-      if (!res.ok) throw new Error(json.message || json.detail || 'Lookup failed.')
+      if (!res.ok) {
+        const detail = json.detail
+        const msg =
+          (typeof detail === 'string' ? detail : detail?.message || detail?.error) ||
+          json.message ||
+          'Lookup failed.'
+        throw new Error(msg)
+      }
       setScanResult(json.data)
     } catch (e) { setScanError(e.message) }
     finally { setScanning(false) }
