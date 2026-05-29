@@ -1241,3 +1241,197 @@
   border-radius: 7px; padding: 9px 12px; width: 100%;
   color: var(--red); font-size: 0.76rem; text-align: left;
 }
+
+/* ══════════════════════════════════════
+   API ENDPOINT DOCS  (append to end of IPLookup.module.css)
+   ══════════════════════════════════════ */
+
+.apiDocsWrap {
+  display: flex; flex-direction: column; gap: 12px;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+
+/* ── Section header ── */
+.apiDocsHeader {
+  display: flex; align-items: center; gap: 8px;
+}
+.apiDocsHeaderIcon {
+  color: var(--blue); font-size: 1rem;
+}
+.apiDocsHeaderTitle {
+  font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--text);
+}
+.apiDocsHeaderSub {
+  font-size: 0.62rem; font-weight: 600; color: var(--text4);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-left: auto;
+}
+
+/* ── Card ── */
+.apiCard {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 8px; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+
+.apiCardHead {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 14px; border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+.apiMethod {
+  font-size: 0.62rem; font-weight: 900; letter-spacing: 0.14em;
+  color: var(--green); background: rgba(52,211,153,0.1);
+  border: 1px solid rgba(52,211,153,0.3); border-radius: 4px;
+  padding: 2px 7px; flex-shrink: 0;
+}
+.apiCardBadge {
+  font-size: 0.59rem; font-weight: 800; letter-spacing: 0.1em;
+  text-transform: uppercase; border-radius: 4px; padding: 2px 7px;
+  border: 1px solid; flex-shrink: 0;
+}
+.apiCardBadgeAuto {
+  color: var(--blue); background: var(--blue-dim); border-color: rgba(56,189,248,0.3);
+}
+.apiCardBadgeManual {
+  color: var(--purple); background: var(--purple-dim); border-color: rgba(167,139,250,0.3);
+}
+.apiCardLabel {
+  font-size: 0.76rem; font-weight: 700; color: var(--text);
+}
+
+.apiCardDesc {
+  font-size: 0.71rem; color: var(--text3); line-height: 1.55;
+  margin: 0; padding: 10px 14px 0;
+}
+
+/* ── Target IP input (endpoint 2) ── */
+.apiIpRow {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 14px;
+}
+.apiIpLabel {
+  font-size: 0.65rem; font-weight: 700; color: var(--text3);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  white-space: nowrap; flex-shrink: 0;
+}
+.apiIpInput {
+  flex: 1; min-width: 0;
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 5px; padding: 5px 10px;
+  font-family: var(--sans); font-size: 0.73rem; color: var(--text);
+  transition: border-color 150ms;
+}
+.apiIpInput::placeholder { color: var(--text4); }
+.apiIpInput:focus { outline: none; border-color: rgba(167,139,250,0.45); }
+
+/* ── URL bar ── */
+.apiUrlBar {
+  display: flex; align-items: stretch; gap: 0;
+  margin: 10px 14px 0;
+  background: var(--surface3); border: 1px solid var(--border2); border-radius: 6px;
+  overflow: hidden;
+}
+.apiUrlText {
+  flex: 1; min-width: 0;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 0.68rem; color: var(--blue);
+  padding: 8px 12px; overflow-x: auto; white-space: nowrap;
+  scrollbar-width: none;
+}
+.apiUrlText::-webkit-scrollbar { display: none; }
+
+/* shared copy button */
+.apiCopyBtn {
+  flex-shrink: 0;
+  background: transparent; border: none; border-left: 1px solid var(--border2);
+  padding: 6px 11px; cursor: pointer; font-family: var(--sans);
+  font-size: 0.69rem; font-weight: 700; color: var(--text3);
+  transition: color 150ms, background 150ms;
+  white-space: nowrap; display: flex; align-items: center;
+}
+.apiCopyBtn:hover { color: var(--blue); background: var(--blue-dim); }
+
+/* ── cURL block ── */
+.apiCurlWrap {
+  margin: 8px 14px 0;
+  border: 1px solid var(--border2); border-radius: 6px; overflow: hidden;
+}
+.apiCurlTop {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px 4px 4px 10px;
+  background: var(--surface2); border-bottom: 1px solid var(--border);
+}
+.apiCurlLabel {
+  font-size: 0.61rem; font-weight: 800; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--text4);
+}
+.apiCurlBlock {
+  margin: 0; padding: 10px 14px;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 0.68rem; line-height: 1.65;
+  color: var(--text2); background: var(--surface3);
+  overflow-x: auto; white-space: pre;
+  scrollbar-width: thin; scrollbar-color: var(--border2) transparent;
+}
+.apiCurlBlock::-webkit-scrollbar { height: 3px; }
+.apiCurlBlock::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* ── Try it button ── */
+.apiTryRow {
+  padding: 10px 14px;
+}
+.apiTryBtn {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(56,189,248,0.07); border: 1px solid rgba(56,189,248,0.28);
+  border-radius: 6px; padding: 6px 16px;
+  font-family: var(--sans); font-size: 0.72rem; font-weight: 700;
+  color: var(--blue); cursor: pointer;
+  transition: background 150ms, border-color 150ms;
+}
+.apiTryBtn:hover:not(:disabled) {
+  background: rgba(56,189,248,0.14); border-color: rgba(56,189,248,0.55);
+}
+.apiTryBtnDisabled { opacity: 0.3; cursor: not-allowed; }
+
+/* ── Live error ── */
+.apiLiveError {
+  display: flex; align-items: center; gap: 8px;
+  margin: 0 14px 10px;
+  background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.25);
+  border-radius: 6px; padding: 7px 12px;
+  color: var(--red); font-size: 0.73rem;
+}
+
+/* ── Live response ── */
+.apiResponseWrap {
+  margin: 0 14px 14px;
+  border: 1px solid rgba(52,211,153,0.22); border-radius: 6px; overflow: hidden;
+}
+.apiResponseTop {
+  display: flex; align-items: center; gap: 8px;
+  padding: 4px 4px 4px 10px;
+  background: rgba(52,211,153,0.05); border-bottom: 1px solid rgba(52,211,153,0.15);
+}
+.apiResponseLabel {
+  font-size: 0.61rem; font-weight: 800; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--text3); flex: 1;
+}
+.apiResponseStatus {
+  font-size: 0.62rem; font-weight: 800; color: var(--green);
+  background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.28);
+  border-radius: 4px; padding: 1px 7px; letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.apiResponseBlock {
+  margin: 0; padding: 10px 14px;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 0.67rem; line-height: 1.55;
+  color: var(--text2); background: rgba(52,211,153,0.025);
+  overflow: auto; max-height: 320px; white-space: pre;
+  scrollbar-width: thin; scrollbar-color: rgba(52,211,153,0.18) transparent;
+}
+.apiResponseBlock::-webkit-scrollbar { width: 4px; height: 4px; }
+.apiResponseBlock::-webkit-scrollbar-thumb { background: rgba(52,211,153,0.22); border-radius: 3px; }

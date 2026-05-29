@@ -607,6 +607,152 @@ function VerifyPaymentModal({ entry, token, onClose, onVerified, onRefreshUser  
   )
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// STEP 1 ── Paste this entire component into IPLookup.jsx
+//            Place it just ABOVE the "SubscriptionLedger" function definition
+// ═══════════════════════════════════════════════════════════════════════════
+
+function ApiEndpointDocs({ apiKey }) {
+  const [copiedIdx, setCopiedIdx]   = useState(null)
+  const [liveResult, setLiveResult] = useState({})
+  const [liveLoading, setLiveLoading] = useState({})
+  const [liveError, setLiveError]   = useState({})
+  const [targetIp, setTargetIp]     = useState('')
+
+  const BASE = window.location.origin
+
+  const endpoints = [
+    {
+      label:  'Auto-detect IP',
+      badge:  'auto',
+      desc:   'Returns intelligence on the IP address of whoever calls this endpoint — no parameter required.',
+      url:    `${BASE}/api/scanoracle/lookup/${apiKey}`,
+      curl:   `curl -X GET \\\n  '${BASE}/api/scanoracle/lookup/${apiKey}' \\\n  -H 'accept: application/json'`,
+    },
+    {
+      label:  'Lookup Specific IP',
+      badge:  'manual',
+      desc:   'Pass any IPv4 or IPv6 address to retrieve full intelligence for that exact IP.',
+      url:    `${BASE}/api/scanoracle/lookup/${apiKey}/${targetIp || '{ip_address}'}`,
+      curl:   `curl -X GET \\\n  '${BASE}/api/scanoracle/lookup/${apiKey}/${targetIp || '{ip_address}'}' \\\n  -H 'accept: application/json'`,
+    },
+  ]
+
+  const copy = (text, key) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedIdx(key)
+      setTimeout(() => setCopiedIdx(null), 1800)
+    })
+  }
+
+  const tryLive = async (idx) => {
+    if (idx === 1 && !targetIp.trim()) return
+    setLiveLoading(p => ({ ...p, [idx]: true }))
+    setLiveError(p => ({ ...p, [idx]: null }))
+    setLiveResult(p => ({ ...p, [idx]: null }))
+    try {
+      const res  = await fetch(endpoints[idx].url, { headers: { accept: 'application/json' } })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.detail || json.message || `HTTP ${res.status}`)
+      setLiveResult(p => ({ ...p, [idx]: json }))
+    } catch (e) {
+      setLiveError(p => ({ ...p, [idx]: e.message }))
+    } finally {
+      setLiveLoading(p => ({ ...p, [idx]: false }))
+    }
+  }
+
+  return (
+    <div className={styles.apiDocsWrap}>
+      <div className={styles.apiDocsHeader}>
+        <span className={styles.apiDocsHeaderIcon}>⌥</span>
+        <span className={styles.apiDocsHeaderTitle}>API Endpoints</span>
+        <span className={styles.apiDocsHeaderSub}>Masked · JSON · No auth header</span>
+      </div>
+
+      {endpoints.map((ep, idx) => (
+        <div key={idx} className={styles.apiCard}>
+          {/* head */}
+          <div className={styles.apiCardHead}>
+            <span className={styles.apiMethod}>GET</span>
+            <span className={`${styles.apiCardBadge} ${idx === 0 ? styles.apiCardBadgeAuto : styles.apiCardBadgeManual}`}>
+              {ep.badge}
+            </span>
+            <span className={styles.apiCardLabel}>{ep.label}</span>
+          </div>
+
+          <p className={styles.apiCardDesc}>{ep.desc}</p>
+
+          {/* IP input — endpoint 2 only */}
+          {idx === 1 && (
+            <div className={styles.apiIpRow}>
+              <span className={styles.apiIpLabel}>Target IP</span>
+              <input
+                className={styles.apiIpInput}
+                type="text"
+                placeholder="e.g. 1.1.1.1 or 2606:4700:4700::1111"
+                value={targetIp}
+                onChange={e => setTargetIp(e.target.value)}
+                spellCheck={false}
+              />
+            </div>
+          )}
+
+          {/* URL bar */}
+          <div className={styles.apiUrlBar}>
+            <code className={styles.apiUrlText}>{ep.url}</code>
+            <button className={styles.apiCopyBtn} onClick={() => copy(ep.url, `url-${idx}`)} title="Copy URL">
+              {copiedIdx === `url-${idx}` ? '✔️' : '📋'}
+            </button>
+          </div>
+
+          {/* cURL */}
+          <div className={styles.apiCurlWrap}>
+            <div className={styles.apiCurlTop}>
+              <span className={styles.apiCurlLabel}>cURL</span>
+              <button className={styles.apiCopyBtn} onClick={() => copy(ep.curl, `curl-${idx}`)}>
+                {copiedIdx === `curl-${idx}` ? '✔️ copied' : '📋 copy'}
+              </button>
+            </div>
+            <pre className={styles.apiCurlBlock}>{ep.curl}</pre>
+          </div>
+
+          {/* Try it */}
+          <div className={styles.apiTryRow}>
+            <button
+              className={`${styles.apiTryBtn} ${idx === 1 && !targetIp.trim() ? styles.apiTryBtnDisabled : ''}`}
+              onClick={() => tryLive(idx)}
+              disabled={liveLoading[idx] || (idx === 1 && !targetIp.trim())}
+            >
+              {liveLoading[idx]
+                ? <><span className={styles.btnSpinner} /> Running…</>
+                : '▶ Try it live'
+              }
+            </button>
+          </div>
+
+          {liveError[idx] && (
+            <div className={styles.apiLiveError}>⚠ {liveError[idx]}</div>
+          )}
+
+          {liveResult[idx] && (
+            <div className={styles.apiResponseWrap}>
+              <div className={styles.apiResponseTop}>
+                <span className={styles.apiResponseLabel}>Response</span>
+                <span className={styles.apiResponseStatus}>200 OK</span>
+                <button className={styles.apiCopyBtn} onClick={() => copy(JSON.stringify(liveResult[idx], null, 2), `res-${idx}`)}>
+                  {copiedIdx === `res-${idx}` ? '✔️ copied' : '📋 copy'}
+                </button>
+              </div>
+              <pre className={styles.apiResponseBlock}>{JSON.stringify(liveResult[idx], null, 2)}</pre>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
 // ─── Subscription Ledger ──────────────────────────────────────────────────────
 function SubscriptionLedger({ token, refreshTrigger, onRefreshUser }) {
   const [entries, setEntries]     = useState([])
@@ -786,6 +932,7 @@ function SubscriptionLedger({ token, refreshTrigger, onRefreshUser }) {
                   <code className={styles.ledgerApiKeyVal}>{entry.api_key}</code>
                 </div>
               )}
+	      {entry.api_key && <ApiEndpointDocs apiKey={entry.api_key} />}
             </div>
           )}
         </div>
