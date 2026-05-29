@@ -1,8 +1,16 @@
 {
   "rewrites": [
     {
+      "source": "/api/scanoracle/lookup/:key/:ip/",
+      "destination": "https://security.appcardy.com/api/v1.0/scanoracle/ip/info/api/:key/:ip"
+    },
+    {
       "source": "/api/scanoracle/lookup/:key/:ip",
       "destination": "https://security.appcardy.com/api/v1.0/scanoracle/ip/info/api/:key/:ip"
+    },
+    {
+      "source": "/api/scanoracle/lookup/:key/",
+      "destination": "https://security.appcardy.com/api/v1.0/scanoracle/ip/info/api/:key/"
     },
     {
       "source": "/api/scanoracle/lookup/:key",
