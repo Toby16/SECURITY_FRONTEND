@@ -6,6 +6,7 @@ import styles from './DepositModal.module.css'
 const fmt = (n, cur) =>
   new Intl.NumberFormat('en-NG', { style: 'currency', currency: cur, maximumFractionDigits: 2 }).format(n)
 
+const RATE = 1200 // NGN per USD
 const STEPS = ['Amount', 'Confirm', 'Pay', 'Done']
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
@@ -69,6 +70,7 @@ function StepBar({ current }) {
 // ── Main component ────────────────────────────────────────────────────────────
 export default function DepositModal({ onClose, onBalanceUpdate }) {
   const [step,      setStep]      = useState(0)   // 0=Amount 1=Confirm 2=Pay 3=Done
+  const [currency,  setCurrency]  = useState('NGN') // 'NGN' | 'USD'
   const [amount,    setAmount]    = useState('')
   const [preview,   setPreview]   = useState(null) // { payment_id, naira_amount, dollar_amount }
   const [payInfo,   setPayInfo]   = useState(null) // { transaction_id, authorization_url, paystack_reference }
@@ -97,14 +99,23 @@ export default function DepositModal({ onClose, onBalanceUpdate }) {
 
   const clearErr = () => setError('')
 
+  const numericAmount = parseFloat(amount.replace(/,/g, '')) || 0
+
+  // Always send NGN to the API — multiply by rate when user chose USD
+  const ngnAmount = currency === 'USD'
+    ? Math.round(numericAmount * RATE)
+    : numericAmount
+
   // ── Step 0 → 1: create deposit, get NGN + USD preview ──────────────────────
   const handleNew = async () => {
-    const val = parseFloat(amount.replace(/,/g, ''))
-    if (!val || val < 100) { setError('Minimum deposit is ₦100.'); return }
-    if (val > 5999999.99) { setError('Single deposit cannot exceed ₦5,999,999.99.'); return }
+    const val = numericAmount
+    if (!val || val <= 0) { setError('Enter a valid amount.'); return }
+    if (currency === 'NGN' && val < 100)  { setError('Minimum deposit is ₦100.'); return }
+    if (currency === 'USD' && val < 1)    { setError('Minimum deposit is $1.'); return }
+    if (ngnAmount > 5999999.99) { setError('Single deposit cannot exceed ₦5,999,999.99.'); return }
     setLoading(true); clearErr()
     try {
-      const data = await depositNew(val)
+      const data = await depositNew(ngnAmount) // always NGN to the API
       setPreview(data)
       setStep(1)
     } catch (e) { setError(e.message) }
@@ -114,15 +125,12 @@ export default function DepositModal({ onClose, onBalanceUpdate }) {
   // ── Step 1 → 2: start payment, open Paystack tab, begin polling ────────────
   const handleStart = async () => {
     setLoading(true); clearErr()
-    // redirect_url = current page with ?verify=1 query (we handle it on return)
     const redirectUrl = `${window.location.origin}${window.location.pathname}?verify=1`
     try {
       const data = await depositStart(preview.payment_id, redirectUrl)
       setPayInfo(data)
       setStep(2)
-      // Open Paystack in a new tab
       window.open(data.authorization_url, '_blank', 'noopener,noreferrer')
-      // Begin async polling every 5s
       startPolling(preview.payment_id, data.paystack_reference)
     } catch (e) { setError(e.message) }
     finally { setLoading(false) }
@@ -134,7 +142,6 @@ export default function DepositModal({ onClose, onBalanceUpdate }) {
     pollRef.current = setInterval(async () => {
       try {
         const data = await depositVerify(payment_id, paystack_reference)
-        // success — stop polling, show result
         clearInterval(pollRef.current)
         setResult(data)
         setStep(3)
@@ -164,9 +171,8 @@ export default function DepositModal({ onClose, onBalanceUpdate }) {
     clearInterval(pollRef.current)
     setStep(0); setAmount(''); setPreview(null)
     setPayInfo(null); setResult(null); setError('')
+    setCurrency('NGN')
   }
-
-  const numericAmount = parseFloat(amount.replace(/,/g, '')) || 0
 
   return (
     <div
@@ -205,23 +211,55 @@ export default function DepositModal({ onClose, onBalanceUpdate }) {
           {/* ── STEP 0: Enter amount ── */}
           {step === 0 && (
             <div className={styles.stepContent}>
-              <p className={styles.stepDesc}>Enter the amount you'd like to deposit in Naira.</p>
+              <p className={styles.stepDesc}>Enter the amount you'd like to deposit.</p>
+
+              {/* Currency toggle */}
+              <div className={styles.currencyToggle}>
+                <button
+                  className={`${styles.toggleBtn} ${currency === 'NGN' ? styles.toggleActive : ''}`}
+                  onClick={() => { setCurrency('NGN'); setAmount(''); clearErr() }}
+                >
+                  ₦ NGN
+                </button>
+                <button
+                  className={`${styles.toggleBtn} ${currency === 'USD' ? styles.toggleActive : ''}`}
+                  onClick={() => { setCurrency('USD'); setAmount(''); clearErr() }}
+                >
+                  $ USD
+                </button>
+              </div>
+
               <div className={styles.amountGroup}>
-                <label className={styles.fieldLabel}>Amount (NGN)</label>
+                <label className={styles.fieldLabel}>Amount ({currency})</label>
                 <div className={styles.amountInputWrap}>
-                  <span className={styles.currencyPrefix}><IconNaira /></span>
+                  <span className={styles.currencyPrefix}>
+                    {currency === 'NGN' ? <IconNaira /> : <IconDollar />}
+                  </span>
                   <input
                     ref={inputRef}
                     type="number"
                     className={styles.amountInput}
-                    placeholder="e.g. 5000"
+                    placeholder={currency === 'NGN' ? 'e.g. 5000' : 'e.g. 10'}
                     value={amount}
-                    min="100"
+                    min={currency === 'NGN' ? '100' : '1'}
                     onChange={(e) => { setAmount(e.target.value); clearErr() }}
                     onKeyDown={(e) => e.key === 'Enter' && handleNew()}
                   />
                 </div>
-                <p className={styles.minNote}>Min: ₦100 &nbsp;·&nbsp; Max: ₦5,999,999.99 per deposit</p>
+
+                {/* Live NGN equivalent shown when typing in USD mode */}
+                {currency === 'USD' && numericAmount > 0 && (
+                  <p className={styles.conversionHint}>
+                    ≈ {fmt(ngnAmount, 'NGN')} at ₦{RATE.toLocaleString()}/$1
+                  </p>
+                )}
+
+                <p className={styles.minNote}>
+                  {currency === 'NGN'
+                    ? 'Min: ₦100 · Max: ₦5,999,999.99 per deposit'
+                    : `Min: $1 · Max: $${Math.floor(5999999 / RATE).toLocaleString()} per deposit`
+                  }
+                </p>
               </div>
               {error && <div className={styles.errorBox}>{error}</div>}
             </div>
@@ -232,6 +270,13 @@ export default function DepositModal({ onClose, onBalanceUpdate }) {
             <div className={styles.stepContent}>
               <p className={styles.stepDesc}>Review the deposit details before proceeding to payment.</p>
               <div className={styles.confirmCard}>
+                {/* Show what they typed in their chosen currency */}
+                {currency === 'USD' && (
+                  <div className={styles.confirmRow}>
+                    <span className={styles.confirmLabel}>You entered</span>
+                    <span className={styles.confirmValueUsd}>{fmt(numericAmount, 'USD')}</span>
+                  </div>
+                )}
                 <div className={styles.confirmRow}>
                   <span className={styles.confirmLabel}>You deposit</span>
                   <span className={styles.confirmValueBig}>{fmt(preview.naira_amount, 'NGN')}</span>
@@ -248,7 +293,7 @@ export default function DepositModal({ onClose, onBalanceUpdate }) {
               </div>
               <div className={styles.infoNote}>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-                Rate: ₦1,200 / $1 &nbsp;·&nbsp; You'll be redirected to Paystack's secure checkout in a new tab.
+                Rate: ₦{RATE.toLocaleString()} / $1 · You'll be redirected to Paystack's secure checkout in a new tab.
               </div>
               {error && <div className={styles.errorBox}>{error}</div>}
             </div>
