@@ -276,11 +276,11 @@
   background: rgba(13,17,23,0.65) !important;
 }
 .appSoon .appText {
-  filter: blur(0.8px) opacity(0.78);
+  filter: blur(2.5px) opacity(0.78);
   transition: filter 0.35s ease;
   user-select: none;
 }
-.appSoon:hover .appText { filter: blur(0.45px) opacity(0.88); }
+/* .appSoon:hover .appText { filter: blur(0.45px) opacity(0.88); } */
 .appSoon .appBadge,
 .appSoon .appIconWrap { filter: none !important; opacity: 1 !important; }
 .appSoon:hover {
