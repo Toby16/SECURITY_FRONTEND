@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import styles from "./ForgotPassword.module.css";
 
-const SUPPORT_EMAIL = "ghostroute.icu@gmail.com";
+const SUPPORT_EMAIL = "ghostroute.security@gmail.com";
 const EMAIL_SUBJECT = "Forgot Password";
 const EMAIL_BODY = `i forgot my password\nnew password: [your new password, or leave blank for a secure one]`;
 
