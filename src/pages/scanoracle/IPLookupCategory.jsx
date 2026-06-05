@@ -78,8 +78,6 @@ const CAT_COLORS = {
 
 const DISPLAY_CATEGORIES = ['Network', 'Location', 'Country', 'Time', 'Contact', 'Threat']
 
-// ─── FIX: Only skip truly absent values (null/undefined), never skip false.
-// false is valid data (e.g. is_blacklisted=false means "clean" — show it).
 function isAbsent(val) {
   return val === null || val === undefined
 }
@@ -88,8 +86,8 @@ function formatValue(key, val) {
   if (isAbsent(val)) return null
   if (typeof val === 'boolean') return val ? 'Yes' : 'No'
   if (key === 'population') return Number(val).toLocaleString()
-  if (key === 'country_flag_icon') return null   // rendered as <img>, not text
-  if (key === 'maps') return null                // rendered as <a>, not text
+  if (key === 'country_flag_icon') return null
+  if (key === 'maps') return null
   const str = String(val)
   if (str.trim() === '') return null
   return str
@@ -99,6 +97,192 @@ function isValidIP(ip) {
   const ipv4 = /^(\d{1,3}\.){3}\d{1,3}$/
   const ipv6 = /^[0-9a-fA-F:]+$/
   return ipv4.test(ip) || ipv6.test(ip)
+}
+
+// ─── Category API Endpoints Panel ─────────────────────────────────────────────
+function CategoryApiEndpoints({ apiKey }) {
+  const [copiedIdx, setCopiedIdx] = useState(null)
+  const [liveResult, setLiveResult] = useState({})
+  const [liveLoading, setLiveLoading] = useState({})
+  const [liveError, setLiveError] = useState({})
+  const [targetIp, setTargetIp] = useState('')
+  const [expanded, setExpanded] = useState(false)
+
+  const BASE = window.location.origin
+
+  const endpoints = [
+    {
+      label: 'Auto-detect IP',
+      badge: 'auto',
+      badgeStyle: styles.catApiBadgeAuto,
+      desc: 'Returns intelligence on the caller\'s IP — no parameter needed.',
+      url: `${BASE}/api/scanoracle/lookup/${apiKey}`,
+      curl: `curl -X GET \\\n  '${BASE}/api/scanoracle/lookup/${apiKey}' \\\n  -H 'accept: application/json'`,
+    },
+    {
+      label: 'Lookup Specific IP',
+      badge: 'manual',
+      badgeStyle: styles.catApiBadgeManual,
+      desc: 'Pass any IPv4 or IPv6 address to retrieve intelligence for that exact IP.',
+      url: `${BASE}/api/scanoracle/lookup/${apiKey}/${targetIp || '{ip_address}'}`,
+      curl: `curl -X GET \\\n  '${BASE}/api/scanoracle/lookup/${apiKey}/${targetIp || '{ip_address}'}' \\\n  -H 'accept: application/json'`,
+    },
+  ]
+
+  const copy = (text, key) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedIdx(key)
+      setTimeout(() => setCopiedIdx(null), 1800)
+    })
+  }
+
+  const tryLive = async (idx) => {
+    if (idx === 1 && !targetIp.trim()) return
+    setLiveLoading(p => ({ ...p, [idx]: true }))
+    setLiveError(p => ({ ...p, [idx]: null }))
+    setLiveResult(p => ({ ...p, [idx]: null }))
+    try {
+      const res = await fetch(endpoints[idx].url, { headers: { accept: 'application/json' } })
+      const json = await res.json()
+      if (!res.ok) {
+        const detail = json.detail
+        const msg = typeof detail === 'string' ? detail
+          : typeof detail === 'object' && detail !== null
+            ? (detail.error || detail.message || JSON.stringify(detail))
+            : (json.message || `HTTP ${res.status}`)
+        throw new Error(msg)
+      }
+      setLiveResult(p => ({ ...p, [idx]: json }))
+    } catch (e) {
+      setLiveError(p => ({ ...p, [idx]: e.message }))
+    } finally {
+      setLiveLoading(p => ({ ...p, [idx]: false }))
+    }
+  }
+
+  return (
+    <div className={styles.catApiWrap}>
+      {/* ── Collapsible header ── */}
+      <button
+        className={styles.catApiToggle}
+        onClick={() => setExpanded(o => !o)}
+        aria-expanded={expanded}
+      >
+        <span className={styles.catApiToggleLeft}>
+          <span className={styles.catApiToggleIcon}>🔗</span>
+          <span className={styles.catApiToggleTitle}>API Endpoints</span>
+          <span className={styles.catApiToggleSub}>JSON · No auth header</span>
+        </span>
+        <span className={`${styles.catApiChevron} ${expanded ? styles.catApiChevronOpen : ''}`}>›</span>
+      </button>
+
+      {expanded && (
+        <div className={styles.catApiBody}>
+          {/* ── API Key strip ── */}
+          <div className={styles.catApiKeyStrip}>
+            <span className={styles.catApiKeyLabel}>⌗ API KEY</span>
+            <code className={styles.catApiKeyVal}>{apiKey}</code>
+            <button
+              className={styles.catApiCopyBtn}
+              onClick={() => copy(apiKey, 'key')}
+            >
+              {copiedIdx === 'key' ? '✔️' : '📋'}
+            </button>
+          </div>
+
+          {/* ── Endpoint cards ── */}
+          {endpoints.map((ep, idx) => (
+            <div key={idx} className={styles.catApiCard}>
+              <div className={styles.catApiCardHead}>
+                <span className={styles.catApiMethod}>GET</span>
+                <span className={`${styles.catApiBadge} ${ep.badgeStyle}`}>{ep.badge}</span>
+                <span className={styles.catApiCardLabel}>{ep.label}</span>
+              </div>
+
+              <p className={styles.catApiCardDesc}>{ep.desc}</p>
+
+              {/* IP input for endpoint 2 */}
+              {idx === 1 && (
+                <div className={styles.catApiIpRow}>
+                  <span className={styles.catApiIpLabel}>Target IP</span>
+                  <input
+                    className={styles.catApiIpInput}
+                    type="text"
+                    placeholder="e.g. 1.1.1.1 or 2606:4700:4700::1111"
+                    value={targetIp}
+                    onChange={e => setTargetIp(e.target.value)}
+                    spellCheck={false}
+                  />
+                </div>
+              )}
+
+              {/* URL bar */}
+              <div className={styles.catApiUrlBar}>
+                <code className={styles.catApiUrlText}>{ep.url}</code>
+                <button
+                  className={styles.catApiCopyBtn}
+                  onClick={() => copy(ep.url, `url-${idx}`)}
+                  title="Copy URL"
+                >
+                  {copiedIdx === `url-${idx}` ? '✔️' : '📋'}
+                </button>
+              </div>
+
+              {/* cURL */}
+              <div className={styles.catApiCurlWrap}>
+                <div className={styles.catApiCurlTop}>
+                  <span className={styles.catApiCurlLabel}>cURL</span>
+                  <button
+                    className={styles.catApiCopyBtn}
+                    onClick={() => copy(ep.curl, `curl-${idx}`)}
+                  >
+                    {copiedIdx === `curl-${idx}` ? '✔️ copied' : '📋 copy'}
+                  </button>
+                </div>
+                <pre className={styles.catApiCurlBlock}>{ep.curl}</pre>
+              </div>
+
+              {/* Try it live */}
+              <div className={styles.catApiTryRow}>
+                <button
+                  className={`${styles.catApiTryBtn} ${idx === 1 && !targetIp.trim() ? styles.catApiTryBtnDisabled : ''}`}
+                  onClick={() => tryLive(idx)}
+                  disabled={liveLoading[idx] || (idx === 1 && !targetIp.trim())}
+                >
+                  {liveLoading[idx]
+                    ? <><span className={styles.catApiBtnSpinner} /> Running…</>
+                    : '▶ Try it live'
+                  }
+                </button>
+              </div>
+
+              {liveError[idx] && (
+                <div className={styles.catApiLiveError}>⚠ {liveError[idx]}</div>
+              )}
+
+              {liveResult[idx] && (
+                <div className={styles.catApiResponseWrap}>
+                  <div className={styles.catApiResponseTop}>
+                    <span className={styles.catApiResponseLabel}>Response</span>
+                    <span className={styles.catApiResponseStatus}>200 OK</span>
+                    <button
+                      className={styles.catApiCopyBtn}
+                      onClick={() => copy(JSON.stringify(liveResult[idx], null, 2), `res-${idx}`)}
+                    >
+                      {copiedIdx === `res-${idx}` ? '✔️ copied' : '📋 copy'}
+                    </button>
+                  </div>
+                  <pre className={styles.catApiResponseBlock}>
+                    {JSON.stringify(liveResult[idx], null, 2)}
+                  </pre>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
 }
 
 // ─── Category Card ────────────────────────────────────────────────────────────
@@ -189,25 +373,20 @@ function ResultPanel({ result, loading, error, ipQueried }) {
   const threatNum = parseInt(String(d.threat_score ?? '').replace('%', '')) || 0
   const threatColor = threatNum < 30 ? '#34d399' : threatNum < 60 ? '#fbbf24' : '#ef4444'
 
-  // ─── FIX: A field is "present" if the API returned it (key exists in d),
-  // even when the value is false/0/empty-string. Only skip null/undefined.
-  // This means is_blacklisted=false ("clean") and is_tor=false ("not TOR") both render.
   const fieldsByCategory = {}
   Object.entries(d).forEach(([key, val]) => {
     if (!FIELD_META[key]) return
-    if (isAbsent(val)) return           // skip only truly missing values
+    if (isAbsent(val)) return
     const cat = FIELD_META[key].cat
     if (!fieldsByCategory[cat]) fieldsByCategory[cat] = []
     fieldsByCategory[cat].push([key, val])
   })
 
-  // Threat summary section: show if ANY threat key came back from the API
-  const hasThreatScore     = !isAbsent(d.threat_score)
-  const hasTorField        = !isAbsent(d.is_tor)
-  const hasBlacklistField  = !isAbsent(d.is_blacklisted)
-  const hasNetworkStatus   = !isAbsent(d.network_status)
+  const hasThreatScore    = !isAbsent(d.threat_score)
+  const hasTorField       = !isAbsent(d.is_tor)
+  const hasBlacklistField = !isAbsent(d.is_blacklisted)
+  const hasNetworkStatus  = !isAbsent(d.network_status)
   const hasThreat = hasThreatScore || hasTorField || hasBlacklistField
-
   const hasFlag = d.country_flag_icon && !isAbsent(d.country_flag_icon)
 
   return (
@@ -451,7 +630,6 @@ export default function IPLookupCategory() {
             Select a Subscription
           </div>
 
-          {/* FIX: removed max-height cap on the wrapper — scroll is on catList itself */}
           <div className={styles.catList}>
             {catsLoading && (
               <div className={styles.catsLoading}>
@@ -485,6 +663,11 @@ export default function IPLookupCategory() {
               />
             ))}
           </div>
+
+          {/* ── API Endpoints for selected category ── */}
+          {selectedCat?.api_key && (
+            <CategoryApiEndpoints apiKey={selectedCat.api_key} key={selectedCat.category_id} />
+          )}
 
           <div className={styles.sectionLabel} style={{ marginTop: 8 }}>
             <span className={styles.sectionLabelDot} style={{ background: '#38bdf8' }} />

@@ -559,3 +559,410 @@
   .inputCard { padding: 12px 14px; }
   .scanBtn { padding: 10px 14px; font-size: 0.75rem; }
 }
+
+/* ══════════════════════════════════════
+   CATEGORY API ENDPOINTS PANEL
+   Append these rules to IPLookupCategory.module.css
+   ══════════════════════════════════════ */
+
+/* ── Outer wrapper ── */
+.catApiWrap {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  overflow: hidden;
+  /* subtle left accent to distinguish from the category cards above */
+  border-left: 2px solid rgba(56,189,248,0.35);
+}
+
+/* ── Collapsible toggle button ── */
+.catApiToggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 14px;
+  background: var(--surface2);
+  border: none;
+  cursor: pointer;
+  font-family: var(--sans);
+  transition: background 150ms;
+  gap: 8px;
+}
+.catApiToggle:hover {
+  background: var(--surface3);
+}
+
+.catApiToggleLeft {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.catApiToggleIcon {
+  font-size: 0.85rem;
+  color: var(--blue);
+}
+.catApiToggleTitle {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.catApiToggleSub {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--text4);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.catApiChevron {
+  font-size: 1rem;
+  color: var(--text3);
+  line-height: 1;
+  transition: transform 200ms;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.catApiChevronOpen {
+  transform: rotate(90deg);
+}
+
+/* ── Expanded body ── */
+.catApiBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 12px 14px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  animation: catApiSlideIn 0.18s ease;
+}
+@keyframes catApiSlideIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── API Key strip ── */
+.catApiKeyStrip {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--surface3);
+  border: 1px solid rgba(167,139,250,0.22);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.catApiKeyLabel {
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--purple);
+  padding: 6px 10px;
+  background: rgba(167,139,250,0.07);
+  border-right: 1px solid rgba(167,139,250,0.15);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.catApiKeyVal {
+  flex: 1;
+  min-width: 0;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 0.68rem;
+  color: var(--purple);
+  padding: 6px 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Shared copy button ── */
+.catApiCopyBtn {
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--border2);
+  padding: 5px 10px;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text3);
+  transition: color 150ms, background 150ms;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+.catApiCopyBtn:hover {
+  color: var(--blue);
+  background: var(--blue-dim);
+}
+
+/* ── Endpoint card ── */
+.catApiCard {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 7px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.catApiCardHead {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface3);
+}
+.catApiMethod {
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  color: var(--green);
+  background: rgba(52,211,153,0.1);
+  border: 1px solid rgba(52,211,153,0.3);
+  border-radius: 4px;
+  padding: 2px 6px;
+  flex-shrink: 0;
+}
+.catApiBadge {
+  font-size: 0.56rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  padding: 2px 6px;
+  border: 1px solid;
+  flex-shrink: 0;
+}
+.catApiBadgeAuto {
+  color: var(--blue);
+  background: var(--blue-dim);
+  border-color: rgba(56,189,248,0.3);
+}
+.catApiBadgeManual {
+  color: var(--purple);
+  background: var(--purple-dim);
+  border-color: rgba(167,139,250,0.3);
+}
+.catApiCardLabel {
+  font-size: 0.73rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.catApiCardDesc {
+  font-size: 0.69rem;
+  color: var(--text3);
+  line-height: 1.5;
+  margin: 0;
+  padding: 9px 12px 0;
+}
+
+/* ── IP input row (endpoint 2) ── */
+.catApiIpRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+}
+.catApiIpLabel {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--text3);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.catApiIpInput {
+  flex: 1;
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 5px;
+  padding: 5px 9px;
+  font-family: var(--sans);
+  font-size: 0.71rem;
+  color: var(--text);
+  transition: border-color 150ms;
+}
+.catApiIpInput::placeholder { color: var(--text4); }
+.catApiIpInput:focus {
+  outline: none;
+  border-color: rgba(167,139,250,0.45);
+}
+
+/* ── URL bar ── */
+.catApiUrlBar {
+  display: flex;
+  align-items: stretch;
+  margin: 8px 12px;
+  background: var(--surface3);
+  border: 1px solid var(--border2);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.catApiUrlText {
+  flex: 1;
+  min-width: 0;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 0.65rem;
+  color: var(--blue);
+  padding: 7px 10px;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+}
+.catApiUrlText::-webkit-scrollbar { display: none; }
+
+/* ── cURL block ── */
+.catApiCurlWrap {
+  margin: 0 12px 4px;
+  border: 1px solid var(--border2);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.catApiCurlTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 3px 3px 9px;
+  background: var(--surface3);
+  border-bottom: 1px solid var(--border);
+}
+.catApiCurlLabel {
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text4);
+}
+.catApiCurlBlock {
+  margin: 0;
+  padding: 8px 12px;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 0.65rem;
+  line-height: 1.6;
+  color: var(--text2);
+  background: var(--surface);
+  overflow-x: auto;
+  white-space: pre;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border2) transparent;
+}
+.catApiCurlBlock::-webkit-scrollbar { height: 3px; }
+.catApiCurlBlock::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* ── Try it live ── */
+.catApiTryRow {
+  padding: 8px 12px;
+}
+.catApiTryBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(56,189,248,0.06);
+  border: 1px solid rgba(56,189,248,0.25);
+  border-radius: 5px;
+  padding: 5px 14px;
+  font-family: var(--sans);
+  font-size: 0.69rem;
+  font-weight: 700;
+  color: var(--blue);
+  cursor: pointer;
+  transition: background 150ms, border-color 150ms;
+}
+.catApiTryBtn:hover:not(:disabled) {
+  background: rgba(56,189,248,0.13);
+  border-color: rgba(56,189,248,0.5);
+}
+.catApiTryBtnDisabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.catApiBtnSpinner {
+  width: 11px;
+  height: 11px;
+  border: 1.5px solid rgba(56,189,248,0.25);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+/* ── Live error ── */
+.catApiLiveError {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 12px 9px;
+  background: rgba(239,68,68,0.07);
+  border: 1px solid rgba(239,68,68,0.25);
+  border-radius: 5px;
+  padding: 6px 10px;
+  color: var(--red);
+  font-size: 0.7rem;
+}
+
+/* ── Live response ── */
+.catApiResponseWrap {
+  margin: 0 12px 12px;
+  border: 1px solid rgba(52,211,153,0.2);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.catApiResponseTop {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 3px 3px 9px;
+  background: rgba(52,211,153,0.04);
+  border-bottom: 1px solid rgba(52,211,153,0.13);
+}
+.catApiResponseLabel {
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text3);
+  flex: 1;
+}
+.catApiResponseStatus {
+  font-size: 0.59rem;
+  font-weight: 800;
+  color: var(--green);
+  background: rgba(52,211,153,0.1);
+  border: 1px solid rgba(52,211,153,0.25);
+  border-radius: 4px;
+  padding: 1px 6px;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.catApiResponseBlock {
+  margin: 0;
+  padding: 9px 12px;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 0.63rem;
+  line-height: 1.5;
+  color: var(--text2);
+  background: rgba(52,211,153,0.02);
+  overflow: auto;
+  max-height: 280px;
+  white-space: pre;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(52,211,153,0.15) transparent;
+}
+.catApiResponseBlock::-webkit-scrollbar { width: 4px; height: 4px; }
+.catApiResponseBlock::-webkit-scrollbar-thumb { background: rgba(52,211,153,0.2); border-radius: 3px; }
+
+/* ── Mobile tweaks ── */
+@media (max-width: 600px) {
+  .catApiBody { padding: 10px 10px 12px; }
+  .catApiUrlText { font-size: 0.6rem; }
+  .catApiCurlBlock { font-size: 0.6rem; }
+}
