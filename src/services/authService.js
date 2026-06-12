@@ -1,7 +1,7 @@
 // src/services/authService.js
 // ── Ghostroute Auth + User Service ───────────────────────────────────────────
-const BASE_URL  = 'https://security.appcardy.com/api/v1.0/auth'
-const USER_URL  = 'https://security.appcardy.com/api/v1.0/user'
+const BASE_URL  = 'https://secure.ghostroute.icu/api/v1.0/auth'
+const USER_URL  = 'https://secure.ghostroute.icu/api/v1.0/user'
 const TOKEN_KEY = 'ghostroute_token'
 
 // ── Token helpers ─────────────────────────────────────────────────────────────
@@ -108,7 +108,7 @@ export async function loginUser({ email, password }) {
 
 // ── Google SSO ────────────────────────────────────────────────────────────────
 export function initiateGoogleSSO() {
-  window.location.href = 'https://security.appcardy.com/api/v1.0/auth/google/'
+  window.location.href = 'https://secure.ghostroute.icu/api/v1.0/auth/google/'
 }
 
 // ── Refresh token ─────────────────────────────────────────────────────────────
@@ -227,7 +227,7 @@ export async function forgotPassword(verificationToken, newPassword) {
 
 // ── Change password ───────────────────────────────────────────────────────────
 export async function changePassword(token, current_password, new_password) {
-  const res = await fetch('https://security.appcardy.com/api/v1.0/user/change/password', {
+  const res = await fetch('https://secure.ghostroute.icu/api/v1.0/user/change/password', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -245,7 +245,7 @@ export async function changePassword(token, current_password, new_password) {
 
 // ── Delete account ────────────────────────────────────────────────────────────
 export async function deleteAccount(token) {
-  const res = await fetch('https://security.appcardy.com/api/v1.0/user/delete/profile/', {
+  const res = await fetch('https://secure.ghostroute.icu/api/v1.0/user/delete/profile/', {
     method: 'DELETE',
     headers: {
       'Accept': 'application/json',
@@ -262,7 +262,7 @@ export async function deleteAccount(token) {
 
 export async function deactivateAccount(token) {
   const res = await fetch(
-    'https://security.appcardy.com/api/v1.0/user/deactivate/profile',
+    'https://secure.ghostroute.icu/api/v1.0/user/deactivate/profile',
     {
       method: 'DELETE',
       headers: {
