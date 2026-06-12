@@ -279,7 +279,7 @@ function DataSelectorPanel({ lookupMeta, rate, lookupsLoading, token, onPurchase
     if (selectedCount === 0) { setSubmitError('Select at least one data field.'); return }
     setSubmitting(true); setSubmitError(null); setTxId(null)
     try {
-      const res = await fetch('https://security.appcardy.com/api/v1.0/scanoracle/payment/create/ip', {
+      const res = await fetch('https://secure.ghostroute.icu/api/v1.0/scanoracle/payment/create/ip', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`, 'accept': 'application/json' },
         body: JSON.stringify({ ...selected, days_for: daysFor, auto_renew: autoRenew }),
@@ -477,7 +477,7 @@ function VerifyPaymentModal({ entry, token, onClose, onVerified, onRefreshUser  
   const handleVerify = async () => {
     setVerifying(true); setError(null)
     try {
-      const res = await fetch('https://security.appcardy.com/api/v1.0/scanoracle/verify/payment/ip', {
+      const res = await fetch('https://secure.ghostroute.icu/api/v1.0/scanoracle/verify/payment/ip', {
         method: 'POST',
         headers: {
           'accept': 'application/json',
@@ -792,7 +792,7 @@ function SubscriptionLedger({ token, refreshTrigger, onRefreshUser }) {
   const loadEntries = () => {
     if (!token) { setLoading(false); return }
     setLoading(true); setError(null)
-    fetch('https://security.appcardy.com/api/v1.0/scanoracle/get/categories/ip', {
+    fetch('https://secure.ghostroute.icu/api/v1.0/scanoracle/get/categories/ip', {
       headers: { 'accept': 'application/json', 'Authorization': `Bearer ${token}` },
     })
       .then(r => {
@@ -808,7 +808,7 @@ function SubscriptionLedger({ token, refreshTrigger, onRefreshUser }) {
   const handleDelete = async (categoryId) => {
     setDeletingId(categoryId); setDeleteError(null)
     try {
-      const res = await fetch('https://security.appcardy.com/api/v1.0/scanoracle/delete/category/id', {
+      const res = await fetch('https://secure.ghostroute.icu/api/v1.0/scanoracle/delete/category/id', {
         method: 'DELETE',
         headers: { 'accept': 'application/json', 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ transaction_id: categoryId }),
@@ -1055,7 +1055,7 @@ export default function IPLookup() {
 
   useEffect(() => {
     setLiveLoading(true)
-    fetch('https://security.appcardy.com/api/v1.0/scanoracle/get/ip_address', { headers: { 'accept': 'application/json' } })
+    fetch('https://secure.ghostroute.icu/api/v1.0/scanoracle/get/ip_address', { headers: { 'accept': 'application/json' } })
       .then(r => r.json())
       .then(json => { setLiveData(json); setLiveLoading(false) })
       .catch(() => { setLiveLoading(false) })
@@ -1067,7 +1067,7 @@ export default function IPLookup() {
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 8000)
     setLookupsLoading(true)
-    fetch('https://security.appcardy.com/api/v1.0/scanoracle/get/all_lookups', {
+    fetch('https://secure.ghostroute.icu/api/v1.0/scanoracle/get/all_lookups', {
       signal: controller.signal,
       headers: { 'accept': 'application/json', 'Authorization': `Bearer ${token}` },
     })
