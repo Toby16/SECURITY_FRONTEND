@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react'
 import { saveToken } from '../services/authService.js'
 
-const SSO_URL       = 'https://security.appcardy.com/api/v1.0/auth/google/'
+const SSO_URL       = 'https://secure.ghostroute.icu/api/v1.0/auth/google/'
 const POPUP_W       = 520
 const POPUP_H       = 640
 const POLL_INTERVAL = 400
