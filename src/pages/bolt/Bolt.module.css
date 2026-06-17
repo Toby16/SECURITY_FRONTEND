@@ -1,0 +1,307 @@
+.page {
+  --bg: #060608;
+  --surface: rgba(255, 255, 255, 0.045);
+  --surface-border: rgba(255, 255, 255, 0.09);
+  --bolt-cyan: #7df9ff;
+  --bolt-amber: #ffd166;
+  --bolt-blue: #5b8cff;
+  --text-primary: #f5f6f7;
+  --text-dim: #8a8d93;
+  --danger: #ff5c5c;
+  --track: rgba(255, 255, 255, 0.07);
+
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI',
+    Roboto, sans-serif;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 50% 18%,
+      rgba(125, 249, 255, 0.10) 0%,
+      rgba(125, 249, 255, 0) 45%
+    ),
+    radial-gradient(
+      circle at 80% 85%,
+      rgba(91, 140, 255, 0.08) 0%,
+      rgba(91, 140, 255, 0) 50%
+    ),
+    var(--bg);
+}
+
+.header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 22px 8px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--text-primary);
+}
+
+.brandBolt {
+  font-size: 16px;
+  filter: drop-shadow(0 0 6px rgba(125, 249, 255, 0.55));
+}
+
+.brandText {
+  opacity: 0.92;
+}
+
+.statusPill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  backdrop-filter: blur(12px);
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-dim);
+}
+
+.statusPillLive .statusDot {
+  background: var(--bolt-cyan);
+  box-shadow: 0 0 8px rgba(125, 249, 255, 0.9);
+  animation: pulseDot 1.4s ease-in-out infinite;
+}
+
+.statusPillLive {
+  color: var(--bolt-cyan);
+  border-color: rgba(125, 249, 255, 0.25);
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.75); }
+}
+
+.main {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 20px 40px;
+  gap: 28px;
+}
+
+.gaugeWrap {
+  position: relative;
+  width: min(320px, 86vw);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gaugeSvg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.gaugeTrack {
+  stroke: var(--track);
+  stroke-width: 10;
+}
+
+.gaugeFill {
+  stroke-width: 10;
+  transition: d 0.25s ease-out;
+}
+
+.needleGroup {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.boltNeedle {
+  fill: var(--bolt-amber);
+  filter: drop-shadow(0 0 6px rgba(255, 209, 102, 0.65));
+}
+
+.gaugeHub {
+  fill: #0c0c10;
+  stroke: var(--surface-border);
+  stroke-width: 1.5;
+}
+
+.readout {
+  position: absolute;
+  bottom: 8%;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.readoutNumber {
+  font-family: 'SF Mono', 'JetBrains Mono', 'Roboto Mono', monospace;
+  font-size: 44px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  background: linear-gradient(
+    90deg,
+    var(--bolt-amber) 0%,
+    var(--bolt-cyan) 55%,
+    var(--bolt-blue) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.readoutUnit {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.statsRow {
+  display: flex;
+  gap: 10px;
+  width: min(360px, 90vw);
+}
+
+.statCard {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 8px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  backdrop-filter: blur(14px);
+}
+
+.statLabel {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.statValue {
+  font-family: 'SF Mono', 'JetBrains Mono', 'Roboto Mono', monospace;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.controls {
+  display: flex;
+  gap: 12px;
+  width: min(360px, 90vw);
+}
+
+.controlBtn {
+  flex: 1;
+  padding: 14px 0;
+  border-radius: 999px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.controlBtn:active {
+  transform: scale(0.97);
+}
+
+.controlBtnStart {
+  background: linear-gradient(90deg, var(--bolt-amber), var(--bolt-cyan));
+  color: #0a0a0c;
+}
+
+.controlBtnStop {
+  background: rgba(255, 92, 92, 0.14);
+  border: 1px solid rgba(255, 92, 92, 0.4);
+  color: var(--danger);
+}
+
+.controlBtnGhost {
+  flex: 0 0 auto;
+  padding: 14px 20px;
+  border-radius: 999px;
+  background: transparent;
+  border: 1px solid var(--surface-border);
+  color: var(--text-dim);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.controlBtnGhost:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+}
+
+.footnote {
+  max-width: 320px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-dim);
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .needleGroup,
+  .gaugeFill,
+  .statusPillLive .statusDot {
+    transition: none;
+    animation: none;
+  }
+}
+
+@media (max-width: 380px) {
+  .readoutNumber {
+    font-size: 36px;
+  }
+  .statValue {
+    font-size: 14px;
+  }
+}

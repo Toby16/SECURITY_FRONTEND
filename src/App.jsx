@@ -8,6 +8,7 @@ import Verify      from './pages/Verify.jsx'
 import Dashboard   from './pages/Dashboard.jsx'
 import IPLookup    from './pages/scanoracle/IPLookup.jsx'
 import IPLookupCategory from './pages/scanoracle/IPLookupCategory.jsx'
+import Bolt from './pages/bolt/Bolt.jsx'
 import NotFound    from './pages/NotFound.jsx'
 import PrivateRoute from './components/PrivateRoute.jsx'
 
@@ -38,6 +39,9 @@ function App() {
 	  <Route path="/scanoracle/iplookup/category" element={
             <PrivateRoute><IPLookupCategory /></PrivateRoute>
           } />
+	  <Route path="/bolt" element={
+	    <PrivateRoute><Bolt /></PrivateRoute>
+	  } />
           {/* 404 */}
           <Route path="*" element={<NotFound />} />
         </Routes>
