@@ -15,9 +15,13 @@ const MIN_INTER_ROUND_GAP_MS = 900;
 
 const STREAM_COUNT = 2;
 
-// Rolling average window: keep real samples from the last 5 seconds
 const AVG_WINDOW_MS = 5000;
 const AVG_UPDATE_MS = 5000;
+
+// Sanity ceiling: no single-sample spike above this can affect EMA/peak/avg.
+// Real-world links top out well below 2000 Mbps; this just guards against
+// the first-sample burst when a new round starts and elapsed≈0.
+const SANITY_CAP_MBPS = 2000;
 
 function randomBetween(min, max) {
   return min + Math.random() * (max - min);
@@ -41,7 +45,6 @@ export function useBoltSpeed() {
   const lastRealRef = useRef(0);
   const tierIndexRef = useRef(0);
 
-  // Sliding window of { t: timestamp, v: mbps } real samples
   const sampleWindowRef = useRef([]);
 
   const clearTimers = useCallback(() => {
@@ -53,7 +56,6 @@ export function useBoltSpeed() {
   const pushSample = useCallback((mbps) => {
     const now = performance.now();
     sampleWindowRef.current.push({ t: now, v: mbps });
-    // Trim entries older than the window
     const cutoff = now - AVG_WINDOW_MS;
     sampleWindowRef.current = sampleWindowRef.current.filter(s => s.t >= cutoff);
   }, []);
@@ -86,6 +88,10 @@ export function useBoltSpeed() {
     const tier = TIERS[tierIndexRef.current];
     setTierLabel(`${tier}`);
 
+    // Reset EMA at the start of every round so a tier change doesn't
+    // carry a stale high value into the next round's first sample.
+    emaRef.current = 0;
+
     let totalBytes = 0;
     const roundStart = performance.now();
     let lastSampleBytes = 0;
@@ -94,9 +100,23 @@ export function useBoltSpeed() {
     sampleTimerRef.current = setInterval(() => {
       const now = performance.now();
       const elapsed = (now - lastSampleTime) / 1000;
-      if (elapsed <= 0) return;
+
+      // Guard: skip the sample if elapsed is too small — avoids ÷0 spikes
+      // on the very first tick or when the JS event loop stalls.
+      if (elapsed < 0.15) return;
+
       const deltaBytes = totalBytes - lastSampleBytes;
-      const instantMbps = (deltaBytes * 8) / elapsed / 1_000_000;
+      const rawMbps = (deltaBytes * 8) / elapsed / 1_000_000;
+
+      // Clamp absurd spikes before they ever touch EMA, peak, or avg.
+      const instantMbps = Math.min(rawMbps, SANITY_CAP_MBPS);
+
+      // Skip zero-byte ticks (network stall) so they don't drag down the avg
+      if (instantMbps <= 0) {
+        lastSampleBytes = totalBytes;
+        lastSampleTime = now;
+        return;
+      }
 
       emaRef.current = emaRef.current === 0
         ? instantMbps
@@ -176,7 +196,6 @@ export function useBoltSpeed() {
     loopActiveRef.current = false;
     if (abortRef.current) { abortRef.current.abort(); abortRef.current = null; }
     clearTimers();
-    // Compute final avg on stop
     computeAvg();
     setStatus('stopped');
   }, [clearTimers, computeAvg]);

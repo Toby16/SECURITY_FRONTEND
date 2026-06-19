@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useBoltSpeed } from './useBoltSpeed';
 import styles from './Bolt.module.css';
 
@@ -12,6 +13,7 @@ export default function Bolt() {
   const { status, displayMbps, peakMbps, avgMbps, tierLabel, roundCount, start, stop } =
     useBoltSpeed();
 
+  const navigate = useNavigate();
   const startedRef = useRef(false);
 
   useEffect(() => {
@@ -38,18 +40,40 @@ export default function Bolt() {
       <div className={styles.backdrop} aria-hidden="true" />
 
       <header className={styles.header}>
+        <div className={styles.headerLeft}>
+          <button
+            type="button"
+            className={styles.backBtn}
+            onClick={() => navigate('/dashboard')}
+            aria-label="Back to dashboard"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Dashboard
+          </button>
+        </div>
+
         <div className={styles.brand}>
           <span className={styles.brandBolt}>⚡</span>
           <span className={styles.brandName}>Ghostroute Bolt</span>
         </div>
-        <div className={`${styles.pill} ${isLive ? styles.pillLive : ''}`}>
-          <span className={styles.pillDot} />
-          {isLive ? 'LIVE' : isStopped ? 'STOPPED' : 'IDLE'}
+
+        <div className={styles.headerRight}>
+          <div className={`${styles.pill} ${isLive ? styles.pillLive : ''}`}>
+            <span className={styles.pillDot} />
+            {isLive ? 'LIVE' : isStopped ? 'STOPPED' : 'IDLE'}
+          </div>
         </div>
       </header>
 
       <main className={styles.main}>
-        <div className={styles.orb} aria-label="Tap to test speed" onClick={!isLive ? handleToggle : undefined} role={!isLive ? 'button' : undefined}>
+        <div
+          className={styles.orb}
+          aria-label="Tap to test speed"
+          onClick={!isLive ? handleToggle : undefined}
+          role={!isLive ? 'button' : undefined}
+        >
           <div className={styles.orbRing} />
           <div className={styles.orbInner}>
             {isLive || isStopped ? (
@@ -76,7 +100,7 @@ export default function Bolt() {
             </div>
             <div className={styles.metaDivider} />
             <div className={styles.metaItem}>
-              <span className={styles.metaLabel}>Avg</span>
+              <span className={styles.metaLabel}>Avg 5s</span>
               <span className={styles.metaValue}>{avgMbps > 0 ? formatMbps(avgMbps) : '—'}</span>
             </div>
           </div>
