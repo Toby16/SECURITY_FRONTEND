@@ -9,7 +9,7 @@ function formatMbps(value) {
 }
 
 export default function Bolt() {
-  const { status, displayMbps, peakMbps, tierLabel, roundCount, start, stop } =
+  const { status, displayMbps, peakMbps, avgMbps, tierLabel, roundCount, start, stop } =
     useBoltSpeed();
 
   const startedRef = useRef(false);
@@ -76,8 +76,8 @@ export default function Bolt() {
             </div>
             <div className={styles.metaDivider} />
             <div className={styles.metaItem}>
-              <span className={styles.metaLabel}>Streams</span>
-              <span className={styles.metaValue}>2</span>
+              <span className={styles.metaLabel}>Avg</span>
+              <span className={styles.metaValue}>{avgMbps > 0 ? formatMbps(avgMbps) : '—'}</span>
             </div>
           </div>
         )}

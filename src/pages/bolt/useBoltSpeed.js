@@ -13,8 +13,11 @@ const SAMPLE_INTERVAL_MS = 400;
 
 const MIN_INTER_ROUND_GAP_MS = 900;
 
-// Reduced from 5 to 2 streams
 const STREAM_COUNT = 2;
+
+// Rolling average window: keep real samples from the last 5 seconds
+const AVG_WINDOW_MS = 5000;
+const AVG_UPDATE_MS = 5000;
 
 function randomBetween(min, max) {
   return min + Math.random() * (max - min);
@@ -24,28 +27,50 @@ export function useBoltSpeed() {
   const [status, setStatus] = useState('idle');
   const [displayMbps, setDisplayMbps] = useState(0);
   const [peakMbps, setPeakMbps] = useState(0);
+  const [avgMbps, setAvgMbps] = useState(0);
   const [tierLabel, setTierLabel] = useState(null);
   const [roundCount, setRoundCount] = useState(0);
 
   const abortRef = useRef(null);
   const dabbleTimerRef = useRef(null);
   const sampleTimerRef = useRef(null);
+  const avgTimerRef = useRef(null);
   const loopActiveRef = useRef(false);
 
   const emaRef = useRef(0);
   const lastRealRef = useRef(0);
   const tierIndexRef = useRef(0);
 
+  // Sliding window of { t: timestamp, v: mbps } real samples
+  const sampleWindowRef = useRef([]);
+
   const clearTimers = useCallback(() => {
-    if (dabbleTimerRef.current) {
-      clearInterval(dabbleTimerRef.current);
-      dabbleTimerRef.current = null;
-    }
-    if (sampleTimerRef.current) {
-      clearInterval(sampleTimerRef.current);
-      sampleTimerRef.current = null;
-    }
+    if (dabbleTimerRef.current) { clearInterval(dabbleTimerRef.current); dabbleTimerRef.current = null; }
+    if (sampleTimerRef.current) { clearInterval(sampleTimerRef.current); sampleTimerRef.current = null; }
+    if (avgTimerRef.current) { clearInterval(avgTimerRef.current); avgTimerRef.current = null; }
   }, []);
+
+  const pushSample = useCallback((mbps) => {
+    const now = performance.now();
+    sampleWindowRef.current.push({ t: now, v: mbps });
+    // Trim entries older than the window
+    const cutoff = now - AVG_WINDOW_MS;
+    sampleWindowRef.current = sampleWindowRef.current.filter(s => s.t >= cutoff);
+  }, []);
+
+  const computeAvg = useCallback(() => {
+    const now = performance.now();
+    const cutoff = now - AVG_WINDOW_MS;
+    const recent = sampleWindowRef.current.filter(s => s.t >= cutoff);
+    if (recent.length === 0) return;
+    const avg = recent.reduce((sum, s) => sum + s.v, 0) / recent.length;
+    setAvgMbps(avg);
+  }, []);
+
+  const startAvgTimer = useCallback(() => {
+    if (avgTimerRef.current) return;
+    avgTimerRef.current = setInterval(computeAvg, AVG_UPDATE_MS);
+  }, [computeAvg]);
 
   const startDabble = useCallback(() => {
     if (dabbleTimerRef.current) return;
@@ -53,8 +78,7 @@ export function useBoltSpeed() {
       const base = lastRealRef.current;
       if (base <= 0) return;
       const jitter = randomBetween(-DABBLE_JITTER_RATIO, DABBLE_JITTER_RATIO);
-      const dabbled = Math.max(0, base * (1 + jitter));
-      setDisplayMbps(dabbled);
+      setDisplayMbps(Math.max(0, base * (1 + jitter)));
     }, DABBLE_INTERVAL_MS);
   }, []);
 
@@ -81,6 +105,7 @@ export function useBoltSpeed() {
       lastRealRef.current = emaRef.current;
       setDisplayMbps(emaRef.current);
       setPeakMbps((p) => Math.max(p, emaRef.current));
+      pushSample(emaRef.current);
 
       lastSampleBytes = totalBytes;
       lastSampleTime = now;
@@ -102,28 +127,19 @@ export function useBoltSpeed() {
     };
 
     try {
-      await Promise.all(
-        Array.from({ length: STREAM_COUNT }, () => streamOne())
-      );
+      await Promise.all(Array.from({ length: STREAM_COUNT }, () => streamOne()));
     } finally {
-      if (sampleTimerRef.current) {
-        clearInterval(sampleTimerRef.current);
-        sampleTimerRef.current = null;
-      }
+      if (sampleTimerRef.current) { clearInterval(sampleTimerRef.current); sampleTimerRef.current = null; }
     }
 
-    if (tierIndexRef.current < TIERS.length - 1) {
-      tierIndexRef.current += 1;
-    }
+    if (tierIndexRef.current < TIERS.length - 1) tierIndexRef.current += 1;
     setRoundCount((c) => c + 1);
 
     const elapsedRound = performance.now() - roundStart;
     if (elapsedRound < MIN_INTER_ROUND_GAP_MS && !signal.aborted) {
-      await new Promise((r) =>
-        setTimeout(r, MIN_INTER_ROUND_GAP_MS - elapsedRound)
-      );
+      await new Promise((r) => setTimeout(r, MIN_INTER_ROUND_GAP_MS - elapsedRound));
     }
-  }, []);
+  }, [pushSample]);
 
   const loop = useCallback(async (signal) => {
     loopActiveRef.current = true;
@@ -142,7 +158,9 @@ export function useBoltSpeed() {
     tierIndexRef.current = 0;
     emaRef.current = 0;
     lastRealRef.current = 0;
+    sampleWindowRef.current = [];
     setPeakMbps(0);
+    setAvgMbps(0);
     setRoundCount(0);
     setDisplayMbps(0);
     setStatus('testing');
@@ -150,18 +168,18 @@ export function useBoltSpeed() {
     const controller = new AbortController();
     abortRef.current = controller;
     startDabble();
+    startAvgTimer();
     loop(controller.signal);
-  }, [status, loop, startDabble]);
+  }, [status, loop, startDabble, startAvgTimer]);
 
   const stop = useCallback(() => {
     loopActiveRef.current = false;
-    if (abortRef.current) {
-      abortRef.current.abort();
-      abortRef.current = null;
-    }
+    if (abortRef.current) { abortRef.current.abort(); abortRef.current = null; }
     clearTimers();
+    // Compute final avg on stop
+    computeAvg();
     setStatus('stopped');
-  }, [clearTimers]);
+  }, [clearTimers, computeAvg]);
 
   useEffect(() => {
     return () => {
@@ -171,13 +189,5 @@ export function useBoltSpeed() {
     };
   }, [clearTimers]);
 
-  return {
-    status,
-    displayMbps,
-    peakMbps,
-    tierLabel,
-    roundCount,
-    start,
-    stop,
-  };
+  return { status, displayMbps, peakMbps, avgMbps, tierLabel, roundCount, start, stop };
 }
