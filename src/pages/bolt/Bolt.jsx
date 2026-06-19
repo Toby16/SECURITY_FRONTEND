@@ -100,7 +100,7 @@ export default function Bolt() {
             </div>
             <div className={styles.metaDivider} />
             <div className={styles.metaItem}>
-              <span className={styles.metaLabel}>Avg 5s</span>
+              <span className={styles.metaLabel}>Avg</span>
               <span className={styles.metaValue}>{avgMbps > 0 ? formatMbps(avgMbps) : '—'}</span>
             </div>
           </div>
