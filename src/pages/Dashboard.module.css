@@ -250,10 +250,25 @@
 .appCard:hover .appIconWrap[data-color="purple"] {
   animation: iconPulse 1.2s ease-in-out infinite alternate;
 }
+.appCard:hover .appIconWrap[data-color="amber"] {
+  animation: boltZap 0.6s ease-in-out infinite alternate;
+  transform: scale(1.1) translateY(-2px) !important;
+}
 @keyframes iconPulse {
   from { filter: brightness(1.15) drop-shadow(0 0 8px currentColor); }
   to   { filter: brightness(1.3)  drop-shadow(0 0 16px currentColor); }
 }
+@keyframes boltZap {
+  from {
+    filter: brightness(1.1) drop-shadow(0 0 6px #fbbf24);
+    transform: scale(1.1) translateY(-2px) skewX(-4deg);
+  }
+  to {
+    filter: brightness(1.4) drop-shadow(0 0 14px #fbbf24) drop-shadow(0 2px 20px rgba(251,191,36,0.5));
+    transform: scale(1.14) translateY(-4px) skewX(-4deg);
+  }
+}
+
 .appIconWrap[data-color="blue"]   { background: rgba(56,139,253,0.12);  color: #388bfd; }
 .appIconWrap[data-color="purple"] { background: rgba(124,58,237,0.12);  color: #a78bfa; }
 .appIconWrap[data-color="green"]  { background: rgba(35,134,54,0.12);   color: #3fb950; }
