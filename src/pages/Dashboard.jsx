@@ -107,6 +107,17 @@ const APPS = [
     ),
   },
   {
+    name: 'BOLT - Internet Speed Metrics',
+    desc: 'Real-time internet speed and network quality diagnostics. 📶',
+    color: 'amber', live: true,
+	route: '/bolt',
+    icon: (
+      <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
+        <path d="M9.504 2.078a.75.75 0 01.292.757L8.762 7h2.988a.75.75 0 01.58 1.228l-5.25 6.5a.75.75 0 01-1.324-.555l.977-4.143H3.75a.75.75 0 01-.58-1.228l5.25-6.5a.75.75 0 011.084-.224z"/>
+      </svg>
+    ),
+  },
+  {
     name: 'SCANORACLE — Email Scanner',
     desc: 'Validate, score and investigate any email address. 📨',
     color: 'purple', live: false,
@@ -163,16 +174,6 @@ const APPS = [
     icon: (
       <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
         <path d="M2.75 14A1.75 1.75 0 011 12.25v-2.5a.75.75 0 011.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 00.25-.25v-2.5a.75.75 0 011.5 0v2.5A1.75 1.75 0 0113.25 14H2.75zM7.25 7.689V2a.75.75 0 011.5 0v5.689l1.97-1.97a.75.75 0 111.06 1.06l-3.25 3.25a.75.75 0 01-1.06 0L4.22 6.78a.75.75 0 011.06-1.06l1.97 1.97z"/>
-      </svg>
-    ),
-  },
-  {
-    name: 'Speed Metrics',
-    desc: 'Real-time internet speed and network quality diagnostics. 📶',
-    color: 'amber', live: false,
-    icon: (
-      <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
-        <path d="M8 0a8 8 0 110 16A8 8 0 018 0zm.5 4.75a.75.75 0 00-1.5 0v3.5c0 .414.336.75.75.75h3.25a.75.75 0 000-1.5H8.5v-2.75z"/>
       </svg>
     ),
   },
