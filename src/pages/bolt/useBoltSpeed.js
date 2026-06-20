@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 const API_BASE = 'https://secure.ghostroute.icu/api/v1.0/bolt/speed/download';
 
-const TIERS = [5, 50, 100];
+const TIERS = [5, 50, 100, 200];
 
 const DABBLE_INTERVAL_MS = 220;
 const DABBLE_JITTER_RATIO = 0.018;
