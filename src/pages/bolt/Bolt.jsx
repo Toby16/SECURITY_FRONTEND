@@ -9,6 +9,14 @@ function formatMbps(value) {
   return value.toFixed(2);
 }
 
+function getStability(peakMbps, avgMbps) {
+  if (peakMbps <= 0 || avgMbps <= 0) return null;
+  const ratio = avgMbps / peakMbps;
+  if (ratio >= 0.75) return { label: 'Stable', tier: 'stable' };
+  if (ratio >= 0.45) return { label: 'Good', tier: 'unstable' };
+  return { label: 'Poor', tier: 'poor' };
+}
+
 export default function Bolt() {
   const { status, displayMbps, peakMbps, avgMbps, tierLabel, roundCount, start, stop } =
     useBoltSpeed();
@@ -34,6 +42,8 @@ export default function Bolt() {
       start();
     }
   };
+
+  const stability = getStability(peakMbps, avgMbps);
 
   return (
     <div className={styles.page}>
@@ -103,6 +113,18 @@ export default function Bolt() {
               <span className={styles.metaLabel}>Avg</span>
               <span className={styles.metaValue}>{avgMbps > 0 ? formatMbps(avgMbps) : '—'}</span>
             </div>
+            {stability && (
+              <>
+                <div className={styles.metaDivider} />
+                <div className={styles.metaItem}>
+                  <span className={styles.metaLabel}>Signal</span>
+                  <span className={`${styles.stabilityValue} ${styles[`stability_${stability.tier}`]}`}>
+                    <span className={`${styles.stabilityDot} ${styles[`stabilityDot_${stability.tier}`]}`} />
+                    {stability.label}
+                  </span>
+                </div>
+              </>
+            )}
           </div>
         )}
 
