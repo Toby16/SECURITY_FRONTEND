@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 const PING_URL      = 'https://secure.ghostroute.icu/api/v1.0/bolt/speed/ping';
 const DOWNLOAD_BASE = 'https://secure.ghostroute.icu/api/v1.0/bolt/speed/download';
-const UPLOAD_URL    = 'https://secure.ghostroute.icu/api/v1.0/bolt/speed/upload/2';
+const UPLOAD_URL    = 'https://secure.ghostroute.icu/api/v1.0/bolt/speed/upload/20';
 
 const MIN_TOTAL_MS = 35_000;
 const MAX_TOTAL_MS = 60_000;
@@ -15,7 +15,7 @@ const DOWNLOAD_TIERS        = [5, 20, 50];
 const DOWNLOAD_ROUND_GAP_MS = 400;
 const SAMPLE_MIN_ELAPSED_S  = 0.15; // shared gate for both download & upload sampling
 
-const UPLOAD_SAMPLE_TARGET_BYTES = 2 * 1024 * 1024; // cap reused buffer ~2MB
+const UPLOAD_SAMPLE_TARGET_BYTES = 10 * 1024 * 1024; // cap reused buffer ~10MB
 const UPLOAD_ROUND_GAP_MS = 3000;
 
 const MAX_LOG_ROWS = 150;
@@ -98,11 +98,11 @@ function computeGrade({ avgPing, jitter, lossPct }) {
   if (lossPct != null) score -= Math.min(40, lossPct * 4);
   score = Math.max(0, Math.min(100, Math.round(score)));
 
-  if (score >= 90) return { score, grade: 'A+', label: 'Excellent', description: 'Rock-solid connection — low latency, minimal jitter, no loss. Great for gaming, calls, and streaming.' };
-  if (score >= 78) return { score, grade: 'A', label: 'Very Good', description: 'Strong, consistent connection suitable for nearly any real-time use case.' };
-  if (score >= 62) return { score, grade: 'B', label: 'Good', description: 'Solid connection with occasional minor fluctuations. Most activities will feel smooth.' };
-  if (score >= 45) return { score, grade: 'C', label: 'Fair', description: 'Usable, but noticeable latency or jitter may cause hiccups in calls or games.' };
-  if (score >= 25) return { score, grade: 'D', label: 'Weak', description: 'Real instability detected — expect lag, dropped frames, or stutter in real-time apps.' };
+  if (score >= 85) return { score, grade: 'A+', label: 'Excellent', description: 'Rock-solid connection — low latency, minimal jitter, no loss. Great for gaming, calls, and streaming.' };
+  if (score >= 65) return { score, grade: 'A', label: 'Very Good', description: 'Strong, consistent connection suitable for nearly any real-time use case.' };
+  if (score >= 50) return { score, grade: 'B', label: 'Good', description: 'Solid connection with occasional minor fluctuations. Most activities will feel smooth.' };
+  if (score >= 35) return { score, grade: 'C', label: 'Fair', description: 'Usable, but noticeable latency or jitter may cause hiccups in calls or games.' };
+  if (score >= 20) return { score, grade: 'D', label: 'Weak', description: 'Real instability detected — expect lag, dropped frames, or stutter in real-time apps.' };
   return { score, grade: 'F', label: 'Poor', description: 'Significant instability or loss detected. Real-time applications will likely struggle.' };
 }
 

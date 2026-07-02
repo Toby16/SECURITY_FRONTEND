@@ -165,7 +165,7 @@ export default function BoltInfo() {
 
         {/* ── Live throughput ────────────────────────────── */}
         <section className={infoStyles.card}>
-          <h3 className={infoStyles.cardTitle}>Throughput</h3>
+          <h3 className={infoStyles.cardTitle}>Throughput 🏺</h3>
           <div className={infoStyles.throughputGrid}>
             <div className={infoStyles.throughputBlock}>
               <span className={infoStyles.metaLabel}>Download</span>
@@ -199,7 +199,7 @@ export default function BoltInfo() {
         {/* ── Wireshark-style ping/jitter trace ─────────── */}
         <section className={infoStyles.card}>
           <div className={infoStyles.traceHeader}>
-            <h3 className={infoStyles.cardTitle}>Live Packet Trace</h3>
+            <h3 className={infoStyles.cardTitle}>🦎 Live Packet Trace</h3>
             <span className={infoStyles.traceHint}>ping · {pingStats.count} sent</span>
           </div>
 
@@ -247,8 +247,8 @@ export default function BoltInfo() {
         {/* ── Browser / device network info ─────────────── */}
         <section className={infoStyles.card}>
           <div className={infoStyles.cardHeaderRow}>
-            <h3 className={infoStyles.cardTitle}>Browser &amp; Connection Info</h3>
-            {isRunning && <span className={infoStyles.liveHint}>auto-updating</span>}
+            <h3 className={infoStyles.cardTitle}>Browser &amp; Connection Info 📡</h3>
+            {isRunning && <span className={infoStyles.liveHint}>♻️ auto-updating</span>}
           </div>
           <div className={infoStyles.infoGrid}>
             <InfoChip label="Online" value={browserInfo?.online ? 'Yes' : 'No'} />
@@ -277,7 +277,7 @@ export default function BoltInfo() {
             </p>
           )}
 
-          <h4 className={infoStyles.subHeading}>Connection timing breakdown</h4>
+          <h4 className={infoStyles.subHeading}>Connection timing breakdown 🔬</h4>
           {resourceTiming?.exposed ? (
             <div className={infoStyles.infoGrid}>
               <InfoChip label="DNS lookup" value={`${resourceTiming.dns.toFixed(1)} ms`} />
