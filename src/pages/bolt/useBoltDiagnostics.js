@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 const PING_URL      = 'https://secure.ghostroute.icu/api/v1.0/bolt/speed/ping';
 const DOWNLOAD_BASE = 'https://secure.ghostroute.icu/api/v1.0/bolt/speed/download';
-const UPLOAD_URL    = 'https://secure.ghostroute.icu/api/v1.0/bolt/speed/upload/20';
+const UPLOAD_URL    = 'https://secure.ghostroute.icu/api/v1.0/bolt/speed/upload/2';
 
 const MIN_TOTAL_MS = 35_000;
 const MAX_TOTAL_MS = 60_000;
@@ -15,7 +15,7 @@ const DOWNLOAD_TIERS        = [5, 20, 50];
 const DOWNLOAD_ROUND_GAP_MS = 400;
 const SAMPLE_MIN_ELAPSED_S  = 0.15; // shared gate for both download & upload sampling
 
-const UPLOAD_SAMPLE_TARGET_BYTES = 10 * 1024 * 1024; // cap reused buffer ~10MB
+const UPLOAD_SAMPLE_TARGET_BYTES = 2 * 1024 * 1024; // cap reused buffer ~10MB
 const UPLOAD_ROUND_GAP_MS = 3000;
 
 const MAX_LOG_ROWS = 150;
@@ -113,6 +113,7 @@ async function pingOnce(seq) {
   try {
     const res = await fetch(PING_URL, {
       headers: { accept: 'application/json' },
+      priority: 'high',
       cache: 'no-store',
       signal: controller.signal,
     });
