@@ -2,6 +2,7 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBoltDiagnostics } from './useBoltDiagnostics';
+import { useIpFacts } from './useIpFacts';
 import styles from './Bolt.module.css';
 import infoStyles from './BoltInfo.module.css';
 
@@ -37,6 +38,7 @@ const ACTIVITY_LABEL = {
 };
 
 export default function BoltInfo() {
+  const { facts } = useIpFacts();
   const navigate = useNavigate();
   const {
     phase, elapsedMs, totalMs, activity, interrupted,
@@ -292,6 +294,26 @@ export default function BoltInfo() {
             </p>
           )}
         </section>
+
+	{facts && facts.length > 0 && (
+	  <section className={infoStyles.funFactsCard}>
+    	    <div className={infoStyles.funFactsHeader}>
+      	      <h3 className={infoStyles.cardTitle}>Did you know? ✨</h3>
+      	      <span className={infoStyles.funFactsHint}>Check it out!</span>
+    	    </div>
+    	    <div className={infoStyles.funFactsList}>
+      	      {facts.map((f, i) => (
+        	<div className={infoStyles.funFactItem} key={i}>
+          	  <span className={infoStyles.funFactIcon}>{f.icon}</span>
+          	  <div>
+            	    <div className={infoStyles.funFactLabel}>{f.label}</div>
+            	    <div className={infoStyles.funFactValue}>{f.value}</div>
+          	  </div>
+        	</div>
+      	      ))}
+    	    </div>
+  	  </section>
+	)}
 
         <p className={styles.footnote}>
           Bolt™ . Ghostroute Security™ . 2026 📡

@@ -484,3 +484,69 @@
     height: 220px;
   }
 }
+
+/* ─── Fun facts (easter egg) ─────────────────── */
+
+.funFactsCard {
+  padding: 18px 20px;
+  border-radius: 20px;
+  background: rgba(180, 125, 255, 0.05);
+  border: 1px solid rgba(180, 125, 255, 0.18);
+}
+
+.funFactsHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.funFactsHint {
+  font-size: 9px;
+  color: #6b7080;
+  font-style: italic;
+}
+
+.funFactsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.funFactItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.funFactIcon {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.funFactLabel {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6b7080;
+}
+
+.funFactValue {
+  font-size: 10px;
+  font-weight: 600;
+  color: #f0f2f5;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  .funFactsCard {
+    padding: 14px 14px;
+    border-radius: 16px;
+  }
+}
