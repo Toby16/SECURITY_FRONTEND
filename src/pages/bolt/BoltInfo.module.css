@@ -1,3 +1,4 @@
+/* src/pages/bolt/BoltInfo.module.css */
 .main {
   position: relative;
   z-index: 1;
@@ -113,6 +114,23 @@
   font-weight: 700;
   letter-spacing: 0.02em;
   color: #f0f2f5;
+}
+
+.cardHeaderRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.liveHint {
+  margin: 0 0 14px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7df9ff;
+  opacity: 0.75;
 }
 
 .subHeading {
@@ -295,8 +313,10 @@
   color: #ff5c5c;
 }
 
+/* Fixed HEIGHT (not max-height) so the card never resizes as rows are
+   appended — it holds ~9-10 rows and anything beyond scrolls internally. */
 .traceLogWrap {
-  max-height: 220px;
+  height: 300px;
   overflow-y: auto;
   overflow-x: auto;
   border-radius: 10px;
@@ -384,10 +404,12 @@
 
   .resultGrid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
   }
 
   .infoGrid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
 
   .throughputGrid {
@@ -406,7 +428,9 @@
   }
 
   .traceStats {
-    gap: 12px;
+    gap: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
   }
 
   .hideNarrow {
@@ -415,6 +439,17 @@
 
   .traceTable {
     min-width: 0;
+  }
+
+  .traceTable td,
+  .traceTable thead th {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  /* Slightly shorter on mobile — still ~7-8 rows, still fixed (no resize). */
+  .traceLogWrap {
+    height: 240px;
   }
 
   .bannerDoneRow {
@@ -426,11 +461,26 @@
     width: 100%;
     text-align: center;
   }
+
+  .resultHead {
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .gradeBadge {
+    width: 48px;
+    height: 48px;
+    font-size: 17px;
+  }
 }
 
 @media (max-width: 380px) {
   .resultGrid,
   .infoGrid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .traceLogWrap {
+    height: 220px;
   }
 }

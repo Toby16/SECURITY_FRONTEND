@@ -1,3 +1,4 @@
+// src/pages/bolt/BoltInfo.jsx
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBoltDiagnostics } from './useBoltDiagnostics';
@@ -23,6 +24,10 @@ function fmtClock(ms) {
   const m = Math.floor(s / 60);
   const rem = s % 60;
   return `${m}:${rem.toString().padStart(2, '0')}`;
+}
+function fmtKB(bytes) {
+  if (bytes == null) return '--';
+  return `${(bytes / 1024).toFixed(0)} KB`;
 }
 
 const ACTIVITY_LABEL = {
@@ -138,8 +143,8 @@ export default function BoltInfo() {
                 {summary.grade}
               </div>
               <div>
-                <h2 className={infoStyles.resultLabel}>{summaryLabel(summary)}</h2>
-                <p className={infoStyles.resultDesc}>{summaryDesc(summary)}</p>
+                <h2 className={infoStyles.resultLabel}>{summary.gradeLabel}</h2>
+                <p className={infoStyles.resultDesc}>{summary.gradeDescription}</p>
               </div>
             </div>
 
@@ -147,6 +152,7 @@ export default function BoltInfo() {
               <ResultStat label="Download avg" value={`${fmtMbps(summary.downloadAvg)} Mbps`} />
               <ResultStat label="Download peak" value={`${fmtMbps(summary.downloadPeak)} Mbps`} />
               <ResultStat label="Upload avg" value={`${fmtMbps(summary.uploadAvg)} Mbps`} sub={`${summary.uploadSamples} sample(s)`} />
+              <ResultStat label="Upload peak" value={`${fmtMbps(summary.uploadPeak)} Mbps`} />
               <ResultStat label="Ping avg" value={`${fmtMs(summary.avgPing)} ms`} />
               <ResultStat label="Jitter" value={`${fmtMs(summary.jitter)} ms`} />
               <ResultStat label="Packet loss" value={fmtPct(summary.lossPct)} />
@@ -178,11 +184,13 @@ export default function BoltInfo() {
               </div>
             </div>
           </div>
-          {upload.lastResult && (
+          {(upload.lastProgress || upload.lastResult) && (
             <p className={infoStyles.integrityNote}>
-              Last upload payload: {(upload.lastResult.received_bytes / 1024).toFixed(0)} KB sent
-              of {(upload.lastResult.expected_bytes / (1024 * 1024)).toFixed(0)} MB expected by server
-              · integrity match: {upload.lastResult.size_match ? 'yes' : 'no (partial sample, expected)'}
+              {upload.lastResult
+                ? `Last upload round: ${fmtKB(upload.lastResult.sentBytes)} sent in ${(upload.lastResult.clientMs / 1000).toFixed(2)}s (measured client-side from actual transfer progress).`
+                : upload.lastProgress
+                ? `Uploading… ${fmtKB(upload.lastProgress.loaded)} sent so far.`
+                : null}
             </p>
           )}
         </section>
@@ -237,7 +245,10 @@ export default function BoltInfo() {
 
         {/* ── Browser / device network info ─────────────── */}
         <section className={infoStyles.card}>
-          <h3 className={infoStyles.cardTitle}>Browser &amp; Connection Info</h3>
+          <div className={infoStyles.cardHeaderRow}>
+            <h3 className={infoStyles.cardTitle}>Browser &amp; Connection Info</h3>
+            {isRunning && <span className={infoStyles.liveHint}>auto-updating</span>}
+          </div>
           <div className={infoStyles.infoGrid}>
             <InfoChip label="Online" value={browserInfo?.online ? 'Yes' : 'No'} />
             <InfoChip
@@ -289,24 +300,6 @@ export default function BoltInfo() {
       </main>
     </div>
   );
-}
-
-function summaryLabel(summary) {
-  return summary.grade ? gradeInfo(summary.grade).label : '';
-}
-function summaryDesc(summary) {
-  return summary.grade ? gradeInfo(summary.grade).description : '';
-}
-function gradeInfo(grade) {
-  const map = {
-    'A+': { label: 'Excellent', description: 'Rock-solid connection — low latency, minimal jitter, no loss.' },
-    'A': { label: 'Very Good', description: 'Strong, consistent connection suitable for nearly any real-time use case.' },
-    'B': { label: 'Good', description: 'Solid connection with occasional minor fluctuations.' },
-    'C': { label: 'Fair', description: 'Usable, but noticeable latency or jitter may cause hiccups.' },
-    'D': { label: 'Weak', description: 'Real instability detected — expect lag or stutter in real-time apps.' },
-    'F': { label: 'Poor', description: 'Significant instability or loss detected.' },
-  };
-  return map[grade] || { label: '', description: '' };
 }
 
 function ResultStat({ label, value, sub }) {
