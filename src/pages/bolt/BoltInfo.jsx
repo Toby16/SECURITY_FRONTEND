@@ -1,24 +1,62 @@
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useBoltDiagnostics } from './useBoltDiagnostics';
 import styles from './Bolt.module.css';
 import infoStyles from './BoltInfo.module.css';
 
-const CARDS = [
-  {
-    title: 'Peak',
-    body: 'The highest smoothed speed reached during any single test chunk. A high peak shows what your connection is capable of under ideal conditions.',
-  },
-  {
-    title: 'Average',
-    body: 'A rolling 5-second average of your real-time speed. This is a better predictor of everyday performance than peak alone.',
-  },
-  {
-    title: 'Signal',
-    body: 'Compares average to peak. Stable means your speed holds steady near its peak; Poor means it swings widely, which can point to congestion or a flaky link.',
-  },
-];
+function fmtMbps(v) {
+  if (v == null || v <= 0) return '--';
+  if (v >= 100) return v.toFixed(0);
+  if (v >= 10) return v.toFixed(1);
+  return v.toFixed(2);
+}
+function fmtMs(v) {
+  if (v == null) return '--';
+  return v < 10 ? v.toFixed(2) : v.toFixed(1);
+}
+function fmtPct(v) {
+  if (v == null) return '--';
+  return `${v.toFixed(1)}%`;
+}
+function fmtClock(ms) {
+  const s = Math.floor(ms / 1000);
+  const m = Math.floor(s / 60);
+  const rem = s % 60;
+  return `${m}:${rem.toString().padStart(2, '0')}`;
+}
+
+const ACTIVITY_LABEL = {
+  priming: 'Priming connection…',
+  download: 'Measuring download throughput…',
+  upload: 'Uploading captured sample payload…',
+};
 
 export default function BoltInfo() {
   const navigate = useNavigate();
+  const {
+    phase, elapsedMs, totalMs, activity, interrupted,
+    download, upload, pingLog, pingStats,
+    browserInfo, resourceTiming, summary,
+    start,
+  } = useBoltDiagnostics();
+
+  const startedRef = useRef(false);
+  useEffect(() => {
+    if (!startedRef.current) {
+      startedRef.current = true;
+      start();
+    }
+  }, [start]);
+
+  const isRunning = phase === 'running';
+  const isDone = phase === 'done';
+  const progressPct = totalMs > 0 ? Math.min(100, (elapsedMs / totalMs) * 100) : 0;
+  const remainingS = Math.max(0, Math.ceil((totalMs - elapsedMs) / 1000));
+  const logRef = useRef(null);
+
+  useEffect(() => {
+    if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
+  }, [pingLog]);
 
   return (
     <div className={styles.page}>
@@ -40,19 +78,261 @@ export default function BoltInfo() {
         </div>
         <div className={styles.brand}>
           <span className={styles.brandBolt}>⚡</span>
-          <span className={styles.brandName}>Understanding Bolt</span>
+          <span className={styles.brandName}>Bolt Diagnostics</span>
         </div>
-        <div className={styles.headerRight} />
+        <div className={styles.headerRight}>
+          <div className={`${styles.pill} ${isRunning ? styles.pillLive : ''}`}>
+            <span className={styles.pillDot} />
+            {isRunning ? 'SCANNING' : isDone ? 'COMPLETE' : 'IDLE'}
+          </div>
+        </div>
       </header>
 
       <main className={infoStyles.main}>
-        {CARDS.map((c) => (
-          <div key={c.title} className={infoStyles.card}>
-            <h3 className={infoStyles.cardTitle}>{c.title}</h3>
-            <p className={infoStyles.cardBody}>{c.body}</p>
+
+        {/* ── Warning / progress banner ─────────────────── */}
+        <div className={infoStyles.banner}>
+          {isRunning && (
+            <>
+              <div className={infoStyles.bannerTop}>
+                <span className={infoStyles.activityText}>
+                  {ACTIVITY_LABEL[activity] || 'Running full diagnostic…'}
+                </span>
+                <span className={infoStyles.timerText}>
+                  {fmtClock(elapsedMs)} / {fmtClock(totalMs)} · {remainingS}s left
+                </span>
+              </div>
+              <div className={infoStyles.progressTrack}>
+                <div className={infoStyles.progressFill} style={{ width: `${progressPct}%` }} />
+              </div>
+              <p className={infoStyles.bannerNote}>
+                A diagnostic scan is in progress and can't be stopped once started. Keep this tab
+                open and active — switching apps, locking your screen, or losing connection mid-scan
+                may cause irregular or inaccurate results.
+              </p>
+              {interrupted && (
+                <p className={infoStyles.bannerWarn}>
+                  ⚠ Interruption detected — the tab lost focus during the scan. Final results may be unreliable.
+                </p>
+              )}
+            </>
+          )}
+          {isDone && (
+            <div className={infoStyles.bannerDoneRow}>
+              <span className={infoStyles.bannerDoneText}>
+                Scan complete — ran for {fmtClock(totalMs)}.
+                {interrupted && ' (was interrupted — results may be unreliable)'}
+              </span>
+              <button type="button" className={infoStyles.retryBtn} onClick={start}>
+                Run diagnostic again
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* ── Overall result (shown once done) ──────────── */}
+        {isDone && summary && (
+          <section className={infoStyles.card}>
+            <div className={infoStyles.resultHead}>
+              <div className={`${infoStyles.gradeBadge} ${infoStyles[`grade_${summary.grade.replace('+', 'plus')}`]}`}>
+                {summary.grade}
+              </div>
+              <div>
+                <h2 className={infoStyles.resultLabel}>{summaryLabel(summary)}</h2>
+                <p className={infoStyles.resultDesc}>{summaryDesc(summary)}</p>
+              </div>
+            </div>
+
+            <div className={infoStyles.resultGrid}>
+              <ResultStat label="Download avg" value={`${fmtMbps(summary.downloadAvg)} Mbps`} />
+              <ResultStat label="Download peak" value={`${fmtMbps(summary.downloadPeak)} Mbps`} />
+              <ResultStat label="Upload avg" value={`${fmtMbps(summary.uploadAvg)} Mbps`} sub={`${summary.uploadSamples} sample(s)`} />
+              <ResultStat label="Ping avg" value={`${fmtMs(summary.avgPing)} ms`} />
+              <ResultStat label="Jitter" value={`${fmtMs(summary.jitter)} ms`} />
+              <ResultStat label="Packet loss" value={fmtPct(summary.lossPct)} />
+              <ResultStat label="Ping min / max" value={`${fmtMs(summary.minPing)} / ${fmtMs(summary.maxPing)} ms`} />
+              <ResultStat label="Ping samples" value={summary.pingSamples} />
+            </div>
+          </section>
+        )}
+
+        {/* ── Live throughput ────────────────────────────── */}
+        <section className={infoStyles.card}>
+          <h3 className={infoStyles.cardTitle}>Throughput</h3>
+          <div className={infoStyles.throughputGrid}>
+            <div className={infoStyles.throughputBlock}>
+              <span className={infoStyles.metaLabel}>Download</span>
+              <span className={infoStyles.throughputValue}>{fmtMbps(download.current)}<small> Mbps</small></span>
+              <div className={infoStyles.subRow}>
+                <span>Peak {fmtMbps(download.peak)}</span>
+                <span>Avg {fmtMbps(download.avg)}</span>
+              </div>
+            </div>
+            <div className={infoStyles.throughputDivider} />
+            <div className={infoStyles.throughputBlock}>
+              <span className={infoStyles.metaLabel}>Upload</span>
+              <span className={infoStyles.throughputValue}>{fmtMbps(upload.current)}<small> Mbps</small></span>
+              <div className={infoStyles.subRow}>
+                <span>Peak {fmtMbps(upload.peak)}</span>
+                <span>Avg {fmtMbps(upload.avg)}</span>
+              </div>
+            </div>
           </div>
-        ))}
+          {upload.lastResult && (
+            <p className={infoStyles.integrityNote}>
+              Last upload payload: {(upload.lastResult.received_bytes / 1024).toFixed(0)} KB sent
+              of {(upload.lastResult.expected_bytes / (1024 * 1024)).toFixed(0)} MB expected by server
+              · integrity match: {upload.lastResult.size_match ? 'yes' : 'no (partial sample, expected)'}
+            </p>
+          )}
+        </section>
+
+        {/* ── Wireshark-style ping/jitter trace ─────────── */}
+        <section className={infoStyles.card}>
+          <div className={infoStyles.traceHeader}>
+            <h3 className={infoStyles.cardTitle}>Live Packet Trace</h3>
+            <span className={infoStyles.traceHint}>ping · {pingStats.count} sent</span>
+          </div>
+
+          <div className={infoStyles.traceStats}>
+            <TraceStat label="Min" value={`${fmtMs(pingStats.min)} ms`} />
+            <TraceStat label="Avg" value={`${fmtMs(pingStats.avg)} ms`} />
+            <TraceStat label="Max" value={`${fmtMs(pingStats.max)} ms`} />
+            <TraceStat label="Jitter" value={`${fmtMs(pingStats.jitter)} ms`} />
+            <TraceStat label="Loss" value={fmtPct(pingStats.lossPct)} warn={pingStats.lossPct > 2} />
+          </div>
+
+          <div className={infoStyles.traceLogWrap} ref={logRef}>
+            <table className={infoStyles.traceTable}>
+              <thead>
+                <tr>
+                  <th>No.</th>
+                  <th>Time</th>
+                  <th>RTT</th>
+                  <th className={infoStyles.hideNarrow}>Server Δ</th>
+                  <th className={infoStyles.hideNarrow}>Len</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pingLog.map((row) => (
+                  <tr key={row.seq} className={row.ok ? infoStyles.rowOk : infoStyles.rowLost}>
+                    <td>{row.seq}</td>
+                    <td>{(row.t / 1000).toFixed(2)}s</td>
+                    <td>{row.rtt != null ? `${row.rtt.toFixed(1)} ms` : '--'}</td>
+                    <td className={infoStyles.hideNarrow}>
+                      {row.serverProcMs != null ? `${row.serverProcMs.toFixed(3)} ms` : '--'}
+                    </td>
+                    <td className={infoStyles.hideNarrow}>{row.len ? `${row.len} B` : '--'}</td>
+                    <td>{row.ok ? 'OK' : 'LOST'}</td>
+                  </tr>
+                ))}
+                {pingLog.length === 0 && (
+                  <tr><td colSpan={6} className={infoStyles.traceEmpty}>Waiting for first packet…</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* ── Browser / device network info ─────────────── */}
+        <section className={infoStyles.card}>
+          <h3 className={infoStyles.cardTitle}>Browser &amp; Connection Info</h3>
+          <div className={infoStyles.infoGrid}>
+            <InfoChip label="Online" value={browserInfo?.online ? 'Yes' : 'No'} />
+            <InfoChip
+              label="Connection type"
+              value={browserInfo?.supported ? (browserInfo.effectiveType || '--') : 'Not exposed by browser'}
+            />
+            <InfoChip
+              label="Reported downlink"
+              value={browserInfo?.supported && browserInfo.downlinkMbps != null ? `${browserInfo.downlinkMbps} Mbps` : '--'}
+            />
+            <InfoChip
+              label="Reported RTT"
+              value={browserInfo?.supported && browserInfo.rttMs != null ? `${browserInfo.rttMs} ms` : '--'}
+            />
+            <InfoChip
+              label="Data saver"
+              value={browserInfo?.supported ? (browserInfo.saveData ? 'On' : 'Off') : '--'}
+            />
+            <InfoChip label="CPU threads" value={browserInfo?.hardwareConcurrency ?? '--'} />
+          </div>
+          {!browserInfo?.supported && (
+            <p className={infoStyles.integrityNote}>
+              This browser doesn't expose the Network Information API (mainly Safari/Firefox) —
+              those fields fall back gracefully rather than guessing.
+            </p>
+          )}
+
+          <h4 className={infoStyles.subHeading}>Connection timing breakdown</h4>
+          {resourceTiming?.exposed ? (
+            <div className={infoStyles.infoGrid}>
+              <InfoChip label="DNS lookup" value={`${resourceTiming.dns.toFixed(1)} ms`} />
+              <InfoChip label="TCP connect" value={`${resourceTiming.tcp.toFixed(1)} ms`} />
+              <InfoChip label="TLS handshake" value={`${resourceTiming.tls.toFixed(1)} ms`} />
+              <InfoChip label="TTFB" value={`${resourceTiming.ttfb.toFixed(1)} ms`} />
+              <InfoChip label="Content transfer" value={`${resourceTiming.download.toFixed(1)} ms`} />
+            </div>
+          ) : (
+            <p className={infoStyles.integrityNote}>
+              {isRunning
+                ? 'Timing breakdown will appear once enough requests complete.'
+                : 'Not exposed for this origin (server would need to send a Timing-Allow-Origin header).'}
+            </p>
+          )}
+        </section>
+
+        <p className={styles.footnote}>
+          Bolt™ . Ghostroute Security™ . 2026 📡
+        </p>
       </main>
+    </div>
+  );
+}
+
+function summaryLabel(summary) {
+  return summary.grade ? gradeInfo(summary.grade).label : '';
+}
+function summaryDesc(summary) {
+  return summary.grade ? gradeInfo(summary.grade).description : '';
+}
+function gradeInfo(grade) {
+  const map = {
+    'A+': { label: 'Excellent', description: 'Rock-solid connection — low latency, minimal jitter, no loss.' },
+    'A': { label: 'Very Good', description: 'Strong, consistent connection suitable for nearly any real-time use case.' },
+    'B': { label: 'Good', description: 'Solid connection with occasional minor fluctuations.' },
+    'C': { label: 'Fair', description: 'Usable, but noticeable latency or jitter may cause hiccups.' },
+    'D': { label: 'Weak', description: 'Real instability detected — expect lag or stutter in real-time apps.' },
+    'F': { label: 'Poor', description: 'Significant instability or loss detected.' },
+  };
+  return map[grade] || { label: '', description: '' };
+}
+
+function ResultStat({ label, value, sub }) {
+  return (
+    <div className={infoStyles.resultStat}>
+      <span className={infoStyles.metaLabel}>{label}</span>
+      <span className={infoStyles.resultStatValue}>{value}</span>
+      {sub && <span className={infoStyles.resultStatSub}>{sub}</span>}
+    </div>
+  );
+}
+
+function TraceStat({ label, value, warn }) {
+  return (
+    <div className={infoStyles.traceStat}>
+      <span className={infoStyles.metaLabel}>{label}</span>
+      <span className={warn ? infoStyles.traceStatWarn : infoStyles.traceStatValue}>{value}</span>
+    </div>
+  );
+}
+
+function InfoChip({ label, value }) {
+  return (
+    <div className={infoStyles.infoChip}>
+      <span className={infoStyles.metaLabel}>{label}</span>
+      <span className={infoStyles.infoChipValue}>{value}</span>
     </div>
   );
 }

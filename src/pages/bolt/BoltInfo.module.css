@@ -5,30 +5,432 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  max-width: 560px;
+  max-width: 640px;
   margin: 0 auto;
-  padding: 32px 24px 56px;
+  padding: 20px 20px 56px;
   width: 100%;
 }
 
-.card {
-  padding: 20px 22px;
+/* ─── Banner ──────────────────────────────────── */
+
+.banner {
+  padding: 16px 18px;
   border-radius: 18px;
+  background: rgba(255, 209, 102, 0.06);
+  border: 1px solid rgba(255, 209, 102, 0.2);
+}
+
+.bannerTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.activityText {
+  font-size: 13px;
+  font-weight: 600;
+  color: #f0f2f5;
+}
+
+.timerText {
+  font-family: 'SF Mono', 'JetBrains Mono', 'Roboto Mono', monospace;
+  font-size: 12px;
+  color: #9aa0ad;
+}
+
+.progressTrack {
+  width: 100%;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ffd166, #7df9ff, #5b8cff);
+  transition: width 0.25s ease;
+}
+
+.bannerNote {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: #9aa0ad;
+}
+
+.bannerWarn {
+  margin: 8px 0 0;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #ff5c5c;
+}
+
+.bannerDoneRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.bannerDoneText {
+  font-size: 13px;
+  color: #f0f2f5;
+}
+
+.retryBtn {
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(90deg, #ffd166, #7df9ff);
+  color: #080a0e;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.13s ease;
+  white-space: nowrap;
+}
+.retryBtn:active { transform: scale(0.96); }
+
+/* ─── Cards ───────────────────────────────────── */
+
+.card {
+  padding: 18px 20px;
+  border-radius: 20px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .cardTitle {
-  margin: 0 0 8px;
-  font-size: 14px;
+  margin: 0 0 14px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.02em;
   color: #f0f2f5;
 }
 
-.cardBody {
+.subHeading {
+  margin: 18px 0 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6b7080;
+}
+
+.metaLabel {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6b7080;
+}
+
+.integrityNote {
+  margin: 10px 0 0;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #6b7080;
+}
+
+/* ─── Result card ─────────────────────────────── */
+
+.resultHead {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.gradeBadge {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'SF Mono', 'JetBrains Mono', 'Roboto Mono', monospace;
+  font-size: 20px;
+  font-weight: 700;
+  background: rgba(125, 249, 255, 0.12);
+  color: #7df9ff;
+  border: 1px solid rgba(125, 249, 255, 0.3);
+}
+.grade_Aplus, .grade_A { color: #7df9ff; background: rgba(125, 249, 255, 0.12); border-color: rgba(125, 249, 255, 0.3); }
+.grade_B { color: #b6f97d; background: rgba(182, 249, 125, 0.12); border-color: rgba(182, 249, 125, 0.3); }
+.grade_C { color: #ffd166; background: rgba(255, 209, 102, 0.12); border-color: rgba(255, 209, 102, 0.3); }
+.grade_D, .grade_F { color: #ff5c5c; background: rgba(255, 92, 92, 0.12); border-color: rgba(255, 92, 92, 0.3); }
+
+.resultLabel {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #f0f2f5;
+}
+
+.resultDesc {
   margin: 0;
-  font-size: 13px;
-  line-height: 1.55;
+  font-size: 12px;
+  line-height: 1.5;
   color: #9aa0ad;
+}
+
+.resultGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.resultStat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.resultStatValue {
+  font-family: 'SF Mono', 'JetBrains Mono', 'Roboto Mono', monospace;
+  font-size: 14px;
+  font-weight: 600;
+  color: #f0f2f5;
+}
+
+.resultStatSub {
+  font-size: 10px;
+  color: #6b7080;
+}
+
+/* ─── Throughput ──────────────────────────────── */
+
+.throughputGrid {
+  display: flex;
+  align-items: stretch;
+}
+
+.throughputBlock {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.throughputDivider {
+  width: 1px;
+  margin: 0 20px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.throughputValue {
+  font-family: 'SF Mono', 'JetBrains Mono', 'Roboto Mono', monospace;
+  font-size: 26px;
+  font-weight: 600;
+  color: #f0f2f5;
+}
+.throughputValue small {
+  font-size: 11px;
+  font-weight: 700;
+  color: #6b7080;
+  margin-left: 4px;
+}
+
+.subRow {
+  display: flex;
+  gap: 14px;
+  font-size: 11px;
+  color: #9aa0ad;
+  font-family: 'SF Mono', 'JetBrains Mono', 'Roboto Mono', monospace;
+}
+
+/* ─── Packet trace (Wireshark-style) ──────────── */
+
+.traceHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.traceHint {
+  font-size: 10px;
+  color: #6b7080;
+  font-family: 'SF Mono', 'JetBrains Mono', 'Roboto Mono', monospace;
+}
+
+.traceStats {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.traceStat {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.traceStatValue {
+  font-family: 'SF Mono', 'JetBrains Mono', 'Roboto Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: #7df9ff;
+}
+
+.traceStatWarn {
+  font-family: 'SF Mono', 'JetBrains Mono', 'Roboto Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ff5c5c;
+}
+
+.traceLogWrap {
+  max-height: 220px;
+  overflow-y: auto;
+  overflow-x: auto;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  -webkit-overflow-scrolling: touch;
+}
+
+.traceTable {
+  width: 100%;
+  min-width: 420px;
+  border-collapse: collapse;
+  font-family: 'SF Mono', 'JetBrains Mono', 'Roboto Mono', monospace;
+  font-size: 11px;
+}
+
+.traceTable thead th {
+  position: sticky;
+  top: 0;
+  background: rgba(10, 11, 15, 0.95);
+  text-align: left;
+  padding: 6px 10px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6b7080;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.traceTable td {
+  padding: 5px 10px;
+  color: #c7cbd4;
+  white-space: nowrap;
+}
+
+.rowOk td:last-child { color: #7df9ff; }
+.rowLost { background: rgba(255, 92, 92, 0.06); }
+.rowLost td:last-child { color: #ff5c5c; font-weight: 700; }
+
+.traceEmpty {
+  text-align: center;
+  color: #6b7080;
+  padding: 16px !important;
+}
+
+/* ─── Browser info chips ─────────────────────── */
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.infoChip {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.infoChipValue {
+  font-family: 'SF Mono', 'JetBrains Mono', 'Roboto Mono', monospace;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #f0f2f5;
+  overflow-wrap: anywhere;
+}
+
+/* ─── Mobile ──────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .main {
+    padding: 14px 14px 48px;
+    gap: 12px;
+  }
+
+  .card {
+    padding: 14px 14px;
+    border-radius: 16px;
+  }
+
+  .resultGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .infoGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .throughputGrid {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .throughputDivider {
+    width: 100%;
+    height: 1px;
+    margin: 0;
+  }
+
+  .throughputValue {
+    font-size: 22px;
+  }
+
+  .traceStats {
+    gap: 12px;
+  }
+
+  .hideNarrow {
+    display: none;
+  }
+
+  .traceTable {
+    min-width: 0;
+  }
+
+  .bannerDoneRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .retryBtn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 380px) {
+  .resultGrid,
+  .infoGrid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
