@@ -148,7 +148,7 @@ export default function Bolt() {
           className={styles.infoBtn}
           onClick={() => navigate('/bolt/info')}
         >
-          ⚡ High Voltage? ⚡
+          ⚡ High Voltage ⚡
         </button>
 
         <p className={styles.footnote}>
