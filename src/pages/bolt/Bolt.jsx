@@ -89,7 +89,7 @@ export default function Bolt() {
             {isLive || isStopped ? (
               <>
                 <span className={styles.bigNumber}>{formatMbps(displayMbps)}</span>
-                <span className={styles.unit}>Mbps</span>
+                <span className={styles.unit}>- Mbps -</span>
               </>
             ) : (
               <span className={styles.tapLabel}>Tap to test</span>
@@ -100,21 +100,21 @@ export default function Bolt() {
         <div className={styles.meta}>
           <div className={styles.metaRow}>
             <div className={styles.metaItem}>
-              <span className={styles.metaLabel}>Peak</span>
+              <span className={styles.metaLabel}>Peak 🔥</span>
               <span className={styles.metaValue}>
                 {peakMbps > 0 ? formatMbps(peakMbps) : '--'}
               </span>
             </div>
             <div className={styles.metaDivider} />
             <div className={styles.metaItem}>
-              <span className={styles.metaLabel}>Chunk</span>
+              <span className={styles.metaLabel}>Chunk 📦</span>
               <span className={styles.metaValue}>
                 {tierLabel ? `${tierLabel} MB` : '--'}
               </span>
             </div>
             <div className={styles.metaDivider} />
             <div className={styles.metaItem}>
-              <span className={styles.metaLabel}>Avg</span>
+              <span className={styles.metaLabel}>Avg 🎯</span>
               <span className={styles.metaValue}>
                 {avgMbps > 0 ? formatMbps(avgMbps) : '--'}
               </span>
@@ -122,7 +122,7 @@ export default function Bolt() {
           </div>
 
           <div className={styles.metaSignalRow}>
-            <span className={styles.metaLabel}>Signal</span>
+            <span className={styles.metaLabel}>- Signal -</span>
             <span className={`${styles.stabilityValue} ${styles[`stability_${stability.tier}`]}`}>
               <span className={`${styles.stabilityDot} ${styles[`stabilityDot_${stability.tier}`]}`} />
               {stability.label}
@@ -148,7 +148,7 @@ export default function Bolt() {
           className={styles.infoBtn}
           onClick={() => navigate('/bolt/info')}
         >
-          What do these numbers mean?
+          What do these numbers mean? 🕵️
         </button>
 
         <p className={styles.footnote}>
