@@ -82,7 +82,7 @@ export default function BoltInfo() {
           </button>
         </div>
         <div className={styles.brand}>
-          <span className={styles.brandName}>⚡ High Voltage Diagnostics ⚡</span>
+          <span className={styles.brandName}>⚡ High Voltage Diagnostics</span>
         </div>
         <div className={styles.headerRight}>
           <div className={`${styles.pill} ${isRunning ? styles.pillLive : ''}`}>
