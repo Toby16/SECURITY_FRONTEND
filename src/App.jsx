@@ -9,6 +9,7 @@ import IPLookup    from './pages/scanoracle/IPLookup.jsx'
 import IPLookupCategory from './pages/scanoracle/IPLookupCategory.jsx'
 import Bolt from './pages/bolt/Bolt.jsx'
 import BoltInfo from './pages/bolt/BoltInfo.jsx'
+import MechFind from './pages/mechfind/MechFind.jsx'
 import NotFound    from './pages/NotFound.jsx'
 import PrivateRoute from './components/PrivateRoute.jsx'
 function App() {
@@ -39,6 +40,9 @@ function App() {
 	  } />
 	  <Route path="/bolt/info" element={
 	    <PrivateRoute><BoltInfo /></PrivateRoute>
+	  } />
+	  <Route path="/mechfind" element={
+	    <PrivateRoute><MechFind /></PrivateRoute>
 	  } />
           {/* 404 */}
           <Route path="*" element={<NotFound />} />
