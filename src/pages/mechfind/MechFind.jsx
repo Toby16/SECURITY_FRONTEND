@@ -4,7 +4,7 @@ import { getToken } from '../../services/authService.js'
 import { useAuthGuard } from '../../hooks/useAuthGuard.js'
 import { useTokenRefresh } from '../../hooks/useTokenRefresh.js'
 import { initializeMechanicSearch, startMechanicSearch } from '../../services/mechfindService.js'
-import { getPreciseLocation } from './useGeolocation.js'
+import { getPreciseLocation, getCurrentPosition } from './useGeolocation.js'
 import GhostLogo from '../../components/GhostLogo.jsx'
 import styles from './MechFind.module.css'
 
