@@ -471,6 +471,7 @@ export default function Dashboard() {
 	    <button
 	      className={styles.sideActionBtn}
 	      onClick={() => { setShowSupport(true); setSidebarOpen(false) }}
+
 	    >
 	      💬 Contact support
 	    </button>
@@ -487,6 +488,7 @@ export default function Dashboard() {
               <p className={styles.welcomeSub}>Here's what's available in your Ghostroute account.</p>
             </div>
           </div>
+
 
           <div className={styles.donateBanner}>
             <div className={styles.donateBannerGlow} aria-hidden="true" />
@@ -505,7 +507,7 @@ export default function Dashboard() {
           </div>
 
           <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>Mini Apps </h2>
+            <h2 className={styles.sectionTitle}>Security Mini-Apps </h2>
             <div className={styles.appsGrid}>
               {APPS.map(app => (
                 <AppCard
