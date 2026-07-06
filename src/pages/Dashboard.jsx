@@ -94,6 +94,52 @@ function ParticleBg() {
 }
 
 // ── Mini apps data ────────────────────────────────────────────────────────────
+const EVERYDAY_APPS = [
+  {
+    name: 'MechFind — Mechanics & Auto Repair Finder',
+    desc: 'Find vetted mechanics and vehicle repair shops near you. 🚗',
+    color: 'orange', live: true, free: true,
+    route: '/mechfind',
+    icon: (
+      <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
+        <path d="M3.5 8.5l1-3.25A1.5 1.5 0 015.93 4h4.14a1.5 1.5 0 011.43 1.25l1 3.25h.25A1.25 1.25 0 0114 9.75v2.5a.75.75 0 01-.75.75h-1a.75.75 0 01-.75-.75V12H4.5v.25a.75.75 0 01-.75.75h-1A.75.75 0 012 12.25v-2.5A1.25 1.25 0 013.25 8.5h.25zM5.6 5.5l-.85 2.75h6.5L10.4 5.5H5.6zM4.25 10a.75.75 0 100-1.5.75.75 0 000 1.5zm7.5 0a.75.75 0 100-1.5.75.75 0 000 1.5z"/>
+      </svg>
+    ),
+  },
+  {
+    name: 'Petro — Petrol & Gas Station Finder',
+    desc: 'Locate the nearest fuel & gas filling stations. ⛽',
+    color: 'red', live: true, free: true,
+    route: '/petro',
+    icon: (
+      <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
+        <path d="M3 1.75A.75.75 0 013.75 1h4.5a.75.75 0 01.75.75V7h.25A1.75 1.75 0 0111 8.75v3a.5.5 0 001 0v-3.5a1 1 0 01-1-1v-1a1 1 0 011-1V4.56a1 1 0 00-.3-.7L9.5 2.25v-.5a.75.75 0 111.5 0v.19l1.85 1.72A2 2 0 0113.5 5v6.25A1.75 1.75 0 0111.75 13H11v.5a.75.75 0 01-1.5 0V13H4v.5a.75.75 0 01-1.5 0V13h-.5A.75.75 0 011 12.5v-10zm1.5.75v8.25h5.25V2.5H4.5z"/>
+      </svg>
+    ),
+  },
+  {
+    name: 'MedicNear — Hospitals, Clinics & Pharmacies',
+    desc: 'Find hospitals, clinics and pharmacies 10-minutes away. 🏥',
+    color: 'pink', live: true, free: true,
+    route: '/medicnear',
+    icon: (
+      <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
+        <path d="M7.25 1.75a.75.75 0 011.5 0V6h4.25a.75.75 0 010 1.5H8.75v4.25a.75.75 0 01-1.5 0V7.5H3a.75.75 0 010-1.5h4.25V1.75z"/>
+      </svg>
+    ),
+  },
+  {
+    name: 'Roamio — Hotel & Restaurant Finder',
+    desc: 'Discover great hotels and restaurants wherever you are. 🏨',
+    color: 'gold', live: false,
+    icon: (
+      <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
+        <path d="M2 2.75A.75.75 0 012.75 2h1.5a.75.75 0 01.75.75V6h6V2.75A.75.75 0 0111.75 2h1.5a.75.75 0 01.75.75v10.5a.75.75 0 01-1.5 0V11H3.5v2.25a.75.75 0 01-1.5 0V2.75zM3.5 7.5v2h9v-2h-9z"/>
+      </svg>
+    ),
+  },
+]
+
 const APPS = [
   {
     name: 'SCANORACLE — IP Lookup',
@@ -215,6 +261,7 @@ function AppCard({ app, onClick }) {
       <div className={styles.appText}>
         <p className={styles.appName}>{app.name}</p>
         <p className={styles.appDesc}>{app.desc}</p>
+        {app.free && <span className={styles.freeTag}>1st try free</span>}
       </div>
       {app.live ? (
         <span className={styles.appArrow}>→</span>
@@ -224,6 +271,7 @@ function AppCard({ app, onClick }) {
     </div>
   )
 }
+
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 export default function Dashboard() {
@@ -505,6 +553,22 @@ export default function Dashboard() {
               Make an Impact →
             </button>
           </div>
+
+	  <section className={`${styles.section} ${styles.everydaySection}`}>
+  	    <div className={styles.everydayHeader}>
+    	      <h2 className={styles.sectionTitle}>Ghostroute for Everybody</h2>
+    	      <span className={styles.everydayBadge}>✨ First try free on every app</span>
+  	    </div>
+	    <div className={styles.appsGrid}>
+    	      {EVERYDAY_APPS.map(app => (
+      		<AppCard
+        	key={app.name}
+        	app={app}
+        	onClick={app.live ? () => navigate(app.route) : undefined}
+      		/>
+    	      ))}
+  	    </div>
+	  </section>
 
           <section className={styles.section}>
             <h2 className={styles.sectionTitle}>Security Mini-Apps </h2>
