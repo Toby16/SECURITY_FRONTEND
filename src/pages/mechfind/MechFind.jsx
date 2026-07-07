@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getToken } from '../../services/authService.js'
+import { getToken, getUserProfile } from '../../services/authService.js'
 import { useAuthGuard } from '../../hooks/useAuthGuard.js'
 import { useTokenRefresh } from '../../hooks/useTokenRefresh.js'
 import { initializeMechanicSearch, startMechanicSearch } from '../../services/mechfindService.js'
@@ -29,6 +29,23 @@ function formattedAddress(m) {
   return m.long_formatted_address || m.short_formatted_address
 }
 
+const fmt = (n, cur) =>
+  new Intl.NumberFormat('en-NG', { style: 'currency', currency: cur, maximumFractionDigits: 2 }).format(n ?? 0)
+
+// ── Vehicle icon — used for the MechFind hero mark ──────────────────────────
+function CarIcon({ size = 64 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 11 6.2 7.3A2 2 0 0 1 8.1 6h7.8a2 2 0 0 1 1.9 1.3L19 11" />
+      <path d="M3.5 11h17A1.5 1.5 0 0 1 22 12.5V16a1 1 0 0 1-1 1h-1" />
+      <path d="M3.5 11A1.5 1.5 0 0 0 2 12.5V16a1 1 0 0 0 1 1h1" />
+      <path d="M4.5 17h11" />
+      <circle cx="7.5" cy="17" r="1.5" fill="currentColor" stroke="none" />
+      <circle cx="16.5" cy="17" r="1.5" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
 // ── Status overlay shown while location → initialize → start are in flight ──
 const STATUS_COPY = {
   locating: 'Getting your precise location…',
@@ -49,6 +66,45 @@ function SearchOverlay({ phase }) {
       </div>
       <p className={styles.overlayStatus}>{STATUS_COPY[phase] || 'Working on it…'}</p>
       <p className={styles.overlayHint}>This only takes a moment.</p>
+    </div>
+  )
+}
+
+// ── Location-readiness notice — always shown first, before anything else ───
+function LocationNoticeModal({ onAcknowledge, balance, balanceLoading }) {
+  return (
+    <div className={styles.modalBackdrop} role="dialog" aria-modal="true">
+      <div className={styles.modalCard}>
+        <div className={styles.modalIcon}>📡</div>
+        <h2 className={styles.modalTitle}>Before you search</h2>
+        <p className={styles.modalBody}>
+          MechFind depends on accurate device location to find mechanics near you. Please confirm
+          that location (GPS) services are switched on and permitted for this browser before
+          continuing. If location services are disabled or restricted on your device, we have no
+          way to determine your position on our end, and a search cannot be completed until this
+          is enabled.
+        </p>
+
+        <div className={styles.balanceRow}>
+          <div className={styles.balanceItem}>
+            <span className={styles.balanceLabel}>NGN Balance</span>
+            <span className={styles.balanceValue}>
+              {balanceLoading ? '—' : fmt(balance?.naira_balance, 'NGN')}
+            </span>
+          </div>
+          <div className={styles.balanceSep} />
+          <div className={styles.balanceItem}>
+            <span className={styles.balanceLabel}>USD Balance</span>
+            <span className={styles.balanceValueUsd}>
+              {balanceLoading ? '—' : fmt(balance?.dollar_balance, 'USD')}
+            </span>
+          </div>
+        </div>
+
+        <div className={styles.modalActions}>
+          <button className={styles.primaryBtn} onClick={onAcknowledge}>Got it, continue</button>
+        </div>
+      </div>
     </div>
   )
 }
@@ -259,12 +315,36 @@ export default function MechFind() {
   useTokenRefresh()
   const navigate = useNavigate()
 
-  // idle | consent | locating | initializing | searching | results | error
-  const [phase, setPhase] = useState('idle')
+  // locationNotice | idle | consent | locating | initializing | searching | results | error
+  const [phase, setPhase] = useState('locationNotice')
   const [errorMessage, setErrorMessage] = useState('')
   const [results, setResults] = useState([])
   const [meta, setMeta] = useState(null)
+  const [balance, setBalance] = useState(null)
+  const [balanceLoading, setBalanceLoading] = useState(true)
 
+  // Fetch the user profile once so its balance fields can be shown in the
+  // location-readiness notice — same source Dashboard reads naira_balance /
+  // dollar_balance from.
+  useEffect(() => {
+    let cancelled = false
+    async function loadBalance() {
+      const token = getToken()
+      if (!token) { setBalanceLoading(false); return }
+      try {
+        const r = await getUserProfile(token)
+        if (!cancelled) setBalance(r.user)
+      } catch {
+        // Non-fatal — the notice will just show a dash instead of an amount.
+      } finally {
+        if (!cancelled) setBalanceLoading(false)
+      }
+    }
+    loadBalance()
+    return () => { cancelled = true }
+  }, [])
+
+  const acknowledgeLocationNotice = useCallback(() => setPhase('idle'), [])
   const openConsent = useCallback(() => setPhase('consent'), [])
   const cancelConsent = useCallback(() => setPhase('idle'), [])
 
@@ -305,8 +385,10 @@ export default function MechFind() {
         <button className={styles.backBtn} onClick={() => navigate('/dashboard')} aria-label="Back to dashboard">
           ← Dashboard
         </button>
-        <GhostLogo size={26} showText showSub={false} />
         <span className={styles.navSpacer} />
+        <div className={styles.navBrand}>
+          <GhostLogo size={26} showText showSub={false} />
+        </div>
       </nav>
 
       {phase === 'results' ? (
@@ -323,7 +405,7 @@ export default function MechFind() {
             <span className={styles.tapRing} />
             <span className={styles.tapRing} style={{ animationDelay: '0.9s' }} />
             <div className={styles.logoInner}>
-              <GhostLogo size={104} showText={false} showSub={false} />
+              <CarIcon size={72} />
             </div>
           </button>
 
@@ -334,6 +416,14 @@ export default function MechFind() {
             $0.2 <span className={styles.priceBtnDivider}>/</span> search
           </button>
         </main>
+      )}
+
+      {phase === 'locationNotice' && (
+        <LocationNoticeModal
+          onAcknowledge={acknowledgeLocationNotice}
+          balance={balance}
+          balanceLoading={balanceLoading}
+        />
       )}
 
       {phase === 'consent' && (

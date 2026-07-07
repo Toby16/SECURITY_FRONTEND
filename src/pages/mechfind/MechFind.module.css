@@ -22,7 +22,15 @@
   font-family: inherit; cursor: pointer;
   transition: border-color 150ms, color 150ms, background 150ms;
 }
-.backBtn:hover { border-color: #7c3aed; color: #a78bfa; background: rgba(124,58,237,0.06); }
+.backBtn:hover { border-color: #c2410c; color: #fb923c; background: rgba(194,65,12,0.06); }
+
+/* Brand (ghost logo + wordmark) — kept flush left, right after the back button */
+.navBrand {
+  display: flex;
+  align-items: center;
+  line-height: 1;
+}
+
 .navSpacer { flex: 1; }
 
 /* ── Hero (tap-to-search) ── */
@@ -35,7 +43,7 @@
 .heroGlow {
   position: absolute; top: 15%; left: 50%; transform: translateX(-50%);
   width: 520px; height: 520px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(124,58,237,0.16) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(194,65,12,0.16) 0%, transparent 70%);
   pointer-events: none; z-index: 0;
 }
 
@@ -51,7 +59,7 @@
 
 .tapRing {
   position: absolute; inset: 0; border-radius: 50%;
-  border: 1.5px solid rgba(124,58,237,0.45);
+  border: 1.5px solid rgba(194,65,12,0.45);
   animation: tapPulse 2.4s ease-out infinite;
 }
 @keyframes tapPulse {
@@ -63,12 +71,13 @@
 .logoInner {
   width: 176px; height: 176px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  background: radial-gradient(circle at 32% 28%, rgba(124,58,237,0.28), rgba(13,17,23,0.9) 70%);
-  border: 1px solid rgba(124,58,237,0.4);
+  background: radial-gradient(circle at 32% 28%, rgba(194,65,12,0.28), rgba(13,17,23,0.9) 70%);
+  border: 1px solid rgba(194,65,12,0.4);
+  color: #fb923c;
   box-shadow:
     0 0 0 1px rgba(255,255,255,0.03) inset,
-    0 20px 60px rgba(124,58,237,0.28),
-    0 0 40px rgba(124,58,237,0.18);
+    0 20px 60px rgba(194,65,12,0.28),
+    0 0 40px rgba(194,65,12,0.18);
   backdrop-filter: blur(10px);
   transition: transform 180ms ease, box-shadow 180ms ease;
 }
@@ -76,8 +85,8 @@
   transform: scale(1.035);
   box-shadow:
     0 0 0 1px rgba(255,255,255,0.05) inset,
-    0 24px 70px rgba(124,58,237,0.36),
-    0 0 54px rgba(124,58,237,0.26);
+    0 24px 70px rgba(194,65,12,0.36),
+    0 0 54px rgba(194,65,12,0.26);
 }
 .logoTapTarget:active .logoInner { transform: scale(0.97); }
 
@@ -95,24 +104,24 @@
   position: absolute; left: 50%; bottom: 36px; transform: translateX(-50%);
   display: inline-flex; align-items: center; gap: 5px;
   background: rgba(13,17,23,0.9);
-  border: 1px solid rgba(124,58,237,0.4);
+  border: 1px solid rgba(194,65,12,0.4);
   color: #e6edf3; font-size: 13.5px; font-weight: 700;
   padding: 11px 26px; border-radius: 999px;
   font-family: inherit; cursor: pointer;
   backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px rgba(124,58,237,0.22);
+  box-shadow: 0 10px 30px rgba(194,65,12,0.22);
   transition: transform 150ms, border-color 150ms, box-shadow 150ms;
   z-index: 1;
 }
 .priceBtn:hover {
   transform: translateX(-50%) translateY(-2px);
-  border-color: #7c3aed;
-  box-shadow: 0 14px 38px rgba(124,58,237,0.32);
+  border-color: #c2410c;
+  box-shadow: 0 14px 38px rgba(194,65,12,0.32);
 }
 .priceBtn:active { transform: translateX(-50%) translateY(0); }
 .priceBtnDivider { color: #484f58; font-weight: 400; }
 
-/* ── Modal (consent / error) ── */
+/* ── Modal (location notice / consent / error) ── */
 .modalBackdrop {
   position: fixed; inset: 0; z-index: 50;
   background: rgba(1,4,9,0.72);
@@ -141,7 +150,7 @@
 .modalIcon {
   width: 46px; height: 46px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  background: rgba(124,58,237,0.14); border: 1px solid rgba(124,58,237,0.3);
+  background: rgba(194,65,12,0.14); border: 1px solid rgba(194,65,12,0.3);
   font-size: 19px; margin-bottom: 8px;
 }
 .modalIconError {
@@ -154,22 +163,36 @@
 .priceRow {
   display: flex; align-items: baseline; gap: 7px;
   margin-top: 14px; padding: 8px 16px;
-  background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.22);
+  background: rgba(194,65,12,0.08); border: 1px solid rgba(194,65,12,0.22);
   border-radius: 999px;
 }
-.priceTag { font-size: 15px; font-weight: 800; color: #a78bfa; }
+.priceTag { font-size: 15px; font-weight: 800; color: #fb923c; }
 .priceTagAlt { font-size: 12px; font-weight: 600; color: #7d8590; }
 .priceLabel { font-size: 11px; color: #7d8590; }
 
 .modalFinePrint { font-size: 11px; color: #484f58; margin-top: 10px; line-height: 1.5; }
 
+/* Balance summary shown in the location-readiness notice */
+.balanceRow {
+  display: flex; align-items: stretch; width: 100%;
+  margin-top: 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid #21262d; border-radius: 10px;
+  overflow: hidden;
+}
+.balanceItem { flex: 1; padding: 10px 12px; display: flex; flex-direction: column; gap: 3px; }
+.balanceSep { width: 1px; background: rgba(255,255,255,0.06); }
+.balanceLabel { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #484f58; }
+.balanceValue { font-size: 14.5px; font-weight: 800; color: #fb923c; }
+.balanceValueUsd { font-size: 14.5px; font-weight: 800; color: #3fb950; }
+
 .modalActions { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 18px; }
 .primaryBtn {
-  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  background: linear-gradient(135deg, #c2410c, #9a3412);
   border: none; border-radius: 10px; color: #fff;
   font-size: 13.5px; font-weight: 700; padding: 12px; font-family: inherit;
   cursor: pointer; transition: filter 150ms, transform 150ms;
-  box-shadow: 0 10px 26px rgba(124,58,237,0.32);
+  box-shadow: 0 10px 26px rgba(194,65,12,0.32);
 }
 .primaryBtn:hover { filter: brightness(1.08); transform: translateY(-1px); }
 .ghostBtn {
@@ -194,7 +217,7 @@
 }
 .radarRing {
   position: absolute; inset: 0; border-radius: 50%;
-  border: 1px solid rgba(124,58,237,0.4);
+  border: 1px solid rgba(194,65,12,0.4);
   animation: radarExpand 1.8s ease-out infinite;
 }
 @keyframes radarExpand {
@@ -203,14 +226,14 @@
 }
 .radarCore {
   position: relative; width: 64px; height: 64px; border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, rgba(167,139,250,0.5), rgba(124,58,237,0.15) 70%);
-  border: 1px solid rgba(124,58,237,0.5);
+  background: radial-gradient(circle at 35% 30%, rgba(251,146,60,0.5), rgba(194,65,12,0.15) 70%);
+  border: 1px solid rgba(194,65,12,0.5);
   overflow: hidden;
-  box-shadow: 0 0 30px rgba(124,58,237,0.35);
+  box-shadow: 0 0 30px rgba(194,65,12,0.35);
 }
 .radarSweep {
   position: absolute; inset: 0;
-  background: conic-gradient(from 0deg, rgba(167,139,250,0.75), transparent 65%);
+  background: conic-gradient(from 0deg, rgba(251,146,60,0.75), transparent 65%);
   animation: sweepSpin 1.1s linear infinite;
 }
 @keyframes sweepSpin { to { transform: rotate(360deg); } }
@@ -237,7 +260,7 @@
   font-size: 12px; font-weight: 600; border-radius: 10px; padding: 10px 14px;
 }
 .freeBanner { background: rgba(35,134,54,0.1); border: 1px solid rgba(35,134,54,0.28); color: #3fb950; }
-.paidBanner { background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.24); color: #a78bfa; }
+.paidBanner { background: rgba(194,65,12,0.08); border: 1px solid rgba(194,65,12,0.24); color: #fb923c; }
 
 .resultsList { display: flex; flex-direction: column; gap: 12px; }
 
@@ -248,7 +271,7 @@
   animation: cardIn 260ms ease both;
 }
 @keyframes cardIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-.resultCard:hover { border-color: rgba(124,58,237,0.35); }
+.resultCard:hover { border-color: rgba(194,65,12,0.35); }
 
 .resultTop { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
 .resultTitleBlock { min-width: 0; }
@@ -272,10 +295,10 @@
 
 .resultDistance {
   flex-shrink: 0; display: flex; flex-direction: column; align-items: center;
-  background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.24);
+  background: rgba(194,65,12,0.1); border: 1px solid rgba(194,65,12,0.24);
   border-radius: 10px; padding: 6px 10px; line-height: 1.1;
 }
-.distanceVal { font-size: 14px; font-weight: 800; color: #a78bfa; }
+.distanceVal { font-size: 14px; font-weight: 800; color: #fb923c; }
 .distanceUnit { font-size: 8.5px; color: #7d8590; text-transform: uppercase; letter-spacing: 0.06em; }
 
 .resultAddress { font-size: 12px; color: #7d8590; margin-top: 8px; line-height: 1.45; }
@@ -299,10 +322,10 @@
 
 .hoursToggle {
   align-self: flex-start; margin-top: 10px;
-  background: none; border: none; color: #a78bfa; font-size: 11.5px; font-weight: 600;
+  background: none; border: none; color: #fb923c; font-size: 11.5px; font-weight: 600;
   cursor: pointer; padding: 0; font-family: inherit;
 }
-.hoursToggle:hover { color: #c4b5fd; }
+.hoursToggle:hover { color: #fdba74; }
 
 .hoursList {
   margin-top: 8px; padding: 10px 12px;
@@ -321,10 +344,10 @@
 .actionBtn:hover { border-color: #484f58; background: rgba(33,38,45,0.9); }
 .actionBtnPrimary {
   flex: 1.4; text-align: center; text-decoration: none;
-  background: linear-gradient(135deg, #7c3aed, #6d28d9); border-radius: 8px;
+  background: linear-gradient(135deg, #c2410c, #9a3412); border-radius: 8px;
   border: none; padding: 9px; font-size: 12px; font-weight: 700; color: #fff;
   font-family: inherit; cursor: pointer;
-  box-shadow: 0 6px 18px rgba(124,58,237,0.28);
+  box-shadow: 0 6px 18px rgba(194,65,12,0.28);
   transition: filter 150ms, transform 150ms;
 }
 .actionBtnPrimary:hover { filter: brightness(1.08); transform: translateY(-1px); }
@@ -335,7 +358,7 @@
   color: #7d8590; font-size: 12.5px; font-weight: 600; padding: 10px 22px;
   font-family: inherit; cursor: pointer; transition: border-color 150ms, color 150ms;
 }
-.newSearchBtn:hover { border-color: #7c3aed; color: #a78bfa; }
+.newSearchBtn:hover { border-color: #c2410c; color: #fb923c; }
 
 /* ── Mechanic detail page ── */
 .detailPage {
@@ -350,7 +373,7 @@
   font-family: inherit; cursor: pointer;
   transition: border-color 150ms, color 150ms, background 150ms;
 }
-.detailBack:hover { border-color: #7c3aed; color: #a78bfa; background: rgba(124,58,237,0.06); }
+.detailBack:hover { border-color: #c2410c; color: #fb923c; background: rgba(194,65,12,0.06); }
 
 .detailHeader { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
 .detailName { font-size: 20px; font-weight: 800; color: #e6edf3; letter-spacing: -0.01em; line-height: 1.3; }
@@ -371,6 +394,8 @@
 
 /* ── Mobile ── */
 @media (max-width: 640px) {
+  .nav { padding: 12px 14px; gap: 10px; }
+  .navBrand { margin-left: auto; }
   .logoTapTarget { width: 190px; height: 190px; }
   .logoInner { width: 150px; height: 150px; }
   .heroTitle { font-size: 19px; }
