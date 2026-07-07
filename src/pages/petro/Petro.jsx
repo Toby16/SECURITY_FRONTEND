@@ -572,7 +572,7 @@ export default function Petro() {
           <p className={styles.heroSub}>Tap the pump to find fuel &amp; gas stations near you</p>
 
           <button className={styles.priceBtn} onClick={openConsent}>
-            <span className={styles.priceBtnDivider}>.</span>$0.2/Search <span className={styles.priceBtnDivider}>·</span>
+            <span className={styles.priceBtnDivider}>.</span>$0.2 / search <span className={styles.priceBtnDivider}>·</span>
           </button>
         </main>
       )}
