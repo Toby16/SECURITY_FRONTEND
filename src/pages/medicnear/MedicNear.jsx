@@ -447,7 +447,7 @@ function ResultsView({ results, meta, onClose }) {
     <div className={styles.resultsPage}>
       <div className={styles.resultsHeader}>
         <div>
-          <h2 className={styles.resultsTitle}>{results.length} hospitals, clinics &amp; pharmacies nearby</h2>
+          <h2 className={styles.resultsTitle}>{results.length} medical centers nearby</h2>
           <p className={styles.resultsSub}>✚ Sorted by distance, closest to you.</p>
         </div>
         <button className={styles.closeBtn} onClick={onClose} aria-label="Close results">✕</button>

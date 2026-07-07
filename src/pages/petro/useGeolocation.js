@@ -22,7 +22,7 @@ function toFriendlyError(err) {
   if (err.code === err.PERMISSION_DENIED) {
     message = 'Location access was denied. Enable your location/gps settings, then try again.'
   } else if (err.code === err.POSITION_UNAVAILABLE) {
-    message = 'Your location is unavailable right now. Try again in a moment.'
+    message = 'Your device says location is unavailable. Check that Location Services / GPS is switched on at the system level (not just in this browser), then try again.'
   } else if (err.code === err.TIMEOUT) {
     message = 'Finding your location took too long. Try again.'
   }
@@ -65,5 +65,53 @@ export async function getPreciseLocation() {
         throw toFriendlyError(thirdErr)
       }
     }
+  }
+}
+
+/**
+ * getGeolocationPermissionState
+ * Reads the browser's current permission decision for geolocation WITHOUT
+ * triggering the native prompt. Lets the UI show the right guidance before
+ * the user taps "allow" — e.g. warning them the browser won't prompt again
+ * if they've already denied it, versus the normal first-time flow.
+ *
+ * Returns 'granted' | 'denied' | 'prompt' | 'unsupported'.
+ * 'unsupported' covers browsers without the Permissions API (some older
+ * Safari versions) — callers should just fall back to the normal flow.
+ */
+export async function getGeolocationPermissionState() {
+  if (!('permissions' in navigator) || typeof navigator.permissions?.query !== 'function') {
+    return 'unsupported'
+  }
+  try {
+    const status = await navigator.permissions.query({ name: 'geolocation' })
+    return status.state
+  } catch {
+    return 'unsupported'
+  }
+}
+
+/**
+ * watchGeolocationPermission
+ * Subscribes to live permission changes — e.g. the user flips the toggle in
+ * their browser's site settings while our modal is still open — and calls
+ * onChange with the new state ('granted' | 'denied' | 'prompt'). Returns an
+ * unsubscribe function; safe to call even if the Permissions API isn't
+ * supported (it just becomes a no-op).
+ */
+export function watchGeolocationPermission(onChange) {
+  if (!('permissions' in navigator) || typeof navigator.permissions?.query !== 'function') {
+    return () => {}
+  }
+  let status = null
+  let cancelled = false
+  navigator.permissions.query({ name: 'geolocation' }).then(s => {
+    if (cancelled) return
+    status = s
+    status.onchange = () => onChange(status.state)
+  }).catch(() => {})
+  return () => {
+    cancelled = true
+    if (status) status.onchange = null
   }
 }
