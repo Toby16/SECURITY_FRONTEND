@@ -370,27 +370,18 @@ function MechanicDetail({ m, onBack }) {
           copiedKey={copiedKey}
           onCopy={handleCopy}
         />
-        <InfoRow
-          label="Maps link"
-          value={m.maps_url}
-          fieldKey="mapsUrl"
-          copiedKey={copiedKey}
-          onCopy={handleCopy}
-          mono
-        />
       </div>
 
       {/* ── Classification ── */}
       <div className={styles.detailSection}>
         <p className={styles.detailSectionTitle}>Classification</p>
-        <InfoRow label="Primary type" value={m.primary_type_name} />
-        <InfoRow label="Type key" value={m.primary_type} mono />
-        <InfoRow label="Display label" value={m.label} />
+	<InfoRow label="Label" value={m.label} />
+        <InfoRow label="Primary Service" value={m.primary_type_name} />
+        <InfoRow label="Service Type" value={m.primary_type} mono />
         <InfoRow
           label="Business status"
           value={status ? status.replaceAll('_', ' ').toLowerCase() : null}
         />
-        <InfoRow label="Ghostroute verified" value={m.badge_approved ? 'Yes' : 'No'} />
 
         {Array.isArray(m.types) && m.types.length > 0 && (
           <div className={styles.infoRow}>
@@ -576,7 +567,7 @@ export default function MechFind() {
           <p className={styles.heroSub}>Tap the logo to find vetted mechanics near you</p>
 
           <button className={styles.priceBtn} onClick={openConsent}>
-            $0.2 <span className={styles.priceBtnDivider}>/</span> search
+            $0.2  <span className={styles.priceBtnDivider}>/</span>  search
           </button>
         </main>
       )}
