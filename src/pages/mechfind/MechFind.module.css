@@ -247,7 +247,7 @@
   padding: 24px 20px 60px; max-width: 720px; width: 100%; margin: 0 auto;
 }
 .resultsHeader { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-.resultsTitle { font-size: 18px; font-weight: 750; color: #e6edf3; }
+.resultsTitle { font-size: 15px; font-weight: 750; color: #e6edf3; }
 .resultsSub { font-size: 12px; color: #7d8590; margin-top: 3px; }
 .closeBtn {
   width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;

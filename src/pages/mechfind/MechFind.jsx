@@ -285,7 +285,7 @@ function ResultsView({ results, meta, onClose }) {
     <div className={styles.resultsPage}>
       <div className={styles.resultsHeader}>
         <div>
-          <h2 className={styles.resultsTitle}>Found {results.length} auto-repair shops nearby 🚗</h2>
+          <h2 className={styles.resultsTitle}>{results.length} auto-repair shops nearby</h2>
           <p className={styles.resultsSub}>📍Sorted by distance, closest to you.</p>
         </div>
         <button className={styles.closeBtn} onClick={onClose} aria-label="Close results">✕</button>
@@ -294,7 +294,7 @@ function ResultsView({ results, meta, onClose }) {
       <div className={free ? styles.freeBanner : styles.paidBanner}>
         {free
           ? 'This search was free — no charge applied.'
-          : `This search has been charged at $${meta?.charge} (₦${meta?.naira}).`}
+          : `This search has been charged at $${meta?.charge} ~ ₦${meta?.naira}.`}
       </div>
 
       <div className={styles.resultsList}>
