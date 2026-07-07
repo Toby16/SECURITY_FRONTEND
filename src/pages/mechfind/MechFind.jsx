@@ -32,8 +32,8 @@ function formattedAddress(m) {
 function formatDistance(m) {
   const km = m.distance_km
   const meters = m.distance_meters
-  if (meters != null && meters < 1000) return `${meters} m`
-  if (km != null) return `${km} km${meters != null ? ` · ${meters.toLocaleString()} m` : ''}`
+  if (meters != null) return `${meters} m`
+  if (km != null) return `${km} km`
   return null
 }
 
