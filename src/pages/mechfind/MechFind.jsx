@@ -4,7 +4,7 @@ import { getToken } from '../../services/authService.js'
 import { useAuthGuard } from '../../hooks/useAuthGuard.js'
 import { useTokenRefresh } from '../../hooks/useTokenRefresh.js'
 import { initializeMechanicSearch, startMechanicSearch } from '../../services/mechfindService.js'
-import { getPreciseLocation, getCurrentPosition } from './useGeolocation.js'
+import { getPreciseLocation } from './useGeolocation.js'
 import GhostLogo from '../../components/GhostLogo.jsx'
 import styles from './MechFind.module.css'
 
@@ -23,6 +23,10 @@ function todayHoursLine(hours) {
 
 function formatPhone(m) {
   return m.international_phone_number || m.national_phone_number || null
+}
+
+function formattedAddress(m) {
+  return m.long_formatted_address || m.short_formatted_address
 }
 
 // ── Status overlay shown while location → initialize → start are in flight ──
@@ -95,12 +99,9 @@ function ErrorModal({ message, onRetry, onClose }) {
   )
 }
 
-// ── One mechanic result card ──
-function MechanicCard({ m }) {
-  const [expanded, setExpanded] = useState(false)
+// ── Compact list item — just enough to scan and decide ──
+function MechanicListItem({ m, onView }) {
   const phone = formatPhone(m)
-  const today = todayHoursLine(m.regular_working_hours)
-  const closedForGood = m.business_status && m.business_status !== 'OPERATIONAL'
 
   return (
     <div className={styles.resultCard}>
@@ -110,7 +111,6 @@ function MechanicCard({ m }) {
           <div className={styles.resultTags}>
             <span className={styles.typeTag}>{m.label || m.primary_type_name}</span>
             {m.badge_approved && <span className={styles.verifiedTag}>✓ Verified</span>}
-            {closedForGood && <span className={styles.closedTag}>{m.business_status.replaceAll('_', ' ').toLowerCase()}</span>}
           </div>
         </div>
         <div className={styles.resultDistance}>
@@ -119,7 +119,7 @@ function MechanicCard({ m }) {
         </div>
       </div>
 
-      <p className={styles.resultAddress}>{m.short_formatted_address}</p>
+      <p className={styles.resultAddress}>{formattedAddress(m)}</p>
 
       <div className={styles.resultMetaRow}>
         {m.rating != null ? (
@@ -127,35 +127,108 @@ function MechanicCard({ m }) {
         ) : (
           <span className={styles.ratingPillMuted}>No ratings yet</span>
         )}
+      </div>
+
+      <div className={styles.resultActions}>
+        {phone ? (
+          <a className={styles.actionBtn} href={`tel:${phone}`}>📞 Call</a>
+        ) : (
+          <a className={styles.actionBtn} href={m.maps_url} target="_blank" rel="noopener noreferrer">📍 Maps</a>
+        )}
+        <button className={styles.actionBtnPrimary} onClick={() => onView(m)}>
+          View mechanic →
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ── Full detail page for a single mechanic ──
+function MechanicDetail({ m, onBack }) {
+  const phone = formatPhone(m)
+  const closedForGood = m.business_status && m.business_status !== 'OPERATIONAL'
+  const today = todayHoursLine(m.regular_working_hours)
+
+  return (
+    <div className={styles.detailPage}>
+      <button className={styles.detailBack} onClick={onBack}>← Back to results</button>
+
+      <div className={styles.detailHeader}>
+        <h2 className={styles.detailName}>{m.display_name}</h2>
+        <div className={styles.resultTags}>
+          <span className={styles.typeTag}>{m.label || m.primary_type_name}</span>
+          {m.badge_approved && <span className={styles.verifiedTag}>✓ Verified</span>}
+          {closedForGood && (
+            <span className={styles.closedTag}>{m.business_status.replaceAll('_', ' ').toLowerCase()}</span>
+          )}
+        </div>
+      </div>
+
+      <div className={styles.detailMetaRow}>
+        {m.rating != null ? (
+          <span className={styles.ratingPill}>★ {m.rating}</span>
+        ) : (
+          <span className={styles.ratingPillMuted}>No ratings yet</span>
+        )}
+        <span className={styles.hoursPill}>{m.distance_km} km away</span>
         {today && <span className={styles.hoursPill}>Today · {today}</span>}
       </div>
 
-      {Array.isArray(m.regular_working_hours) && (
-        <button className={styles.hoursToggle} onClick={() => setExpanded(e => !e)}>
-          {expanded ? 'Hide full hours ▲' : 'See full hours ▾'}
-        </button>
-      )}
-      {expanded && Array.isArray(m.regular_working_hours) && (
-        <ul className={styles.hoursList}>
-          {m.regular_working_hours.map(line => <li key={line}>{line}</li>)}
-        </ul>
-      )}
-
-      <div className={styles.resultActions}>
-        {phone && (
-          <a className={styles.actionBtn} href={`tel:${phone}`}>📞 Call</a>
-        )}
+      <div className={styles.detailActions}>
+        {phone && <a className={styles.actionBtn} href={`tel:${phone}`}>📞 Call</a>}
         <a className={styles.actionBtnPrimary} href={m.maps_url} target="_blank" rel="noopener noreferrer">
           Open in Maps →
         </a>
       </div>
+
+      <div className={styles.detailSection}>
+        <p className={styles.detailSectionTitle}>Address</p>
+        <p className={styles.detailValue}>{m.long_formatted_address || m.short_formatted_address}</p>
+      </div>
+
+      {phone && (
+        <div className={styles.detailSection}>
+          <p className={styles.detailSectionTitle}>Phone</p>
+          <p className={styles.detailValue}>{phone}</p>
+        </div>
+      )}
+
+      <div className={styles.detailSection}>
+        <p className={styles.detailSectionTitle}>Coordinates</p>
+        <p className={styles.detailValue}>{m.latitude}, {m.longitude}</p>
+      </div>
+
+      {Array.isArray(m.regular_working_hours) && (
+        <div className={styles.detailSection}>
+          <p className={styles.detailSectionTitle}>Opening hours</p>
+          <ul className={styles.hoursList}>
+            {m.regular_working_hours.map(line => <li key={line}>{line}</li>)}
+          </ul>
+        </div>
+      )}
+
+      {Array.isArray(m.types) && m.types.length > 0 && (
+        <div className={styles.detailSection}>
+          <p className={styles.detailSectionTitle}>Categories</p>
+          <div className={styles.resultTags}>
+            {m.types.map(t => (
+              <span key={t} className={styles.typeTag}>{t.replaceAll('_', ' ')}</span>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
 
 // ── Results screen ──
 function ResultsView({ results, meta, onClose }) {
+  const [selected, setSelected] = useState(null)
   const free = Number(meta?.charge) === 0
+
+  if (selected) {
+    return <MechanicDetail m={selected} onBack={() => setSelected(null)} />
+  }
 
   return (
     <div className={styles.resultsPage}>
@@ -174,7 +247,7 @@ function ResultsView({ results, meta, onClose }) {
       </div>
 
       <div className={styles.resultsList}>
-        {results.map(m => <MechanicCard key={m.maps_url} m={m} />)}
+        {results.map(m => <MechanicListItem key={m.maps_url} m={m} onView={setSelected} />)}
       </div>
 
       <button className={styles.newSearchBtn} onClick={onClose}>
