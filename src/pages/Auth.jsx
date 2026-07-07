@@ -226,6 +226,7 @@ export default function Auth() {
             <button
               role="tab" aria-selected={tab === 'signup'}
               className={`${styles.tab} ${tab === 'signup' ? styles.tabActive : ''}`}
+
               onClick={() => switchTab('signup')} type="button"
             >Create account</button>
           </div>
@@ -263,6 +264,8 @@ export default function Auth() {
               title="Twitter sign-in coming soon"
             >
               <IconTwitter /> <span>Twitter</span>
+
+
             </div>
           </div>
 

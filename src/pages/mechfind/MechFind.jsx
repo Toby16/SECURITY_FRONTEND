@@ -29,6 +29,20 @@ function formattedAddress(m) {
   return m.long_formatted_address || m.short_formatted_address
 }
 
+function formatDistance(m) {
+  const km = m.distance_km
+  const meters = m.distance_meters
+  if (meters != null && meters < 1000) return `${meters} m`
+  if (km != null) return `${km} km${meters != null ? ` · ${meters.toLocaleString()} m` : ''}`
+  return null
+}
+
+function statusTone(status) {
+  if (status === 'OPERATIONAL') return 'good'
+  if (!status) return null
+  return 'bad'
+}
+
 const fmt = (n, cur) =>
   new Intl.NumberFormat('en-NG', { style: 'currency', currency: cur, maximumFractionDigits: 2 }).format(n ?? 0)
 
@@ -199,73 +213,222 @@ function MechanicListItem({ m, onView }) {
   )
 }
 
+// ── Copy-to-clipboard icon button with inline feedback ──
+function CopyButton({ value, fieldKey, copiedKey, onCopy }) {
+  const copied = copiedKey === fieldKey
+  if (!value) return null
+  return (
+    <button
+      type="button"
+      className={styles.copyBtn}
+      onClick={() => onCopy(fieldKey, value)}
+      aria-label={copied ? 'Copied' : 'Copy'}
+    >
+      {copied ? (
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20 6 9 17l-5-5" />
+        </svg>
+      ) : (
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="9" y="9" width="12" height="12" rx="2" />
+          <path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" />
+        </svg>
+      )}
+      <span>{copied ? 'Copied' : 'Copy'}</span>
+    </button>
+  )
+}
+
+// ── Row inside an info card: label, value, optional copy ──
+function InfoRow({ label, value, fieldKey, copiedKey, onCopy, mono }) {
+  if (value == null || value === '') return null
+  return (
+    <div className={styles.infoRow}>
+      <div className={styles.infoRowText}>
+        <p className={styles.infoRowLabel}>{label}</p>
+        <p className={mono ? styles.infoRowValueMono : styles.infoRowValue}>{value}</p>
+      </div>
+      {fieldKey && <CopyButton value={value} fieldKey={fieldKey} copiedKey={copiedKey} onCopy={onCopy} />}
+    </div>
+  )
+}
+
 // ── Full detail page for a single mechanic ──
 function MechanicDetail({ m, onBack }) {
   const phone = formatPhone(m)
-  const closedForGood = m.business_status && m.business_status !== 'OPERATIONAL'
+  const status = m.business_status
+  const tone = statusTone(status)
   const today = todayHoursLine(m.regular_working_hours)
+  const [copiedKey, setCopiedKey] = useState(null)
+
+  const handleCopy = useCallback((key, value) => {
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(String(value)).catch(() => {})
+    }
+    setCopiedKey(key)
+    window.setTimeout(() => setCopiedKey(k => (k === key ? null : k)), 1600)
+  }, [])
+
+  const address = formattedAddress(m)
+  const distanceLabel = formatDistance(m)
 
   return (
     <div className={styles.detailPage}>
       <button className={styles.detailBack} onClick={onBack}>← Back to results</button>
 
-      <div className={styles.detailHeader}>
-        <h2 className={styles.detailName}>{m.display_name}</h2>
-        <div className={styles.resultTags}>
-          <span className={styles.typeTag}>{m.label || m.primary_type_name}</span>
-          {m.badge_approved && <span className={styles.verifiedTag}>✓ Verified</span>}
-          {closedForGood && (
-            <span className={styles.closedTag}>{m.business_status.replaceAll('_', ' ').toLowerCase()}</span>
+      {/* ── Hero ── */}
+      <div className={styles.detailHero}>
+        <div className={styles.detailHeroTop}>
+          <div className={styles.detailHeroIcon}><CarIcon size={30} /></div>
+          {tone && (
+            <span className={tone === 'good' ? styles.statusDotGood : styles.statusDotBad}>
+              <span className={styles.statusDotPip} />
+              {status.replaceAll('_', ' ').toLowerCase()}
+            </span>
           )}
         </div>
-      </div>
 
-      <div className={styles.detailMetaRow}>
-        {m.rating != null ? (
-          <span className={styles.ratingPill}>★ {m.rating}</span>
-        ) : (
-          <span className={styles.ratingPillMuted}>No ratings yet</span>
-        )}
-        <span className={styles.hoursPill}>{m.distance_km} km away</span>
-        {today && <span className={styles.hoursPill}>Today · {today}</span>}
-      </div>
+        <h2 className={styles.detailName}>{m.display_name}</h2>
 
-      <div className={styles.detailActions}>
-        {phone && <a className={styles.actionBtn} href={`tel:${phone}`}>📞 Call</a>}
-        <a className={styles.actionBtnPrimary} href={m.maps_url} target="_blank" rel="noopener noreferrer">
-          Open in Maps →
-        </a>
-      </div>
-
-      <div className={styles.detailSection}>
-        <p className={styles.detailSectionTitle}>Address</p>
-        <p className={styles.detailValue}>{m.long_formatted_address || m.short_formatted_address}</p>
-      </div>
-
-      {phone && (
-        <div className={styles.detailSection}>
-          <p className={styles.detailSectionTitle}>Phone</p>
-          <p className={styles.detailValue}>{phone}</p>
+        <div className={styles.resultTags}>
+          <span className={styles.typeTag}>{m.label || m.primary_type_name}</span>
+          {m.badge_approved ? (
+            <span className={styles.verifiedTag}>✓ Ghostroute Verified</span>
+          ) : (
+            <span className={styles.unverifiedTag}>Not yet verified</span>
+          )}
         </div>
-      )}
 
-      {Array.isArray(m.regular_working_hours) && (
+        <div className={styles.detailStatStrip}>
+          <div className={styles.detailStat}>
+            <span className={styles.detailStatVal}>
+              {m.rating != null ? `★ ${m.rating}` : '—'}
+            </span>
+            <span className={styles.detailStatLabel}>Rating</span>
+          </div>
+          <div className={styles.detailStatSep} />
+          <div className={styles.detailStat}>
+            <span className={styles.detailStatVal}>{distanceLabel || '—'}</span>
+            <span className={styles.detailStatLabel}>Distance</span>
+          </div>
+          <div className={styles.detailStatSep} />
+          <div className={styles.detailStat}>
+            <span className={styles.detailStatVal}>{today || 'Hours vary'}</span>
+            <span className={styles.detailStatLabel}>Today</span>
+          </div>
+        </div>
+
+        <div className={styles.detailActions}>
+          {phone && <a className={styles.actionBtn} href={`tel:${phone}`}>📞 Call {phone}</a>}
+          <a className={styles.actionBtnPrimary} href={m.maps_url} target="_blank" rel="noopener noreferrer">
+            Open in Maps →
+          </a>
+        </div>
+      </div>
+
+      {/* ── Contact & address ── */}
+      <div className={styles.detailSection}>
+        <p className={styles.detailSectionTitle}>Contact &amp; location</p>
+
+        <InfoRow
+          label="Address"
+          value={address}
+          fieldKey="address"
+          copiedKey={copiedKey}
+          onCopy={handleCopy}
+        />
+        {m.short_formatted_address && m.short_formatted_address !== address && (
+          <InfoRow
+            label="Short address"
+            value={m.short_formatted_address}
+            fieldKey="shortAddress"
+            copiedKey={copiedKey}
+            onCopy={handleCopy}
+          />
+        )}
+        {phone ? (
+          <InfoRow
+            label="Phone"
+            value={phone}
+            fieldKey="phone"
+            copiedKey={copiedKey}
+            onCopy={handleCopy}
+            mono
+          />
+        ) : (
+          <div className={styles.infoRow}>
+            <div className={styles.infoRowText}>
+              <p className={styles.infoRowLabel}>Phone</p>
+              <p className={styles.infoRowValueMuted}>Not listed — use Maps to reach them</p>
+            </div>
+          </div>
+        )}
+        <InfoRow
+          label="Timezone"
+          value={m.timezone}
+          fieldKey="timezone"
+          copiedKey={copiedKey}
+          onCopy={handleCopy}
+        />
+        <InfoRow
+          label="Maps link"
+          value={m.maps_url}
+          fieldKey="mapsUrl"
+          copiedKey={copiedKey}
+          onCopy={handleCopy}
+          mono
+        />
+      </div>
+
+      {/* ── Classification ── */}
+      <div className={styles.detailSection}>
+        <p className={styles.detailSectionTitle}>Classification</p>
+        <InfoRow label="Primary type" value={m.primary_type_name} />
+        <InfoRow label="Type key" value={m.primary_type} mono />
+        <InfoRow label="Display label" value={m.label} />
+        <InfoRow
+          label="Business status"
+          value={status ? status.replaceAll('_', ' ').toLowerCase() : null}
+        />
+        <InfoRow label="Ghostroute verified" value={m.badge_approved ? 'Yes' : 'No'} />
+
+        {Array.isArray(m.types) && m.types.length > 0 && (
+          <div className={styles.infoRow}>
+            <div className={styles.infoRowText}>
+              <p className={styles.infoRowLabel}>Categories</p>
+              <div className={styles.resultTags} style={{ marginTop: 6 }}>
+                {m.types.map(t => (
+                  <span key={t} className={styles.typeTag}>{t.replaceAll('_', ' ')}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ── Distance ── */}
+      <div className={styles.detailSection}>
+        <p className={styles.detailSectionTitle}>Distance from you</p>
+        <InfoRow label="Kilometers" value={m.distance_km != null ? `${m.distance_km} km` : null} />
+        <InfoRow label="Meters" value={m.distance_meters != null ? `${m.distance_meters.toLocaleString()} m` : null} />
+      </div>
+
+      {/* ── Opening hours ── */}
+      {Array.isArray(m.regular_working_hours) && m.regular_working_hours.length > 0 && (
         <div className={styles.detailSection}>
           <p className={styles.detailSectionTitle}>Opening hours</p>
-          <ul className={styles.hoursList}>
-            {m.regular_working_hours.map(line => <li key={line}>{line}</li>)}
+          <ul className={styles.hoursListFull}>
+            {m.regular_working_hours.map(line => {
+              const [day, ...rest] = line.split(': ')
+              const isToday = DAY_NAMES[new Date().getDay()] === day
+              return (
+                <li key={line} className={isToday ? styles.hoursRowToday : styles.hoursRow}>
+                  <span>{day}</span>
+                  <span>{rest.join(': ')}</span>
+                </li>
+              )
+            })}
           </ul>
-        </div>
-      )}
-
-      {Array.isArray(m.types) && m.types.length > 0 && (
-        <div className={styles.detailSection}>
-          <p className={styles.detailSectionTitle}>Categories</p>
-          <div className={styles.resultTags}>
-            {m.types.map(t => (
-              <span key={t} className={styles.typeTag}>{t.replaceAll('_', ' ')}</span>
-            ))}
-          </div>
         </div>
       )}
     </div>

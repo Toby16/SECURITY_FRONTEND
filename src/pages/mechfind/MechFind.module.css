@@ -287,6 +287,11 @@
   background: rgba(35,134,54,0.1); border: 1px solid rgba(35,134,54,0.25);
   border-radius: 20px; padding: 2px 8px;
 }
+.unverifiedTag {
+  font-size: 10px; font-weight: 600; color: #7d8590;
+  background: rgba(125,133,144,0.06); border: 1px dashed rgba(125,133,144,0.28);
+  border-radius: 20px; padding: 2px 8px;
+}
 .closedTag {
   font-size: 10px; font-weight: 700; color: #ff7b72; text-transform: capitalize;
   background: rgba(218,54,51,0.1); border: 1px solid rgba(218,54,51,0.28);
@@ -340,6 +345,7 @@
   background: rgba(33,38,45,0.6); border: 1px solid #30363d; border-radius: 8px;
   padding: 9px; font-size: 12px; font-weight: 700; color: #e6edf3;
   transition: border-color 150ms, background 150ms;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .actionBtn:hover { border-color: #484f58; background: rgba(33,38,45,0.9); }
 .actionBtnPrimary {
@@ -375,22 +381,106 @@
 }
 .detailBack:hover { border-color: #c2410c; color: #fb923c; background: rgba(194,65,12,0.06); }
 
-.detailHeader { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
-.detailName { font-size: 20px; font-weight: 800; color: #e6edf3; letter-spacing: -0.01em; line-height: 1.3; }
+/* Hero card at the top of the detail page — identity + quick stats + CTAs */
+.detailHero {
+  background: radial-gradient(circle at 14% 0%, rgba(194,65,12,0.16), transparent 55%), rgba(13,17,23,0.85);
+  border: 1px solid #21262d; border-radius: 18px;
+  padding: 22px 22px 20px;
+  display: flex; flex-direction: column; gap: 12px;
+  backdrop-filter: blur(10px);
+}
+.detailHeroTop { display: flex; align-items: center; justify-content: space-between; }
+.detailHeroIcon {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(194,65,12,0.14); border: 1px solid rgba(194,65,12,0.32);
+  color: #fb923c;
+}
+
+.statusDotGood, .statusDotBad {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10.5px; font-weight: 700; text-transform: capitalize;
+  border-radius: 20px; padding: 4px 10px 4px 8px;
+}
+.statusDotGood { color: #3fb950; background: rgba(35,134,54,0.1); border: 1px solid rgba(35,134,54,0.28); }
+.statusDotBad { color: #ff7b72; background: rgba(218,54,51,0.1); border: 1px solid rgba(218,54,51,0.28); }
+.statusDotPip { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+.detailName {
+  font-size: 21px; font-weight: 800; color: #e6edf3; letter-spacing: -0.01em; line-height: 1.28;
+}
+
+.detailStatStrip {
+  display: flex; align-items: stretch;
+  margin-top: 2px;
+  background: rgba(1,4,9,0.5); border: 1px solid #21262d; border-radius: 12px;
+  overflow: hidden;
+}
+.detailStat {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px; padding: 10px 8px; text-align: center;
+}
+.detailStatVal { font-size: 13px; font-weight: 800; color: #fb923c; white-space: nowrap; }
+.detailStatLabel { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #484f58; }
+.detailStatSep { width: 1px; background: rgba(255,255,255,0.06); }
 
 .detailMetaRow { display: flex; flex-wrap: wrap; gap: 8px; }
 
-.detailActions { display: flex; gap: 8px; margin-top: 4px; }
+.detailActions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.detailActions .actionBtn, .detailActions .actionBtnPrimary { flex: 1 1 160px; }
 
 .detailSection {
-  background: rgba(13,17,23,0.7); border: 1px solid #21262d; border-radius: 12px;
-  padding: 14px 16px; backdrop-filter: blur(8px);
+  background: rgba(13,17,23,0.7); border: 1px solid #21262d; border-radius: 14px;
+  padding: 16px 18px; backdrop-filter: blur(8px);
+  display: flex; flex-direction: column; gap: 2px;
 }
 .detailSectionTitle {
   font-size: 10.5px; font-weight: 700; color: #484f58;
-  letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px;
+  letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;
 }
 .detailValue { font-size: 13px; color: #c9d1d9; line-height: 1.55; }
+
+/* Label/value rows used throughout the detail sections */
+.infoRow {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.05);
+}
+.infoRow:first-child { border-top: none; padding-top: 0; }
+.infoRowText { min-width: 0; flex: 1; }
+.infoRowLabel {
+  font-size: 10px; font-weight: 700; color: #484f58;
+  letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 3px;
+}
+.infoRowValue { font-size: 13px; color: #e6edf3; line-height: 1.5; word-break: break-word; }
+.infoRowValueMono {
+  font-size: 12.5px; color: #e6edf3; line-height: 1.5; word-break: break-all;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.infoRowValueMuted { font-size: 12.5px; color: #484f58; font-style: italic; }
+
+.copyBtn {
+  flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(255,255,255,0.03); border: 1px solid #30363d; border-radius: 7px;
+  padding: 5px 9px; font-size: 10.5px; font-weight: 700; color: #7d8590;
+  font-family: inherit; cursor: pointer; margin-top: 1px;
+  transition: border-color 150ms, color 150ms, background 150ms;
+}
+.copyBtn:hover { border-color: #c2410c; color: #fb923c; background: rgba(194,65,12,0.06); }
+
+.hoursListFull {
+  margin-top: 2px; list-style: none;
+  display: flex; flex-direction: column; gap: 1px;
+  border-radius: 10px; overflow: hidden;
+}
+.hoursRow, .hoursRowToday {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px; padding: 8px 10px;
+}
+.hoursRow { color: #7d8590; background: rgba(255,255,255,0.015); }
+.hoursRowToday {
+  color: #fb923c; font-weight: 700;
+  background: rgba(194,65,12,0.08); border: 1px solid rgba(194,65,12,0.22); border-radius: 8px;
+}
 
 /* ── Mobile ── */
 @media (max-width: 640px) {
@@ -402,4 +492,6 @@
   .priceBtn { bottom: 26px; }
   .resultsPage { padding: 18px 14px 48px; }
   .resultTop { flex-direction: row; }
+  .detailHero { padding: 18px 16px 16px; }
+  .detailStat { padding: 8px 4px; }
 }

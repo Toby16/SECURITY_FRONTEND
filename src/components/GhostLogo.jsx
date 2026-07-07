@@ -96,7 +96,7 @@ export default function GhostLogo({ size = 48, showText = true, showSub = true }
           <span className={styles.name}>
             <span className={styles.accent}>Ghost</span>route
           </span>
-          {showSub && <span className={styles.sub}>Security Mega App</span>}
+          {showSub && <span className={styles.sub}>Mega App</span>}
         </div>
       )}
     </div>
