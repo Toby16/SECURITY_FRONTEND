@@ -18,9 +18,9 @@ export function getCurrentPosition(options) {
 }
 
 function toFriendlyError(err) {
-  let message = 'We couldn\u2019t get your location. Please try again.'
+  let message = 'We couldn\u2019t get your location. Enable your location settings, and try again.'
   if (err.code === err.PERMISSION_DENIED) {
-    message = 'Location access was denied. Enable it for this site in your browser settings, then try again.'
+    message = 'Location access was denied. Enable your location/gps settings, then try again.'
   } else if (err.code === err.POSITION_UNAVAILABLE) {
     message = 'Your location is unavailable right now. Try again in a moment.'
   } else if (err.code === err.TIMEOUT) {

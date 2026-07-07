@@ -193,11 +193,6 @@ function MechanicDetail({ m, onBack }) {
         </div>
       )}
 
-      <div className={styles.detailSection}>
-        <p className={styles.detailSectionTitle}>Coordinates</p>
-        <p className={styles.detailValue}>{m.latitude}, {m.longitude}</p>
-      </div>
-
       {Array.isArray(m.regular_working_hours) && (
         <div className={styles.detailSection}>
           <p className={styles.detailSectionTitle}>Opening hours</p>
