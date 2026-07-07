@@ -9,7 +9,7 @@ async function parseJsonSafe(res) {
  * Returns { search_id, search_dollar_charge, search_naira_charge, ... }
  */
 export async function initializeMechanicSearch(token, latitude, longitude) {
-  const res = await fetch(`${BASE_URL}/search/mechanics/initialize/`, {
+  const res = await fetch(`${BASE_URL}/search/initialize/`, {
     method: 'POST',
     headers: {
       accept: 'application/json',
@@ -30,7 +30,7 @@ export async function initializeMechanicSearch(token, latitude, longitude) {
  * Returns { status_code, message, length, data: [...] }
  */
 export async function startMechanicSearch(token, searchToken, latitude, longitude) {
-  const res = await fetch(`${BASE_URL}/search/mechanics/start/`, {
+  const res = await fetch(`${BASE_URL}/search/start/`, {
     method: 'POST',
     headers: {
       accept: 'application/json',
