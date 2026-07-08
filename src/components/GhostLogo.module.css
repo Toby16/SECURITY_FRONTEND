@@ -80,7 +80,7 @@
 }
 
 .name {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   color: #e6edf3;
   letter-spacing: 0.02em;
@@ -91,7 +91,7 @@
 .accent { color: #a78bfa; }
 
 .sub {
-  font-size: 9px;
+  font-size: 8px;
   color: #484f58;
   letter-spacing: 0.2em;
   text-transform: uppercase;
