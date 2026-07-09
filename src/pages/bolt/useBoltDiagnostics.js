@@ -21,6 +21,12 @@ const UPLOAD_ROUND_GAP_MS = 3000;
 const MAX_LOG_ROWS = 150;
 const TIMING_REFRESH_MS = 4000; // lightweight periodic refresh during the scan
 
+// How long we ping *before* starting download/upload traffic. Grading uses
+// this window so congestion from the throughput tests doesn't pollute the
+// latency/jitter numbers the grade is based on.
+const BASELINE_PING_MS = 3000;
+const BASELINE_MIN_SAMPLES = 3; // need at least this many OK baseline pings to trust it
+
 function randomBetween(min, max) {
   return min + Math.random() * (max - min);
 }
@@ -83,19 +89,40 @@ function computeResourceTimingSummary() {
   };
 }
 
-function computeGrade({ avgPing, jitter, lossPct }) {
-  let score = 100;
-  if (avgPing != null) {
-    if (avgPing > 150) score -= 30;
-    else if (avgPing > 80) score -= 15;
-    else if (avgPing > 40) score -= 5;
+// `sampleCount` = how many pings were attempted in the graded window.
+// `avgPing === null` means every single attempt in that window failed —
+// that's a dead connection and must never grade above F, regardless of
+// what the (nonexistent) latency/jitter numbers say.
+function computeGrade({ avgPing, jitter, lossPct, sampleCount }) {
+  if (!sampleCount || avgPing == null) {
+    return {
+      score: 0,
+      grade: 'F',
+      label: 'No Signal',
+      description: 'No successful ping responses were recorded — the connection appears to be down or unreachable.',
+    };
   }
+
+  let score = 100;
+
+  if (avgPing > 150) score -= 30;
+  else if (avgPing > 80) score -= 15;
+  else if (avgPing > 40) score -= 5;
+
   if (jitter != null) {
     if (jitter > 40) score -= 25;
     else if (jitter > 20) score -= 12;
     else if (jitter > 8) score -= 4;
   }
-  if (lossPct != null) score -= Math.min(40, lossPct * 4);
+
+  if (lossPct != null) {
+    score -= Math.min(70, lossPct * 0.7);
+    // Heavy loss is disqualifying on its own — don't let a couple of fast
+    // successful pings drag a mostly-dead connection up into a good grade.
+    if (lossPct >= 50) score = Math.min(score, 30);
+    else if (lossPct >= 20) score = Math.min(score, 60);
+  }
+
   score = Math.max(0, Math.min(100, Math.round(score)));
 
   if (score >= 85) return { score, grade: 'A+', label: 'Excellent', description: 'Rock-solid connection — low latency, minimal jitter, no loss. Great for gaming, calls, and streaming.' };
@@ -254,11 +281,13 @@ export function useBoltDiagnostics() {
   const pingSamplesRef     = useRef([]);
   const chunksRef          = useRef([]);
   const chunkBytesRef      = useRef(0);
+  const baselineCountRef   = useRef(0); // # of ping samples collected before load traffic started
 
   const controllerRef        = useRef(null);
   const tickTimerRef         = useRef(null);
   const finishTimerRef       = useRef(null);
   const timingTimerRef       = useRef(null);
+  const loadStartTimerRef    = useRef(null);
   const visibilityCleanupRef = useRef(null);
 
   const updatePingStats = useCallback(() => {
@@ -349,35 +378,70 @@ export function useBoltDiagnostics() {
     controller.abort();
     if (tickTimerRef.current) clearInterval(tickTimerRef.current);
     if (timingTimerRef.current) clearInterval(timingTimerRef.current);
+    if (loadStartTimerRef.current) clearTimeout(loadStartTimerRef.current);
     setElapsedMs(total);
 
     setResourceTiming(computeResourceTimingSummary());
 
-    const okSamples = pingSamplesRef.current.filter((s) => s.ok && s.rtt != null);
-    const rtts = okSamples.map((s) => s.rtt);
-    const jitter = computeJitter(rtts);
-    const lossPct = pingSamplesRef.current.length
-      ? ((pingSamplesRef.current.length - rtts.length) / pingSamplesRef.current.length) * 100
+    const allSamples = pingSamplesRef.current;
+    const okAll = allSamples.filter((s) => s.ok && s.rtt != null);
+    const rttsAll = okAll.map((s) => s.rtt);
+    const jitterAll = computeJitter(rttsAll);
+    const lossPctAll = allSamples.length
+      ? ((allSamples.length - rttsAll.length) / allSamples.length) * 100
       : 0;
-    const avgPing = rtts.length ? average(rtts) : null;
-    const gradeResult = computeGrade({ avgPing, jitter, lossPct });
+    const avgPingAll = rttsAll.length ? average(rttsAll) : null;
+
+    // Grade off the pre-load baseline window when we have enough clean
+    // samples — download/upload traffic causes real congestion that
+    // shouldn't count against a "how good is my line" grade. Fall back to
+    // the full-scan numbers if the baseline window came up short (e.g. the
+    // scan was interrupted almost immediately).
+    const baselineSamples = allSamples.slice(0, baselineCountRef.current);
+    const okBaseline = baselineSamples.filter((s) => s.ok && s.rtt != null);
+    const rttsBaseline = okBaseline.map((s) => s.rtt);
+
+    let gradeBasis, gradeAvgPing, gradeJitter, gradeLossPct, gradeSampleCount;
+    if (okBaseline.length >= BASELINE_MIN_SAMPLES) {
+      gradeBasis = 'baseline';
+      gradeAvgPing = average(rttsBaseline);
+      gradeJitter = computeJitter(rttsBaseline);
+      gradeLossPct = baselineSamples.length
+        ? ((baselineSamples.length - rttsBaseline.length) / baselineSamples.length) * 100
+        : 0;
+      gradeSampleCount = baselineSamples.length;
+    } else {
+      gradeBasis = 'full';
+      gradeAvgPing = avgPingAll;
+      gradeJitter = jitterAll;
+      gradeLossPct = lossPctAll;
+      gradeSampleCount = allSamples.length;
+    }
+
+    const gradeResult = computeGrade({
+      avgPing: gradeAvgPing,
+      jitter: gradeJitter,
+      lossPct: gradeLossPct,
+      sampleCount: gradeSampleCount,
+    });
 
     setSummary({
       grade: gradeResult.grade,               // e.g. 'A+' — a plain string
       gradeScore: gradeResult.score,
       gradeLabel: gradeResult.label,
       gradeDescription: gradeResult.description,
-      avgPing,
-      minPing: rtts.length ? Math.min(...rtts) : null,
-      maxPing: rtts.length ? Math.max(...rtts) : null,
-      jitter,
-      lossPct,
+      gradeBasis,                              // 'baseline' | 'full' — drives the note under the grade
+      avgPing: avgPingAll,
+      minPing: rttsAll.length ? Math.min(...rttsAll) : null,
+      maxPing: rttsAll.length ? Math.max(...rttsAll) : null,
+      jitter: jitterAll,
+      lossPct: lossPctAll,
       downloadAvg: average(downloadSamplesRef.current),
       downloadPeak: downloadSamplesRef.current.length ? Math.max(...downloadSamplesRef.current) : 0,
       uploadAvg: uploadSamplesRef.current.length ? average(uploadSamplesRef.current) : 0,
       uploadPeak: uploadSamplesRef.current.length ? Math.max(...uploadSamplesRef.current) : 0,
       uploadSamples: uploadSamplesRef.current.length,
-      pingSamples: pingSamplesRef.current.length,
+      pingSamples: allSamples.length,
       totalMs: total,
     });
 
@@ -409,6 +473,7 @@ export function useBoltDiagnostics() {
     pingSamplesRef.current = [];
     chunksRef.current = [];
     chunkBytesRef.current = 0;
+    baselineCountRef.current = 0;
 
     try { performance.clearResourceTimings(); } catch { /* unsupported */ }
 
@@ -416,9 +481,17 @@ export function useBoltDiagnostics() {
     controllerRef.current = controller;
     const startedAt = performance.now();
 
+    // Ping-only baseline window first (activity stays 'priming'), then kick
+    // off the throughput tests once we've captured clean latency samples.
     pingLoop(controller.signal);
-    downloadLoop(controller.signal);
-    uploadLoop(controller.signal);
+
+    const baselineMs = Math.min(BASELINE_PING_MS, total);
+    loadStartTimerRef.current = setTimeout(() => {
+      if (controller.signal.aborted) return;
+      baselineCountRef.current = pingSamplesRef.current.length;
+      downloadLoop(controller.signal);
+      uploadLoop(controller.signal);
+    }, baselineMs);
 
     tickTimerRef.current = setInterval(() => {
       setElapsedMs(Math.min(performance.now() - startedAt, total));
@@ -461,6 +534,7 @@ export function useBoltDiagnostics() {
       if (tickTimerRef.current) clearInterval(tickTimerRef.current);
       if (finishTimerRef.current) clearTimeout(finishTimerRef.current);
       if (timingTimerRef.current) clearInterval(timingTimerRef.current);
+      if (loadStartTimerRef.current) clearTimeout(loadStartTimerRef.current);
       if (visibilityCleanupRef.current) visibilityCleanupRef.current();
     };
   }, []);

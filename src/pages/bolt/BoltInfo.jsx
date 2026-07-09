@@ -1,4 +1,3 @@
-// src/pages/bolt/BoltInfo.jsx
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBoltDiagnostics } from './useBoltDiagnostics';
@@ -146,6 +145,11 @@ export default function BoltInfo() {
               <div>
                 <h2 className={infoStyles.resultLabel}>{summary.gradeLabel}</h2>
                 <p className={infoStyles.resultDesc}>{summary.gradeDescription}</p>
+                <p className={infoStyles.resultBasis}>
+                  {summary.gradeBasis === 'baseline'
+                    ? 'Graded on baseline ping, measured before download/upload traffic began.'
+                    : 'Graded on the full-scan average (not enough pre-load samples were captured).'}
+                </p>
               </div>
             </div>
 
