@@ -127,7 +127,9 @@ function SearchOverlay({ phase, category }) {
   return (
     <div className={styles.overlay}>
       <div className={`${styles.scannerWrap} ${category.accentClass}`}>
-        <BrandMark size={64} />
+        <span className={styles.overlayGlyph}>
+          {category.key === 'stay' ? <StayGlyph size={40} /> : <EatGlyph size={40} />}
+        </span>
         <span className={styles.scanSweep} />
       </div>
       <p className={styles.overlayStatus}>{copy[phase] || 'Working on it…'}</p>
@@ -135,6 +137,7 @@ function SearchOverlay({ phase, category }) {
     </div>
   )
 }
+
 
 function LocationNoticeModal({ onAcknowledge, balance, balanceLoading }) {
   return (
