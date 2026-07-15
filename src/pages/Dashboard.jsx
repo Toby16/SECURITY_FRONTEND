@@ -131,7 +131,7 @@ const EVERYDAY_APPS = [
   {
     name: 'BlackGrid — Airbnb, Hotel & Restaurant Finder',
     desc: 'Discover great hotels, airbnbs, restaurants, and eats wherever you are. 🏨',
-    color: 'gold', live: true,
+    color: 'black', live: true,
     route: '/blackgrid',
     icon: (
       <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
