@@ -557,7 +557,7 @@ export default function Dashboard() {
               <div>
                 <p className={styles.donateBannerTitle}>Building a better Nigeria, one tool at a time.</p>
                 <p className={styles.donateBannerSub}>
-                  Support orphaned children in Lagos &amp; help us bring world-class apps and tools to everyone — for free.
+                  Support orphaned children in Lagos, Nigeria &amp; help us bring world-class apps and tools to everyone — for free.
                 </p>
               </div>
             </div>
