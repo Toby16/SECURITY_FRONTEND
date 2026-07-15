@@ -9,8 +9,8 @@ const PRESETS = [500, 1000, 2500, 5000, 10000, 25000]
 
 const IMPACT_ITEMS = [
   { emoji: '🏠', label: 'Orphanages in Lagos', value: '19+', sub: 'supported across Lagos state' },
-  { emoji: '🛠️', label: 'Tools in development', value: '8+',   sub: 'being built for Nigerians' },
-  { emoji: '🌍', label: 'Goal', value: 'Free access',         sub: 'for every Nigerian, worldwide' },
+  { emoji: '🐉', label: 'Tools in development', value: '8+',   sub: 'being built for every power user' },
+  { emoji: '🌍', label: 'Goal', value: 'Free access',         sub: 'for everybody, worldwide' },
 ]
 
 const STEPS = ['Amount', 'Confirm', 'Pay', 'Done']
@@ -258,7 +258,7 @@ export default function DonateModal({ onClose }) {
               {/* Trust line */}
               <div className={styles.trustLine}>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                Secured by Paystack &nbsp;·&nbsp; Not deducted from your balance
+                Secured by Paystack &nbsp;·&nbsp; Not deducted from your user balance
               </div>
             </div>
           )}
