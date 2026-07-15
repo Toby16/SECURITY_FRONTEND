@@ -12,6 +12,7 @@ import BoltInfo from './pages/bolt/BoltInfo.jsx'
 import MechFind from './pages/mechfind/MechFind.jsx'
 import Petro from './pages/petro/Petro.jsx'
 import MedicNear from './pages/medicnear/MedicNear.jsx'
+import BlackGrid from './pages/blackgrid/BlackGrid.jsx'
 import NotFound    from './pages/NotFound.jsx'
 import PrivateRoute from './components/PrivateRoute.jsx'
 function App() {
@@ -51,6 +52,9 @@ function App() {
 	  } />
 	  <Route path="/medicnear" element={
 	    <PrivateRoute><MedicNear /></PrivateRoute>
+	  } />
+	  <Route path="/blackgrid" element={
+	    <PrivateRoute><BlackGrid /></PrivateRoute>
 	  } />
           {/* 404 */}
           <Route path="*" element={<NotFound />} />

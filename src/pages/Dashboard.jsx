@@ -129,9 +129,10 @@ const EVERYDAY_APPS = [
     ),
   },
   {
-    name: 'Roamio — Hotel & Restaurant Finder',
-    desc: 'Discover great hotels and restaurants wherever you are. 🏨',
-    color: 'gold', live: false,
+    name: 'BlackGrid — Airbnb, Hotel & Restaurant Finder',
+    desc: 'Discover great hotels, airbnbs, restaurants, and eats wherever you are. 🏨',
+    color: 'gold', live: true,
+    route: '/blackgrid',
     icon: (
       <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
         <path d="M2 2.75A.75.75 0 012.75 2h1.5a.75.75 0 01.75.75V6h6V2.75A.75.75 0 0111.75 2h1.5a.75.75 0 01.75.75v10.5a.75.75 0 01-1.5 0V11H3.5v2.25a.75.75 0 01-1.5 0V2.75zM3.5 7.5v2h9v-2h-9z"/>
