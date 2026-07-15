@@ -505,7 +505,6 @@
 
 @media (max-width: 640px) {
   .resultsPage, .detailPage { padding: 20px 16px 48px; }
-  .stayGrid { grid-template-columns: 1fr 1fr; }
-  /* .stayGrid { grid-template-columns: 1fr; } */
+  .stayGrid { grid-template-columns: 1fr; }
   .eatRight { align-items: flex-end; }
 }
