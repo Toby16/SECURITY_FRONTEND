@@ -28,47 +28,53 @@ export async function initializeBlackGridSearch(token, latitude, longitude) {
 }
 
 /**
- * Step 2 — run the reserved search for a specific category
- * ('stay' → Airbnbs & Hotels, 'eat' → Restaurants & Fast Food) and fetch
- * the nearest listings.
- *
- * NOT WIRED UP YET. Only /search/initialize was provided so far — the
- * BlackGrid equivalent of MedicFind's /search/start (the endpoint that
- * actually returns stay/eat listings) hasn't been given. This stub keeps
- * the same two-step shape as medicFindService so BlackGrid.jsx's phase
- * machine is fully wired and ready — once the real endpoint + response
- * shape are provided, replace the body below with the real fetch call
- * (commented scaffold included).
- *
- * It throws with code 'NOT_IMPLEMENTED' on purpose, so the UI can show a
- * calm "your slot is reserved, results aren't live yet" state instead of
- * treating it like a real search failure.
+ * Step 2a — run the reserved search for the 'stay' category and fetch the
+ * nearest Airbnbs & hotels.
+ * Returns { status_code, message, length, data: [...] }
  */
-export async function startBlackGridSearch(token, searchId, category, latitude, longitude) {
-  throw Object.assign(
-    new Error('Results for this category aren\u2019t connected yet — your search slot is reserved.'),
-    { code: 'NOT_IMPLEMENTED' }
-  )
+export async function startBlackGridHotelSearch(token, searchToken, latitude, longitude) {
+  const res = await fetch(`${BASE_URL}/search/hotel/start/`, {
+    method: 'POST',
+    headers: {
+      accept: 'application/json',
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      search_token: searchToken,
+      latitude: String(latitude),
+      longitude: String(longitude),
+    }),
+  })
+  const data = await parseJsonSafe(res)
+  if (!res.ok) {
+    throw new Error(data?.detail || 'This search is no longer valid. Please search again.')
+  }
+  return data
+}
 
-  // Once the endpoint exists, this should look roughly like:
-  //
-  // const res = await fetch(`${BASE_URL}/search/start`, {
-  //   method: 'POST',
-  //   headers: {
-  //     accept: 'application/json',
-  //     Authorization: `Bearer ${token}`,
-  //     'Content-Type': 'application/json',
-  //   },
-  //   body: JSON.stringify({
-  //     search_id: searchId,
-  //     category, // 'stay' | 'eat'
-  //     latitude: String(latitude),
-  //     longitude: String(longitude),
-  //   }),
-  // })
-  // const data = await parseJsonSafe(res)
-  // if (!res.ok) {
-  //   throw new Error(data?.detail || 'This search is no longer valid. Please search again.')
-  // }
-  // return data
+/**
+ * Step 2b — run the reserved search for the 'eat' category and fetch the
+ * nearest restaurants & fast food spots.
+ * Returns { status_code, message, length, data: [...] }
+ */
+export async function startBlackGridRestaurantSearch(token, searchToken, latitude, longitude) {
+  const res = await fetch(`${BASE_URL}/search/restaurant/start/`, {
+    method: 'POST',
+    headers: {
+      accept: 'application/json',
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      search_token: searchToken,
+      latitude: String(latitude),
+      longitude: String(longitude),
+    }),
+  })
+  const data = await parseJsonSafe(res)
+  if (!res.ok) {
+    throw new Error(data?.detail || 'This search is no longer valid. Please search again.')
+  }
+  return data
 }

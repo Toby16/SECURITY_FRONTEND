@@ -321,3 +321,176 @@
   .categoryRow { gap: 12px; }
   .tile { width: 100%; max-width: 260px; }
 }
+
+/* ══════════════════════ Results shell (shared header/banner/footer) ══════════════════════ */
+.resultsPage {
+  flex: 1; display: flex; flex-direction: column; gap: 18px;
+  padding: 28px 24px 64px; max-width: 780px; width: 100%; margin: 0 auto;
+}
+.resultsHeader { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.resultsEyebrow { font-size: 10.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-2); }
+.resultsTitle { font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-weight: 550; color: var(--text); margin-top: 2px; }
+.closeBtn {
+  width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+  background: var(--surface); border: 1px solid var(--hairline); color: var(--muted);
+  cursor: pointer; font-size: 13px; transition: border-color 150ms, color 150ms;
+}
+.closeBtn:hover { border-color: var(--danger); color: var(--danger); }
+
+.freeBanner, .paidBanner {
+  font-size: 12px; font-weight: 600; border-radius: 10px; padding: 11px 15px;
+}
+.freeBanner { background: rgba(95,160,133,0.1); border: 1px solid rgba(95,160,133,0.28); color: var(--good); }
+.paidBanner { background: var(--gold-soft); border: 1px solid rgba(201,162,90,0.3); color: var(--gold); }
+
+.newSearchBtn {
+  margin-top: 4px; align-self: center;
+  background: transparent; border: 1px solid var(--hairline); border-radius: 999px;
+  color: var(--muted); font-size: 12.5px; font-weight: 600; padding: 10px 22px;
+  font-family: inherit; cursor: pointer; transition: border-color 150ms, color 150ms;
+}
+.newSearchBtn:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ══════════════════════ Shared detail-page scaffolding ══════════════════════ */
+.detailPage {
+  flex: 1; display: flex; flex-direction: column; gap: 14px;
+  padding: 28px 24px 64px; max-width: 640px; width: 100%; margin: 0 auto;
+  animation: modalUp 200ms ease both;
+}
+.detailBack {
+  align-self: flex-start;
+  background: transparent; border: 1px solid var(--hairline); border-radius: 8px;
+  padding: 7px 13px; font-size: 12px; font-weight: 600; color: var(--muted);
+  font-family: inherit; cursor: pointer; transition: border-color 150ms, color 150ms;
+}
+.detailBack:hover { border-color: var(--gold); color: var(--gold); }
+.detailName { font-family: 'Fraunces', Georgia, serif; font-size: 23px; font-weight: 550; color: var(--text); line-height: 1.28; margin-top: 4px; }
+.detailActions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.detailSection {
+  background: var(--surface); border: 1px solid var(--hairline); border-radius: 14px;
+  padding: 18px 20px; display: flex; flex-direction: column; gap: 2px;
+}
+.detailSectionTitle { font-size: 10.5px; font-weight: 700; color: var(--muted-2); letter-spacing: 0.09em; text-transform: uppercase; margin-bottom: 8px; }
+.statDot { color: var(--muted-2); margin: 0 2px; }
+
+.infoRow { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid var(--hairline-soft); }
+.infoRow:first-child { border-top: none; padding-top: 0; }
+.infoRowText { min-width: 0; flex: 1; }
+.infoRowLabel { font-size: 10px; font-weight: 700; color: var(--muted-2); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 3px; }
+.infoRowValue { font-size: 13px; color: var(--text); line-height: 1.5; word-break: break-word; }
+.infoRowValueMono { font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--text); line-height: 1.5; word-break: break-all; }
+.copyBtn {
+  flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px;
+  background: var(--surface-2); border: 1px solid var(--hairline); border-radius: 7px;
+  padding: 5px 9px; font-size: 10.5px; font-weight: 700; color: var(--muted);
+  font-family: inherit; cursor: pointer; margin-top: 1px; transition: border-color 150ms, color 150ms;
+}
+.copyBtn:hover { border-color: var(--gold); color: var(--gold); }
+
+.hoursListFull { margin-top: 2px; list-style: none; display: flex; flex-direction: column; gap: 1px; border-radius: 10px; overflow: hidden; }
+.hoursRow, .hoursRowToday { display: flex; align-items: center; justify-content: space-between; font-size: 12px; padding: 8px 10px; }
+.hoursRow { color: var(--muted); }
+.hoursRowToday { color: var(--gold); font-weight: 700; background: var(--gold-soft); border: 1px solid rgba(201,162,90,0.24); border-radius: 8px; }
+
+/* ══════════════════════ STAY — rate-led card grid ══════════════════════
+   Cards, circular rating badge, distance pill, gold accent — reads like a
+   hotel-booking shelf, browsed at a glance. */
+.stayGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+.stayCard {
+  background: var(--surface); border: 1px solid var(--hairline); border-radius: 14px;
+  padding: 16px 16px 14px; cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.stayCard:hover { transform: translateY(-3px); border-color: rgba(201,162,90,0.4); }
+
+.stayCardTop { display: flex; align-items: center; justify-content: space-between; }
+.stayRatingBadge {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--gold-soft); border: 1px solid rgba(201,162,90,0.3);
+  border-radius: 999px; padding: 4px 10px 4px 8px;
+}
+.stayRatingNum { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; color: var(--gold); }
+.stayStars { display: flex; gap: 1px; color: var(--gold); }
+.stayDistancePill { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--muted); background: var(--surface-2); border: 1px solid var(--hairline); border-radius: 999px; padding: 3px 9px; }
+
+.stayName { font-family: 'Fraunces', Georgia, serif; font-size: 15px; font-weight: 550; color: var(--text); line-height: 1.32; }
+.stayAddress { font-size: 11.5px; color: var(--muted); line-height: 1.5; }
+
+.stayTagRow { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.stayTypeTag { font-size: 10px; font-weight: 600; color: var(--muted); background: var(--surface-2); border: 1px solid var(--hairline); border-radius: 20px; padding: 2px 8px; }
+.stayVerifiedTag { font-size: 10px; font-weight: 700; color: var(--good); background: rgba(95,160,133,0.1); border: 1px solid rgba(95,160,133,0.3); border-radius: 20px; padding: 2px 8px; }
+.stayHoursTag { font-size: 10px; font-weight: 600; color: var(--gold); background: var(--gold-soft); border: 1px solid rgba(201,162,90,0.3); border-radius: 20px; padding: 2px 8px; }
+
+.stayCardActions { display: flex; gap: 8px; margin-top: 6px; }
+.stayActionBtn, .stayActionBtnPrimary {
+  flex: 1; text-align: center; text-decoration: none; font-family: inherit;
+  border-radius: 8px; padding: 8px; font-size: 11.5px; font-weight: 700; cursor: pointer;
+  transition: filter 150ms, border-color 150ms;
+}
+.stayActionBtn { background: transparent; border: 1px solid var(--hairline); color: var(--text); }
+.stayActionBtn:hover { border-color: var(--gold); color: var(--gold); }
+.stayActionBtnPrimary { flex: 1.3; background: var(--gold); border: none; color: #1B140A; }
+.stayActionBtnPrimary:hover { filter: brightness(0.94); }
+
+.stayHero {
+  background: var(--surface); border: 1px solid var(--hairline); border-radius: 16px;
+  padding: 22px 22px 20px; display: flex; flex-direction: column; gap: 4px;
+}
+.stayHeroTop { display: flex; align-items: center; justify-content: space-between; }
+.stayHeroBadge { font-size: 10.5px; font-weight: 700; color: var(--gold); background: var(--gold-soft); border: 1px solid rgba(201,162,90,0.3); border-radius: 999px; padding: 4px 11px; }
+.stayHeroRating { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+/* ══════════════════════ EAT — compact ticket rows ══════════════════════
+   Dashed hairline dividers, left status column, right distance/call — reads
+   like a running order list, scanned quickly rather than browsed slowly. */
+.eatList { display: flex; flex-direction: column; }
+.eatRow {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 6px; border-top: 1px dashed var(--hairline);
+  cursor: pointer; transition: background 150ms;
+}
+.eatRow:first-child { border-top: none; }
+.eatRow:hover { background: var(--surface); border-radius: 10px; }
+
+.eatStatusCol { flex-shrink: 0; width: 52px; display: flex; justify-content: center; }
+.eatStatusDotOpen, .eatStatusDotClosed {
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+  border-radius: 999px; padding: 3px 8px;
+}
+.eatStatusDotOpen { color: var(--good); background: rgba(95,160,133,0.12); border: 1px solid rgba(95,160,133,0.3); }
+.eatStatusDotClosed { color: var(--danger); background: rgba(192,87,75,0.1); border: 1px solid rgba(192,87,75,0.28); }
+.eatStatusDotMuted { width: 6px; height: 6px; border-radius: 50%; background: var(--muted-2); }
+
+.eatMain { flex: 1; min-width: 0; }
+.eatName { font-family: 'Fraunces', Georgia, serif; font-size: 15px; font-weight: 550; color: var(--text); line-height: 1.3; }
+.eatAddress { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+.eatTagRow { display: flex; align-items: center; gap: 7px; margin-top: 6px; }
+.eatCuisineTag { font-size: 10px; font-weight: 600; color: var(--wine); background: var(--wine-soft); border: 1px solid rgba(178,84,68,0.3); border-radius: 20px; padding: 2px 8px; }
+.eatRating { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--muted); }
+.eatVerifiedDot { width: 6px; height: 6px; border-radius: 50%; background: var(--good); }
+
+.eatRight { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.eatDistance { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); }
+.eatCallBtn, .eatCallBtnPrimary {
+  text-decoration: none; font-family: inherit; font-size: 11px; font-weight: 700;
+  border-radius: 7px; padding: 6px 11px; cursor: pointer; transition: filter 150ms, border-color 150ms;
+}
+.eatCallBtn { background: transparent; border: 1px solid var(--hairline); color: var(--text); }
+.eatCallBtn:hover { border-color: var(--wine); color: var(--wine); }
+.eatCallBtnPrimary { background: var(--wine); border: none; color: #1E0D09; }
+.eatCallBtnPrimary:hover { filter: brightness(0.94); }
+.eatCallBtnMuted { font-size: 10.5px; color: var(--muted-2); }
+
+.eatHero {
+  background: var(--surface); border: 1px solid var(--hairline); border-radius: 16px;
+  padding: 22px 22px 20px; display: flex; flex-direction: column; gap: 4px;
+}
+.eatHeroTop { display: flex; align-items: center; justify-content: space-between; }
+.eatHeroToday { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--muted); margin-top: 8px; }
+
+@media (max-width: 640px) {
+  .resultsPage, .detailPage { padding: 20px 16px 48px; }
+  .stayGrid { grid-template-columns: 1fr 1fr; }
+  .eatRight { align-items: flex-end; }
+}
