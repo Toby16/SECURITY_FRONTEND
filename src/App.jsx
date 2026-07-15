@@ -13,6 +13,7 @@ import MechFind from './pages/mechfind/MechFind.jsx'
 import Petro from './pages/petro/Petro.jsx'
 import MedicNear from './pages/medicnear/MedicNear.jsx'
 import BlackGrid from './pages/blackgrid/BlackGrid.jsx'
+import CART from './pages/cart/CART.jsx'
 import NotFound    from './pages/NotFound.jsx'
 import PrivateRoute from './components/PrivateRoute.jsx'
 function App() {
@@ -55,6 +56,9 @@ function App() {
 	  } />
 	  <Route path="/blackgrid" element={
 	    <PrivateRoute><BlackGrid /></PrivateRoute>
+	  } />
+	  <Route path="/cart" element={
+	    <PrivateRoute><CART /></PrivateRoute>
 	  } />
           {/* 404 */}
           <Route path="*" element={<NotFound />} />

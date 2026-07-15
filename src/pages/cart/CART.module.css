@@ -1,0 +1,408 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+
+/* ── Tokens — deep market-floor green, not BlackGrid's ink/gold ──────────── */
+.page {
+  --ink: #06110B;
+  --surface: #0F1D15;
+  --surface-2: #16281D;
+  --hairline: rgba(140,255,180,0.10);
+  --hairline-soft: rgba(140,255,180,0.05);
+  --text: #EAF3EC;
+  --muted: #8FA898;
+  --muted-2: #566B5D;
+  --leaf: #6FCF7B;
+  --leaf-soft: rgba(111,207,123,0.14);
+  --crate: #C08552;
+  --crate-soft: rgba(192,133,82,0.14);
+  --good: #6FCF7B;
+  --danger: #D2604F;
+
+  min-height: 100vh;
+  min-height: 100dvh;
+  overscroll-behavior-y: none;
+  background: var(--ink);
+  display: flex; flex-direction: column;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  position: relative;
+  color: var(--text);
+}
+:global(html), :global(body) { background: #06110B; height: 100%; }
+
+/* ── Top bar ── */
+.nav {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--hairline);
+  background: rgba(6,17,11,0.88);
+  backdrop-filter: blur(14px);
+  position: relative; z-index: 5;
+}
+.backBtn {
+  background: transparent; border: 1px solid var(--hairline); border-radius: 8px;
+  padding: 7px 13px; font-size: 12.5px; font-weight: 600; color: var(--muted);
+  font-family: inherit; cursor: pointer; letter-spacing: 0.01em;
+  transition: border-color 160ms, color 160ms, background 160ms;
+}
+.backBtn:hover { border-color: var(--leaf); color: var(--leaf); background: var(--leaf-soft); }
+.navBrand { display: flex; align-items: center; line-height: 1; }
+.navSpacer { flex: 1; }
+
+/* ── Hero ── */
+.hero {
+  flex: 1; position: relative;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; padding: 56px 24px 72px;
+  overflow: hidden;
+  perspective: 900px;
+}
+
+/* Aisle-vanishing-point floor lines — CART's namesake texture, replacing
+   BlackGrid's flat architectural grid with a 3D "looking down an aisle" feel */
+.heroGrid {
+  position: absolute; left: 50%; bottom: -10%; width: 260%; height: 70%;
+  margin-left: -130%;
+  pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(var(--hairline-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--hairline-soft) 1px, transparent 1px);
+  background-size: 64px 64px;
+  transform: rotateX(62deg);
+  transform-origin: bottom center;
+  mask-image: radial-gradient(ellipse 60% 80% at 50% 100%, black, transparent 75%);
+  animation: aisleDrift 9s linear infinite;
+}
+@keyframes aisleDrift { from { background-position: 0 0; } to { background-position: 0 64px; } }
+
+.heroGlow {
+  position: absolute; top: 2%; left: 50%;
+  width: 620px; height: 620px; margin-left: -310px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(111,207,123,0.11) 0%, transparent 68%);
+  pointer-events: none; z-index: 0;
+  animation: driftGlow 14s ease-in-out infinite alternate;
+}
+@keyframes driftGlow {
+  0%   { transform: translate(-40px, 0) scale(1); }
+  100% { transform: translate(40px, 24px) scale(1.06); }
+}
+
+/* ── Brand mark — a basket that draws itself in, then "fills" once ── */
+.logoBadge {
+  position: relative; z-index: 1;
+  width: 84px; height: 84px; border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.5);
+}
+.brandMark { overflow: visible; }
+.basketOuter {
+  stroke: var(--leaf); stroke-width: 1.7;
+  stroke-dasharray: 130; stroke-dashoffset: 130;
+  animation: drawLine 1.05s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+.basketWeaveA, .basketWeaveB {
+  stroke: var(--leaf); stroke-width: 1.3; opacity: 0.8;
+  stroke-dasharray: 24; stroke-dashoffset: 24;
+  animation: drawLine 0.5s ease forwards;
+}
+.basketWeaveA { animation-delay: 0.7s; }
+.basketWeaveB { animation-delay: 0.88s; }
+.basketDot {
+  fill: var(--leaf); opacity: 0;
+  animation: fadeInDot 0.4s ease forwards;
+  animation-delay: 1.12s;
+}
+@keyframes drawLine { to { stroke-dashoffset: 0; } }
+@keyframes fadeInDot { to { opacity: 1; } }
+
+.heroEyebrow { margin-top: 18px; font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted-2); position: relative; z-index: 1; }
+.heroTitle { margin-top: 2px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 40px; letter-spacing: -0.01em; color: var(--text); position: relative; z-index: 1; }
+.heroSub { font-size: 13.5px; font-weight: 500; color: var(--muted); position: relative; z-index: 1; text-align: center; max-width: 320px; margin-top: 2px; }
+
+/* ── Category tiles — 3D crate tilt on hover ── */
+.categoryRow {
+  position: relative; z-index: 1;
+  display: flex; gap: 18px; margin-top: 30px; flex-wrap: wrap; justify-content: center;
+  perspective: 700px;
+}
+.tile {
+  width: 200px;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--hairline); border-radius: 14px;
+  padding: 22px 20px 20px;
+  font-family: inherit; cursor: pointer; text-align: left;
+  transform-style: preserve-3d;
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.02) inset;
+}
+.tile:hover {
+  transform: rotateX(6deg) rotateY(-6deg) translateY(-4px) scale(1.02);
+  box-shadow: 0 26px 46px rgba(0,0,0,0.5), 0 0 0 1px rgba(111,207,123,0.15);
+}
+.tile:active { transform: rotateX(2deg) rotateY(-2deg) translateY(-1px) scale(1.005); }
+
+.tileIcon {
+  width: 38px; height: 38px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface-2); border: 1px solid var(--hairline);
+  margin-bottom: 6px;
+}
+.accentMarket .tileIcon { color: var(--leaf); border-color: rgba(111,207,123,0.28); }
+.accentMarket:hover { border-color: rgba(111,207,123,0.5); }
+.accentFarm .tileIcon { color: var(--crate); border-color: rgba(192,133,82,0.28); }
+.accentFarm:hover { border-color: rgba(192,133,82,0.5); }
+
+.tileLabel { font-family: 'Space Grotesk', sans-serif; font-size: 19px; font-weight: 700; color: var(--text); }
+.tileTagline { font-size: 12px; font-weight: 500; color: var(--muted); line-height: 1.4; }
+.tileRule { display: block; width: 22px; height: 1px; margin: 10px 0 2px; background: var(--hairline); transition: width 220ms ease, background 220ms ease; }
+.accentMarket:hover .tileRule { width: 100%; background: var(--leaf); }
+.accentFarm:hover .tileRule { width: 100%; background: var(--crate); }
+.tilePrice { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; color: var(--muted-2); }
+
+/* ── Modals ── */
+.modalBackdrop {
+  position: fixed; inset: 0; z-index: 50;
+  background: rgba(4,10,7,0.74);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  animation: fadeIn 180ms ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modalCard {
+  width: 100%; max-width: 380px;
+  background: var(--surface);
+  border: 1px solid var(--hairline); border-radius: 16px;
+  padding: 30px 26px 24px;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: 4px;
+  box-shadow: 0 30px 70px rgba(0,0,0,0.55);
+  animation: modalUp 220ms cubic-bezier(0.16,1,0.3,1);
+}
+@keyframes modalUp {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modalIcon {
+  width: 42px; height: 42px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface-2); border: 1px solid var(--hairline);
+  color: var(--text); font-size: 17px; margin-bottom: 10px;
+}
+.modalIconError { background: rgba(210,96,79,0.14); border-color: rgba(210,96,79,0.35); color: var(--danger); }
+.accentMarket.modalIcon { background: var(--leaf-soft); border-color: rgba(111,207,123,0.32); color: var(--leaf); }
+.accentFarm.modalIcon { background: var(--crate-soft); border-color: rgba(192,133,82,0.32); color: var(--crate); }
+
+.modalTitle { font-family: 'Space Grotesk', sans-serif; font-size: 19px; font-weight: 700; color: var(--text); }
+.modalBody { font-size: 12.5px; font-weight: 500; color: var(--muted); line-height: 1.62; margin-top: 6px; }
+
+.priceTag {
+  display: flex; align-items: baseline; gap: 7px;
+  margin-top: 16px; padding: 8px 16px;
+  background: var(--surface-2); border: 1px solid var(--hairline); border-radius: 999px;
+}
+.priceTagAmount { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; color: var(--leaf); }
+.priceTagLabel { font-size: 11px; font-weight: 500; color: var(--muted); }
+.modalFinePrint { font-size: 11px; font-weight: 500; color: var(--muted-2); margin-top: 12px; line-height: 1.55; }
+
+.balanceRow {
+  display: flex; align-items: stretch; width: 100%; margin-top: 16px;
+  background: var(--surface-2); border: 1px solid var(--hairline); border-radius: 10px;
+  overflow: hidden;
+}
+.balanceItem { flex: 1; padding: 11px 13px; display: flex; flex-direction: column; gap: 3px; }
+.balanceSep { width: 1px; background: var(--hairline); }
+.balanceLabel { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted-2); }
+.balanceValue { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; color: var(--leaf); }
+.balanceValueUsd { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; color: var(--crate); }
+
+.modalActions { display: flex; flex-direction: column; gap: 9px; width: 100%; margin-top: 20px; }
+.primaryBtn {
+  background: var(--text); border: none; border-radius: 10px; color: var(--ink);
+  font-size: 13.5px; font-weight: 700; padding: 12px; font-family: inherit;
+  cursor: pointer; transition: filter 160ms, transform 160ms; letter-spacing: 0.01em;
+}
+.primaryBtn:hover { filter: brightness(0.92); transform: translateY(-1px); }
+.primaryBtn.accentMarket { background: var(--leaf); color: #052B0C; }
+.primaryBtn.accentFarm { background: var(--crate); color: #2A1608; }
+
+.ghostBtn {
+  background: transparent; border: 1px solid var(--hairline); border-radius: 10px;
+  color: var(--muted); font-size: 13px; font-weight: 600; padding: 11px;
+  font-family: inherit; cursor: pointer; transition: border-color 160ms, color 160ms;
+}
+.ghostBtn:hover { border-color: var(--muted-2); color: var(--text); }
+
+/* ── Searching overlay — basket "fills" with a scanning sweep ── */
+.overlay {
+  position: fixed; inset: 0; z-index: 60;
+  background: rgba(6,17,11,0.92);
+  backdrop-filter: blur(8px);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 22px; animation: fadeIn 180ms ease;
+}
+.scannerWrap {
+  position: relative; width: 104px; height: 104px; border-radius: 18px;
+  background: var(--surface); border: 1px solid var(--hairline);
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+  box-shadow: 0 22px 50px rgba(0,0,0,0.5);
+}
+.overlayGlyph { display: flex; align-items: center; justify-content: center; color: var(--leaf); }
+.accentFarm .overlayGlyph { color: var(--crate); }
+.scanSweep {
+  position: absolute; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--leaf), transparent);
+  box-shadow: 0 0 12px 1px rgba(111,207,123,0.6);
+  animation: sweep 2.1s ease-in-out infinite;
+}
+.accentFarm .scanSweep {
+  background: linear-gradient(90deg, transparent, var(--crate), transparent);
+  box-shadow: 0 0 12px 1px rgba(192,133,82,0.6);
+}
+@keyframes sweep { 0% { top: 8%; opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { top: 92%; opacity: 0; } }
+
+.overlayStatus { font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: -0.005em; }
+.overlayHint { font-size: 11.5px; font-weight: 500; color: var(--muted); margin-top: -14px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .heroGrid, .heroGlow, .scanSweep, .basketOuter, .basketWeaveA, .basketWeaveB, .basketDot { animation: none !important; }
+  .basketOuter, .basketWeaveA, .basketWeaveB { stroke-dashoffset: 0; }
+  .basketDot { opacity: 1; }
+  .tile:hover { transform: translateY(-3px) scale(1.01); }
+}
+
+@media (max-width: 640px) {
+  .nav { padding: 12px 16px; gap: 10px; }
+  .navBrand { margin: 0 15px 0 0; }
+  .heroTitle { font-size: 32px; }
+  .categoryRow { gap: 12px; }
+  .tile { width: 100%; max-width: 260px; }
+  .tile:hover { transform: translateY(-3px) scale(1.01); }
+}
+
+/* ══════ Results shell (shared header/banner/footer) — reused once endpoints land ══════ */
+.resultsPage { flex: 1; display: flex; flex-direction: column; gap: 18px; padding: 28px 24px 64px; max-width: 780px; width: 100%; margin: 0 auto; }
+.resultsHeader { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.resultsEyebrow { font-size: 10.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-2); }
+.resultsTitle { font-family: 'Space Grotesk', sans-serif; font-size: 19px; font-weight: 700; color: var(--text); margin-top: 2px; }
+.closeBtn { width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0; background: var(--surface); border: 1px solid var(--hairline); color: var(--muted); cursor: pointer; font-size: 13px; transition: border-color 150ms, color 150ms; }
+.closeBtn:hover { border-color: var(--danger); color: var(--danger); }
+.freeBanner, .paidBanner { font-size: 12px; font-weight: 600; border-radius: 10px; padding: 11px 15px; }
+.freeBanner { background: rgba(111,207,123,0.1); border: 1px solid rgba(111,207,123,0.28); color: var(--good); }
+.paidBanner { background: var(--leaf-soft); border: 1px solid rgba(111,207,123,0.3); color: var(--leaf); }
+.newSearchBtn { margin-top: 4px; align-self: center; background: transparent; border: 1px solid var(--hairline); border-radius: 999px; color: var(--muted); font-size: 12.5px; font-weight: 600; padding: 10px 22px; font-family: inherit; cursor: pointer; transition: border-color 150ms, color 150ms; }
+.newSearchBtn:hover { border-color: var(--leaf); color: var(--leaf); }
+
+/* ══════════════════════ MARKET — shelf-tag card grid ══════════════════════
+   Type tags carry color meaning across supermarket/grocery/mall/general/
+   discount, since that's the real spread in this dataset — not a repaint
+   of BlackGrid's rating-badge stays layout. */
+.marketGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+.marketCard {
+  background: var(--surface); border: 1px solid var(--hairline); border-radius: 14px;
+  padding: 16px 16px 14px; cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.marketCard:hover { transform: translateY(-3px); border-color: rgba(111,207,123,0.4); }
+
+.marketCardTop { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.marketTypeTag { font-size: 10px; font-weight: 700; border-radius: 20px; padding: 3px 9px; white-space: nowrap; }
+.tagSuper { color: var(--leaf); background: var(--leaf-soft); border: 1px solid rgba(111,207,123,0.3); }
+.tagGrocery { color: #8FCB6E; background: rgba(143,203,110,0.12); border: 1px solid rgba(143,203,110,0.3); }
+.tagMall { color: #6EB8CB; background: rgba(110,184,203,0.12); border: 1px solid rgba(110,184,203,0.3); }
+.tagGeneral { color: var(--crate); background: var(--crate-soft); border: 1px solid rgba(192,133,82,0.3); }
+.tagDiscount { color: #D2B04F; background: rgba(210,176,79,0.12); border: 1px solid rgba(210,176,79,0.3); }
+
+.marketDistancePill { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--muted); background: var(--surface-2); border: 1px solid var(--hairline); border-radius: 999px; padding: 3px 9px; flex-shrink: 0; }
+
+.marketName { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.32; }
+.marketAddress { font-size: 11.5px; color: var(--muted); line-height: 1.5; }
+
+.marketMetaRow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 2px; }
+.marketRating { display: inline-flex; align-items: center; gap: 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--leaf); }
+.marketRatingMuted { font-size: 11px; color: var(--muted-2); }
+.marketOpenDot, .marketClosedDot { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; border-radius: 999px; padding: 2px 8px; }
+.marketOpenDot { color: var(--good); background: rgba(111,207,123,0.1); border: 1px solid rgba(111,207,123,0.28); }
+.marketClosedDot { color: var(--danger); background: rgba(210,96,79,0.1); border: 1px solid rgba(210,96,79,0.28); }
+.marketVerifiedTag { font-size: 10px; font-weight: 700; color: #6EB8CB; background: rgba(110,184,203,0.1); border: 1px solid rgba(110,184,203,0.3); border-radius: 20px; padding: 2px 8px; }
+
+.marketCardActions { display: flex; gap: 8px; margin-top: 6px; }
+.marketActionBtn, .marketActionBtnPrimary {
+  flex: 1; text-align: center; text-decoration: none; font-family: inherit;
+  border-radius: 8px; padding: 8px; font-size: 11.5px; font-weight: 700; cursor: pointer;
+  transition: filter 150ms, border-color 150ms;
+}
+.marketActionBtn { background: transparent; border: 1px solid var(--hairline); color: var(--text); }
+.marketActionBtn:hover { border-color: var(--leaf); color: var(--leaf); }
+.marketActionBtnPrimary { flex: 1.3; background: var(--leaf); border: none; color: #052B0C; }
+.marketActionBtnPrimary:hover { filter: brightness(0.94); }
+
+.marketHero {
+  background: var(--surface); border: 1px solid var(--hairline); border-radius: 16px;
+  padding: 22px 22px 20px; display: flex; flex-direction: column; gap: 4px;
+}
+.marketHeroTop { display: flex; align-items: center; justify-content: space-between; }
+.marketHeroMeta { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+/* ══════════════════════ FARM/LOCAL — stall cards, open-day led ══════════════════════
+   A day-strip (Su Mo Tu We Th Fr Sa) surfaces weekend-only / closed-Sunday
+   patterns at a glance — the actual shape of this dataset — instead of
+   BlackGrid's dashed ticket rows. */
+.farmList { display: flex; flex-direction: column; gap: 10px; }
+.farmCard {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  background: var(--surface); border: 1px solid var(--hairline); border-radius: 12px;
+  padding: 14px 16px; cursor: pointer; transition: transform 150ms ease, border-color 150ms ease;
+}
+.farmCard:hover { transform: translateY(-2px); border-color: rgba(192,133,82,0.4); }
+
+.farmCardLeft { min-width: 0; flex: 1; }
+.farmName { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.farmAddress { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+.farmTagRow { display: flex; align-items: center; gap: 7px; margin-top: 6px; }
+.farmTypeTag { font-size: 10px; font-weight: 700; color: var(--crate); background: var(--crate-soft); border: 1px solid rgba(192,133,82,0.3); border-radius: 20px; padding: 2px 8px; }
+.farmRating { display: inline-flex; align-items: center; gap: 3px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--muted); }
+.farmVerifiedDot { width: 6px; height: 6px; border-radius: 50%; background: var(--good); }
+
+.farmDayStrip { display: flex; gap: 3px; margin-top: 8px; }
+.farmDayOn, .farmDayOff {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700;
+  width: 20px; height: 18px; display: flex; align-items: center; justify-content: center;
+  border-radius: 4px;
+}
+.farmDayOn { color: var(--crate); background: var(--crate-soft); border: 1px solid rgba(192,133,82,0.28); }
+.farmDayOff { color: var(--muted-2); background: var(--surface-2); border: 1px solid var(--hairline); }
+
+.farmCardRight { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.farmOpenPill, .farmClosedPill { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; border-radius: 999px; padding: 3px 8px; }
+.farmOpenPill { color: var(--good); background: rgba(111,207,123,0.1); border: 1px solid rgba(111,207,123,0.28); }
+.farmClosedPill { color: var(--danger); background: rgba(210,96,79,0.1); border: 1px solid rgba(210,96,79,0.28); }
+.farmDistance { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+.farmCallBtn, .farmCallBtnPrimary {
+  text-decoration: none; font-family: inherit; font-size: 11px; font-weight: 700;
+  border-radius: 7px; padding: 6px 11px; cursor: pointer; transition: filter 150ms, border-color 150ms;
+}
+.farmCallBtn { background: transparent; border: 1px solid var(--hairline); color: var(--text); }
+.farmCallBtn:hover { border-color: var(--crate); color: var(--crate); }
+.farmCallBtnPrimary { background: var(--crate); border: none; color: #2A1608; }
+.farmCallBtnPrimary:hover { filter: brightness(0.94); }
+.farmCallBtnMuted { font-size: 10.5px; color: var(--muted-2); }
+
+.farmHero {
+  background: var(--surface); border: 1px solid var(--hairline); border-radius: 16px;
+  padding: 22px 22px 20px; display: flex; flex-direction: column; gap: 4px;
+}
+.farmHeroTop { display: flex; align-items: center; justify-content: space-between; }
+.farmHeroToday { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); margin-top: 8px; }
+.hoursClosedText { color: var(--muted-2); }
+
+@media (max-width: 640px) {
+  .marketGrid { grid-template-columns: 1fr; }
+  .farmCard { flex-direction: column; align-items: stretch; gap: 10px; }
+  .farmCardRight { flex-direction: row; align-items: center; justify-content: space-between; }
+}
