@@ -96,13 +96,13 @@ function ParticleBg() {
 // ── Mini apps data ────────────────────────────────────────────────────────────
 const EVERYDAY_APPS = [
   {
-    name: 'MechFind — Mechanics & Auto Repair Finder',
-    desc: 'Find vetted mechanics and vehicle repair shops near you. 🚗',
-    color: 'orange', live: true, free: true,
-    route: '/mechfind',
+    name: 'BlackGrid — Airbnb, Hotel & Restaurant Finder',
+    desc: 'Discover great hotels, airbnbs, restaurants, and eats wherever you are. 🏨',
+    color: 'black', live: true, free: true,
+    route: '/blackgrid',
     icon: (
       <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
-        <path d="M3.5 8.5l1-3.25A1.5 1.5 0 015.93 4h4.14a1.5 1.5 0 011.43 1.25l1 3.25h.25A1.25 1.25 0 0114 9.75v2.5a.75.75 0 01-.75.75h-1a.75.75 0 01-.75-.75V12H4.5v.25a.75.75 0 01-.75.75h-1A.75.75 0 012 12.25v-2.5A1.25 1.25 0 013.25 8.5h.25zM5.6 5.5l-.85 2.75h6.5L10.4 5.5H5.6zM4.25 10a.75.75 0 100-1.5.75.75 0 000 1.5zm7.5 0a.75.75 0 100-1.5.75.75 0 000 1.5z"/>
+        <path d="M2 2.75A.75.75 0 012.75 2h1.5a.75.75 0 01.75.75V6h6V2.75A.75.75 0 0111.75 2h1.5a.75.75 0 01.75.75v10.5a.75.75 0 01-1.5 0V11H3.5v2.25a.75.75 0 01-1.5 0V2.75zM3.5 7.5v2h9v-2h-9z"/>
       </svg>
     ),
   },
@@ -129,16 +129,16 @@ const EVERYDAY_APPS = [
     ),
   },
   {
-    name: 'BlackGrid — Airbnb, Hotel & Restaurant Finder',
-    desc: 'Discover great hotels, airbnbs, restaurants, and eats wherever you are. 🏨',
-    color: 'black', live: true,
-    route: '/blackgrid',
+    name: 'MechFind — Mechanics & Auto Repair Finder',
+    desc: 'Find vetted mechanics and vehicle repair shops near you. 🚗',
+    color: 'orange', live: true, free: true,
+    route: '/mechfind',
     icon: (
       <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
-        <path d="M2 2.75A.75.75 0 012.75 2h1.5a.75.75 0 01.75.75V6h6V2.75A.75.75 0 0111.75 2h1.5a.75.75 0 01.75.75v10.5a.75.75 0 01-1.5 0V11H3.5v2.25a.75.75 0 01-1.5 0V2.75zM3.5 7.5v2h9v-2h-9z"/>
+        <path d="M3.5 8.5l1-3.25A1.5 1.5 0 015.93 4h4.14a1.5 1.5 0 011.43 1.25l1 3.25h.25A1.25 1.25 0 0114 9.75v2.5a.75.75 0 01-.75.75h-1a.75.75 0 01-.75-.75V12H4.5v.25a.75.75 0 01-.75.75h-1A.75.75 0 012 12.25v-2.5A1.25 1.25 0 013.25 8.5h.25zM5.6 5.5l-.85 2.75h6.5L10.4 5.5H5.6zM4.25 10a.75.75 0 100-1.5.75.75 0 000 1.5zm7.5 0a.75.75 0 100-1.5.75.75 0 000 1.5z"/>
       </svg>
     ),
-  },
+  }
 ]
 
 const APPS = [
