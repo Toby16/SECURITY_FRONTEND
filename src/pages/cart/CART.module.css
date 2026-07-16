@@ -331,6 +331,18 @@
 .detailBack:hover { border-color: var(--leaf); color: var(--leaf); }
 .detailName { font-family: 'Space Grotesk', sans-serif; font-size: 23px; font-weight: 700; color: var(--text); line-height: 1.28; margin-top: 4px; }
 .detailActions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+
+/* Detail-hero call/maps buttons need to size to their content (the label
+   includes the full phone number here, unlike the short "Call"/"Maps"
+   labels used in .marketCardActions) — otherwise flex:1 shrinks them below
+   content width and wraps the number inside the pill, which was throwing
+   off the whole hero row's alignment. */
+.detailActions .marketActionBtn,
+.detailActions .marketActionBtnPrimary {
+  flex: 1 1 160px;
+  white-space: nowrap;
+}
+
 .detailSection {
   background: var(--surface);
   border: 1px solid var(--hairline);
