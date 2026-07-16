@@ -14,6 +14,10 @@ function usePageTitle(t) {
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
+// Results farther than this (in km) are hidden behind "Show more" so users
+// aren't bombarded with the full 20-result batch every time.
+const FAR_DISTANCE_KM = 15.99
+
 function todayHoursLine(hours) {
   if (!Array.isArray(hours) || !hours.length) return null
   const today = DAY_NAMES[new Date().getDay()]
@@ -34,6 +38,13 @@ function formatDistance(m) {
   const meters = m.distance_meters
   if (meters != null) return `${meters} m`
   if (km != null) return `${km} km`
+  return null
+}
+
+// Normalizes whichever distance field is present into km, for filtering.
+function distanceKmOf(m) {
+  if (m.distance_km != null) return m.distance_km
+  if (m.distance_meters != null) return m.distance_meters / 1000
   return null
 }
 
@@ -429,7 +440,22 @@ function MechanicDetail({ m, onBack }) {
 // ── Results screen ──
 function ResultsView({ results, meta, onClose }) {
   const [selected, setSelected] = useState(null)
+  const [showAll, setShowAll] = useState(false)
   const free = Number(meta?.charge) === 0
+
+  // Anything with unknown distance is treated as "near" so it's never hidden
+  // by a filter it can't actually be measured against.
+  const nearResults = results.filter(m => {
+    const d = distanceKmOf(m)
+    return d == null || d <= FAR_DISTANCE_KM
+  })
+  const farResults = results.filter(m => {
+    const d = distanceKmOf(m)
+    return d != null && d > FAR_DISTANCE_KM
+  })
+
+  const displayed = showAll ? results : nearResults
+  const hiddenCount = farResults.length
 
   if (selected) {
     return <MechanicDetail m={selected} onBack={() => setSelected(null)} />
@@ -439,7 +465,7 @@ function ResultsView({ results, meta, onClose }) {
     <div className={styles.resultsPage}>
       <div className={styles.resultsHeader}>
         <div>
-          <h2 className={styles.resultsTitle}>{results.length} auto-repair shops nearby</h2>
+          <h2 className={styles.resultsTitle}>{displayed.length} auto-repair shops nearby</h2>
           <p className={styles.resultsSub}>📍Sorted by distance, closest to you.</p>
         </div>
         <button className={styles.closeBtn} onClick={onClose} aria-label="Close results">✕</button>
@@ -452,8 +478,14 @@ function ResultsView({ results, meta, onClose }) {
       </div>
 
       <div className={styles.resultsList}>
-        {results.map(m => <MechanicListItem key={m.maps_url} m={m} onView={setSelected} />)}
+        {displayed.map(m => <MechanicListItem key={m.maps_url} m={m} onView={setSelected} />)}
       </div>
+
+      {!showAll && hiddenCount > 0 && (
+        <button className={styles.showMoreBtn} onClick={() => setShowAll(true)}>
+          Show {hiddenCount} more {hiddenCount === 1 ? 'result' : 'results'} farther away
+        </button>
+      )}
 
       <button className={styles.newSearchBtn} onClick={onClose}>
         Start a new search
