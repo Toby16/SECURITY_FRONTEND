@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getToken, getUserProfile } from '../../services/authService.js'
 import { useAuthGuard } from '../../hooks/useAuthGuard.js'
@@ -13,6 +13,10 @@ function usePageTitle(t) {
 }
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+
+// Results farther than this are hidden behind "Show more" so users aren't
+// bombarded with the full backend response every time.
+const NEARBY_DISTANCE_KM = 15.99
 
 function todayHoursLine(hours) {
   if (!Array.isArray(hours) || !hours.length) return null
@@ -35,6 +39,27 @@ function formatDistance(m) {
   if (meters != null) return `${meters} m`
   if (km != null) return `${km} km`
   return null
+}
+
+// Resolves a facility's distance to kilometers regardless of which field the
+// backend populated, so the nearby/far split works consistently.
+function distanceKm(m) {
+  if (typeof m.distance_km === 'number') return m.distance_km
+  if (typeof m.distance_meters === 'number') return m.distance_meters / 1000
+  return null
+}
+
+// Splits a results array into "nearby" (shown immediately) and "far"
+// (distance > NEARBY_DISTANCE_KM, tucked behind a "Show more" reveal).
+function splitByDistance(results) {
+  const nearby = []
+  const far = []
+  for (const m of results) {
+    const km = distanceKm(m)
+    if (km != null && km > NEARBY_DISTANCE_KM) far.push(m)
+    else nearby.push(m)
+  }
+  return { nearby, far }
 }
 
 function statusTone(status) {
@@ -437,6 +462,9 @@ function FacilityDetail({ m, onBack }) {
 // ── Results screen ──
 function ResultsView({ results, meta, onClose }) {
   const [selected, setSelected] = useState(null)
+  const [showAll, setShowAll] = useState(false)
+  const { nearby, far } = useMemo(() => splitByDistance(results), [results])
+  const visible = showAll ? results : nearby
   const free = meta?.free
 
   if (selected) {
@@ -447,7 +475,7 @@ function ResultsView({ results, meta, onClose }) {
     <div className={styles.resultsPage}>
       <div className={styles.resultsHeader}>
         <div>
-          <h2 className={styles.resultsTitle}>{results.length} medical centers nearby</h2>
+          <h2 className={styles.resultsTitle}>{visible.length} medical centers nearby</h2>
           <p className={styles.resultsSub}>✚ Sorted by distance, closest to you.</p>
         </div>
         <button className={styles.closeBtn} onClick={onClose} aria-label="Close results">✕</button>
@@ -460,8 +488,14 @@ function ResultsView({ results, meta, onClose }) {
       </div>
 
       <div className={styles.resultsList}>
-        {results.map(m => <FacilityListItem key={m.maps_url} m={m} onView={setSelected} />)}
+        {visible.map(m => <FacilityListItem key={m.maps_url} m={m} onView={setSelected} />)}
       </div>
+
+      {!showAll && far.length > 0 && (
+        <button className={styles.showMoreBtn} onClick={() => setShowAll(true)}>
+          Show {far.length} more {far.length === 1 ? 'center' : 'centers'} farther away
+        </button>
+      )}
 
       <button className={styles.newSearchBtn} onClick={onClose}>
         Start a new search

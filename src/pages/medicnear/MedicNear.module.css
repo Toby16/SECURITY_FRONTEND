@@ -378,6 +378,25 @@
 }
 .newSearchBtn:hover { border-color: #EC4899; color: #FF7AC6; }
 
+/* "Show more" reveal for results farther than the nearby threshold —
+   sits between the result list and the "start a new search" action. */
+.showMoreBtn {
+  align-self: center;
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(27,50,44,0.6); border: 1px dashed #1B322C; border-radius: 999px;
+  color: #7FA69B; font-size: 12.5px; font-weight: 700; padding: 10px 20px;
+  font-family: inherit; cursor: pointer;
+  transition: border-color 150ms, color 150ms, background 150ms;
+}
+.showMoreBtn:hover {
+  border-color: #EC4899; color: #FF7AC6; background: rgba(236,72,153,0.08);
+  border-style: solid;
+}
+.showMoreBtn::after {
+  content: '↓';
+  font-size: 11px;
+}
+
 /* ── Facility detail page ── */
 .detailPage {
   flex: 1; display: flex; flex-direction: column; gap: 14px;
