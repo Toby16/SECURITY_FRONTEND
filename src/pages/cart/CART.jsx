@@ -18,6 +18,11 @@ function usePageTitle(t) {
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
+// Listings farther than this are held back behind "Show more" so a normal
+// result page doesn't always read as a wall of 20 cards — most searches
+// only have a couple of far-flung outliers past this line.
+const DISTANCE_REVEAL_THRESHOLD_KM = 25.99
+
 const fmt = (n, cur) =>
   new Intl.NumberFormat('en-NG', { style: 'currency', currency: cur, maximumFractionDigits: 2 }).format(n ?? 0)
 
@@ -66,6 +71,20 @@ function openDaysShort(hours) {
     const [day, ...rest] = line.split(': ')
     return { day, abbr: short[day] || day.slice(0, 2), closed: rest.join(': ') === 'Closed' }
   })
+}
+
+// Splits a result set into "near" (shown by default) and "far" (held back
+// behind Show more), based on distance_km. Anything unparseable is treated
+// as near so it never silently disappears.
+function splitByDistance(results) {
+  const near = []
+  const far = []
+  for (const m of results) {
+    const d = parseFloat(m.distance_km)
+    if (!Number.isNaN(d) && d > DISTANCE_REVEAL_THRESHOLD_KM) far.push(m)
+    else near.push(m)
+  }
+  return { near, far }
 }
 
 // ── Category definitions ────────────────────────────────────────────────
@@ -361,13 +380,18 @@ function MarketDetail({ m, onBack }) {
 
 function MarketResults({ results, meta, onClose }) {
   const [selected, setSelected] = useState(null)
+  const [showAll, setShowAll] = useState(false)
   if (selected) return <MarketDetail m={selected} onBack={() => setSelected(null)} />
+
+  const { near, far } = splitByDistance(results)
+  const visible = showAll ? results : near
+
   return (
     <div className={styles.resultsPage}>
       <div className={styles.resultsHeader}>
         <div>
           <p className={styles.resultsEyebrow}>Market</p>
-          <h2 className={styles.resultsTitle}>{results.length} stores nearby</h2>
+          <h2 className={styles.resultsTitle}>{visible.length} stores nearby</h2>
         </div>
         <button className={styles.closeBtn} onClick={onClose} aria-label="Close results">✕</button>
       </div>
@@ -375,8 +399,13 @@ function MarketResults({ results, meta, onClose }) {
         {meta?.free ? (meta?.message || 'This search was free — no charge applied.') : `Charged $${meta?.charge} ~ ₦${meta?.naira}.`}
       </div>
       <div className={styles.marketGrid}>
-        {results.map((m, i) => <MarketListItem key={`${m.maps_url}-${i}`} m={m} onView={setSelected} />)}
+        {visible.map((m, i) => <MarketListItem key={`${m.maps_url}-${i}`} m={m} onView={setSelected} />)}
       </div>
+      {!showAll && far.length > 0 && (
+        <button className={styles.showMoreBtn} onClick={() => setShowAll(true)}>
+          Show {far.length} more {far.length === 1 ? 'store' : 'stores'} farther away
+        </button>
+      )}
       <button className={styles.newSearchBtn} onClick={onClose}>Start a new search</button>
     </div>
   )
@@ -472,13 +501,18 @@ function FarmDetail({ m, onBack }) {
 
 function FarmResults({ results, meta, onClose }) {
   const [selected, setSelected] = useState(null)
+  const [showAll, setShowAll] = useState(false)
   if (selected) return <FarmDetail m={selected} onBack={() => setSelected(null)} />
+
+  const { near, far } = splitByDistance(results)
+  const visible = showAll ? results : near
+
   return (
     <div className={styles.resultsPage}>
       <div className={styles.resultsHeader}>
         <div>
           <p className={styles.resultsEyebrow}>Farm &amp; Local</p>
-          <h2 className={styles.resultsTitle}>{results.length} markets nearby</h2>
+          <h2 className={styles.resultsTitle}>{visible.length} markets nearby</h2>
         </div>
         <button className={styles.closeBtn} onClick={onClose} aria-label="Close results">✕</button>
       </div>
@@ -486,8 +520,13 @@ function FarmResults({ results, meta, onClose }) {
         {meta?.free ? (meta?.message || 'This search was free — no charge applied.') : `Charged $${meta?.charge} ~ ₦${meta?.naira}.`}
       </div>
       <div className={styles.farmList}>
-        {results.map((m, i) => <FarmListItem key={`${m.maps_url}-${i}`} m={m} onView={setSelected} />)}
+        {visible.map((m, i) => <FarmListItem key={`${m.maps_url}-${i}`} m={m} onView={setSelected} />)}
       </div>
+      {!showAll && far.length > 0 && (
+        <button className={styles.showMoreBtn} onClick={() => setShowAll(true)}>
+          Show {far.length} more {far.length === 1 ? 'market' : 'markets'} farther away
+        </button>
+      )}
       <button className={styles.newSearchBtn} onClick={onClose}>Start a new search</button>
     </div>
   )
