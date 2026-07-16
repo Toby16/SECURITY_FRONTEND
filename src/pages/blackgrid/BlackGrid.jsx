@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getToken, getUserProfile } from '../../services/authService.js'
 import { useAuthGuard } from '../../hooks/useAuthGuard.js'
@@ -17,6 +17,10 @@ function usePageTitle(t) {
 }
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+
+// Results farther than this are hidden behind "Show more" so users aren't
+// bombarded with the full 20-item backend response every time.
+const NEARBY_DISTANCE_KM = 25.99
 
 const fmt = (n, cur) =>
   new Intl.NumberFormat('en-NG', { style: 'currency', currency: cur, maximumFractionDigits: 2 }).format(n ?? 0)
@@ -55,6 +59,18 @@ function isOpenNow(hours) {
   const nowMin = now.getHours() * 60 + now.getMinutes()
   if (end > start) return nowMin >= start && nowMin < end
   return nowMin >= start || nowMin < end // overnight wrap
+}
+
+// Splits a results array into "nearby" (shown immediately) and "far"
+// (distance_km > NEARBY_DISTANCE_KM, tucked behind a "Show more" reveal).
+function splitByDistance(results) {
+  const nearby = []
+  const far = []
+  for (const m of results) {
+    if (typeof m.distance_km === 'number' && m.distance_km > NEARBY_DISTANCE_KM) far.push(m)
+    else nearby.push(m)
+  }
+  return { nearby, far }
 }
 
 // ── Category definitions ────────────────────────────────────────────────
@@ -337,13 +353,17 @@ function StayDetail({ m, onBack }) {
 
 function StayResults({ results, meta, onClose }) {
   const [selected, setSelected] = useState(null)
+  const [showAll, setShowAll] = useState(false)
+  const { nearby, far } = useMemo(() => splitByDistance(results), [results])
+  const visible = showAll ? results : nearby
+
   if (selected) return <StayDetail m={selected} onBack={() => setSelected(null)} />
   return (
     <div className={styles.resultsPage}>
       <div className={styles.resultsHeader}>
         <div>
           <p className={styles.resultsEyebrow}>Stay</p>
-          <h2 className={styles.resultsTitle}>{results.length} places to stay nearby</h2>
+          <h2 className={styles.resultsTitle}>{visible.length} places to stay nearby</h2>
         </div>
         <button className={styles.closeBtn} onClick={onClose} aria-label="Close results">✕</button>
       </div>
@@ -351,8 +371,13 @@ function StayResults({ results, meta, onClose }) {
         {meta?.free ? (meta?.message || 'This search was free — no charge applied.') : `Charged $${meta?.charge} ~ ₦${meta?.naira}.`}
       </div>
       <div className={styles.stayGrid}>
-        {results.map(m => <StayListItem key={m.maps_url} m={m} onView={setSelected} />)}
+        {visible.map(m => <StayListItem key={m.maps_url} m={m} onView={setSelected} />)}
       </div>
+      {!showAll && far.length > 0 && (
+        <button className={styles.showMoreBtn} onClick={() => setShowAll(true)}>
+          Show {far.length} more {far.length === 1 ? 'place' : 'places'} farther away
+        </button>
+      )}
       <button className={styles.newSearchBtn} onClick={onClose}>Start a new search</button>
     </div>
   )
@@ -438,13 +463,17 @@ function EatDetail({ m, onBack }) {
 
 function EatResults({ results, meta, onClose }) {
   const [selected, setSelected] = useState(null)
+  const [showAll, setShowAll] = useState(false)
+  const { nearby, far } = useMemo(() => splitByDistance(results), [results])
+  const visible = showAll ? results : nearby
+
   if (selected) return <EatDetail m={selected} onBack={() => setSelected(null)} />
   return (
     <div className={styles.resultsPage}>
       <div className={styles.resultsHeader}>
         <div>
           <p className={styles.resultsEyebrow}>Eat</p>
-          <h2 className={styles.resultsTitle}>{results.length} places to eat nearby</h2>
+          <h2 className={styles.resultsTitle}>{visible.length} places to eat nearby</h2>
         </div>
         <button className={styles.closeBtn} onClick={onClose} aria-label="Close results">✕</button>
       </div>
@@ -452,8 +481,13 @@ function EatResults({ results, meta, onClose }) {
         {meta?.free ? (meta?.message || 'This search was free — no charge applied.') : `Charged $${meta?.charge} ~ ₦${meta?.naira}.`}
       </div>
       <div className={styles.eatList}>
-        {results.map((m, i) => <EatListItem key={`${m.maps_url}-${i}`} m={m} onView={setSelected} />)}
+        {visible.map((m, i) => <EatListItem key={`${m.maps_url}-${i}`} m={m} onView={setSelected} />)}
       </div>
+      {!showAll && far.length > 0 && (
+        <button className={styles.showMoreBtn} onClick={() => setShowAll(true)}>
+          Show {far.length} more {far.length === 1 ? 'place' : 'places'} farther away
+        </button>
+      )}
       <button className={styles.newSearchBtn} onClick={onClose}>Start a new search</button>
     </div>
   )
