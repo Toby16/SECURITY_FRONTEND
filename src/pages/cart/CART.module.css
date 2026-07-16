@@ -3,10 +3,10 @@
 /* ── Tokens — deep market-floor green, not BlackGrid's ink/gold ──────────── */
 .page {
   --ink: #06110B;
-  --surface: #0F1D15;
-  --surface-2: #16281D;
-  --hairline: rgba(140,255,180,0.10);
-  --hairline-soft: rgba(140,255,180,0.05);
+  --surface: #122019;     /* was #0F1D15 — nudged lighter for card/page contrast */
+  --surface-2: #1A2D22;   /* was #16281D — nudged lighter to keep the 2-step ladder */
+  --hairline: rgba(140,255,180,0.16);      /* was 0.10 — was too faint to read */
+  --hairline-soft: rgba(140,255,180,0.08); /* was 0.05 */
   --text: #EAF3EC;
   --muted: #8FA898;
   --muted-2: #566B5D;
@@ -35,7 +35,9 @@
   border-bottom: 1px solid var(--hairline);
   background: rgba(6,17,11,0.88);
   backdrop-filter: blur(14px);
-  position: relative; z-index: 5;
+  position: sticky;   /* was: relative — keeps it from colliding with in-page back buttons on scroll */
+  top: 0;
+  z-index: 20;         /* was: 5 — raised above detail/result content */
 }
 .backBtn {
   background: transparent; border: 1px solid var(--hairline); border-radius: 8px;
@@ -284,7 +286,7 @@
   .tile:hover { transform: translateY(-3px) scale(1.01); }
 }
 
-/* ══════ Results shell (shared header/banner/footer) — reused once endpoints land ══════ */
+/* ══════ Results shell (shared header/banner/footer) ══════ */
 .resultsPage { flex: 1; display: flex; flex-direction: column; gap: 18px; padding: 28px 24px 64px; max-width: 780px; width: 100%; margin: 0 auto; }
 .resultsHeader { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .resultsEyebrow { font-size: 10.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-2); }
@@ -297,6 +299,52 @@
 .newSearchBtn { margin-top: 4px; align-self: center; background: transparent; border: 1px solid var(--hairline); border-radius: 999px; color: var(--muted); font-size: 12.5px; font-weight: 600; padding: 10px 22px; font-family: inherit; cursor: pointer; transition: border-color 150ms, color 150ms; }
 .newSearchBtn:hover { border-color: var(--leaf); color: var(--leaf); }
 
+/* ══════════════════════ Shared detail-page scaffolding ══════════════════════ */
+.detailPage {
+  flex: 1; display: flex; flex-direction: column; gap: 14px;
+  padding: 28px 24px 64px; max-width: 640px; width: 100%; margin: 0 auto;
+  animation: modalUp 200ms ease both;
+}
+.detailBack {
+  align-self: flex-start;
+  margin-top: 4px;   /* clearance from the sticky nav above */
+  background: transparent; border: 1px solid var(--hairline); border-radius: 8px;
+  padding: 7px 13px; font-size: 12px; font-weight: 600; color: var(--muted);
+  font-family: inherit; cursor: pointer; transition: border-color 150ms, color 150ms;
+}
+.detailBack:hover { border-color: var(--leaf); color: var(--leaf); }
+.detailName { font-family: 'Space Grotesk', sans-serif; font-size: 23px; font-weight: 700; color: var(--text); line-height: 1.28; margin-top: 4px; }
+.detailActions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.detailSection {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.02) inset, 0 8px 20px rgba(0,0,0,0.25);
+  display: flex; flex-direction: column; gap: 2px;
+}
+.detailSectionTitle { font-size: 10.5px; font-weight: 700; color: var(--muted-2); letter-spacing: 0.09em; text-transform: uppercase; margin-bottom: 8px; }
+.statDot { color: var(--muted-2); margin: 0 2px; }
+
+.infoRow { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid var(--hairline-soft); }
+.infoRow:first-child { border-top: none; padding-top: 0; }
+.infoRowText { min-width: 0; flex: 1; }
+.infoRowLabel { font-size: 10px; font-weight: 700; color: var(--muted-2); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 3px; }
+.infoRowValue { font-size: 13px; color: var(--text); line-height: 1.5; word-break: break-word; }
+.infoRowValueMono { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--text); line-height: 1.5; word-break: break-all; }
+.copyBtn {
+  flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px;
+  background: var(--surface-2); border: 1px solid var(--hairline); border-radius: 7px;
+  padding: 5px 9px; font-size: 10.5px; font-weight: 700; color: var(--muted);
+  font-family: inherit; cursor: pointer; margin-top: 1px; transition: border-color 150ms, color 150ms;
+}
+.copyBtn:hover { border-color: var(--leaf); color: var(--leaf); }
+
+.hoursListFull { margin-top: 2px; list-style: none; display: flex; flex-direction: column; gap: 1px; border-radius: 10px; overflow: hidden; }
+.hoursRow, .hoursRowToday { display: flex; align-items: center; justify-content: space-between; font-size: 12px; padding: 8px 10px; }
+.hoursRow { color: var(--muted); }
+.hoursRowToday { color: var(--leaf); font-weight: 700; background: var(--leaf-soft); border: 1px solid rgba(111,207,123,0.24); border-radius: 8px; }
+
 /* ══════════════════════ MARKET — shelf-tag card grid ══════════════════════
    Type tags carry color meaning across supermarket/grocery/mall/general/
    discount, since that's the real spread in this dataset — not a repaint
@@ -307,6 +355,7 @@
   padding: 16px 16px 14px; cursor: pointer;
   transition: transform 160ms ease, border-color 160ms ease;
   display: flex; flex-direction: column; gap: 8px;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.02) inset;
 }
 .marketCard:hover { transform: translateY(-3px); border-color: rgba(111,207,123,0.4); }
 
@@ -345,6 +394,7 @@
 .marketHero {
   background: var(--surface); border: 1px solid var(--hairline); border-radius: 16px;
   padding: 22px 22px 20px; display: flex; flex-direction: column; gap: 4px;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.02) inset, 0 8px 20px rgba(0,0,0,0.25);
 }
 .marketHeroTop { display: flex; align-items: center; justify-content: space-between; }
 .marketHeroMeta { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 12px; color: var(--muted); margin-top: 6px; }
@@ -358,6 +408,7 @@
   display: flex; align-items: center; justify-content: space-between; gap: 14px;
   background: var(--surface); border: 1px solid var(--hairline); border-radius: 12px;
   padding: 14px 16px; cursor: pointer; transition: transform 150ms ease, border-color 150ms ease;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.02) inset;
 }
 .farmCard:hover { transform: translateY(-2px); border-color: rgba(192,133,82,0.4); }
 
@@ -396,12 +447,14 @@
 .farmHero {
   background: var(--surface); border: 1px solid var(--hairline); border-radius: 16px;
   padding: 22px 22px 20px; display: flex; flex-direction: column; gap: 4px;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.02) inset, 0 8px 20px rgba(0,0,0,0.25);
 }
 .farmHeroTop { display: flex; align-items: center; justify-content: space-between; }
 .farmHeroToday { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); margin-top: 8px; }
 .hoursClosedText { color: var(--muted-2); }
 
 @media (max-width: 640px) {
+  .resultsPage, .detailPage { padding: 20px 16px 48px; }
   .marketGrid { grid-template-columns: 1fr; }
   .farmCard { flex-direction: column; align-items: stretch; gap: 10px; }
   .farmCardRight { flex-direction: row; align-items: center; justify-content: space-between; }
