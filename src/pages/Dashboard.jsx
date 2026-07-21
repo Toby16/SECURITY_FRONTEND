@@ -142,7 +142,7 @@ const EVERYDAY_APPS = [
   {
     name: 'MechFind — Mechanics & Auto Repair Finder',
     desc: 'Find vetted mechanics and vehicle repair shops near you. 🚗',
-    color: 'orange', live: true, free: true,
+    color: 'orange', live: true,
     route: '/mechfind',
     icon: (
       <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
@@ -273,7 +273,7 @@ function AppCard({ app, onClick }) {
       <div className={styles.appText}>
         <p className={styles.appName}>{app.name}</p>
         <p className={styles.appDesc}>{app.desc}</p>
-        {app.free && <span className={styles.freeTag}>1st try free</span>}
+        {app.free && <span className={styles.freeTag}>New</span>}
       </div>
       {app.live ? (
         <span className={styles.appArrow}>→</span>
