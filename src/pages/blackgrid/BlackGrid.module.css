@@ -432,18 +432,27 @@
   75%      { transform: translateY(-1.5px) rotate(0.6deg); }
 }
 
-.silhouetteSvg { display: block; }
-.silBrim, .silHead, .silTorso { fill: #0A0A0D; stroke: var(--party-pink); stroke-width: 0.6; }
-.silLegLeft, .silLegRight { fill: #0A0A0D; stroke: var(--party-pink); stroke-width: 0.6; transform-origin: 20px 28px; }
+.silhouetteSvg { display: block; overflow: visible; }
+.silCrown, .silBrim, .silHead, .silTop, .silShorts {
+  fill: #0A0A0D; stroke: var(--party-pink); stroke-width: 0.7; stroke-linejoin: round;
+}
+.silHair, .silArm {
+  fill: none; stroke: var(--party-pink); stroke-width: 0.9; stroke-linecap: round;
+  opacity: 0.85;
+}
+.silLegLeft, .silLegRight {
+  fill: #0A0A0D; stroke: var(--party-pink); stroke-width: 0.7; stroke-linejoin: round;
+  transform-origin: 20px 29.8px;
+}
 .silLegLeft { animation: strideLeft 1.05s ease-in-out infinite; }
 .silLegRight { animation: strideRight 1.05s ease-in-out infinite; }
 @keyframes strideLeft {
-  0%, 100% { transform: rotate(6deg); }
-  50%      { transform: rotate(-8deg); }
+  0%, 100% { transform: rotate(7deg); }
+  50%      { transform: rotate(-9deg); }
 }
 @keyframes strideRight {
-  0%, 100% { transform: rotate(-8deg); }
-  50%      { transform: rotate(6deg); }
+  0%, 100% { transform: rotate(-9deg); }
+  50%      { transform: rotate(7deg); }
 }
 
 .archSweep {

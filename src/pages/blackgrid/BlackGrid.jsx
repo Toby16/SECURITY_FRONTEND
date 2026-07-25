@@ -167,11 +167,17 @@ function StarGlyph({ filled }) {
 function PartySilhouette({ size = 76 }) {
   return (
     <svg width={size} height={size * 1.15} viewBox="0 0 40 46" xmlns="http://www.w3.org/2000/svg" className={styles.silhouetteSvg}>
-      <ellipse cx="20" cy="6.4" rx="7.6" ry="2.6" className={styles.silBrim} />
-      <circle cx="20" cy="8.6" r="4.4" className={styles.silHead} />
-      <path d="M12.5 15c0-3 3.2-4.6 7.5-4.6s7.5 1.6 7.5 4.6l-1.6 12.4a2 2 0 0 1-2 1.8H16.1a2 2 0 0 1-2-1.8Z" className={styles.silTorso} />
-      <path className={styles.silLegLeft} d="M15.4 28.6 13.6 44h3.3l2.4-15.4Z" />
-      <path className={styles.silLegRight} d="M24.6 28.6 26.4 44h-3.3l-2.4-15.4Z" />
+      <path d="M13.6 5.6Q13.6 1.6 20 1.6Q26.4 1.6 26.4 5.6Z" className={styles.silCrown} />
+      <ellipse cx="20" cy="5.6" rx="9" ry="2.3" className={styles.silBrim} />
+      <circle cx="20" cy="8.8" r="3.5" className={styles.silHead} />
+      <path d="M16.5 9.6Q14.7 12.4 15.5 15.6" className={styles.silHair} />
+      <path d="M23.5 9.6Q25.3 12.4 24.5 15.6" className={styles.silHair} />
+      <path d="M15.8 14.6C15.8 13.1 17.4 12.3 20 12.3C22.6 12.3 24.2 13.1 24.2 14.6L23.2 19.6C22.8 20.6 21.6 21 20 21C18.4 21 17.2 20.6 16.8 19.6Z" className={styles.silTop} />
+      <path d="M16.1 14.9C14.5 16.5 14 18.9 14.9 20.9" className={styles.silArm} />
+      <path d="M23.6 15C25.7 15.4 26.4 17.6 25.1 19.8C24.6 20.6 23.4 20.3 23.3 19.3Z" className={styles.silArm} />
+      <path d="M16.6 21.6C16.6 20.3 18 19.7 20 19.7C22 19.7 23.4 20.3 23.4 21.6L24.6 27.6C24.6 29 22.6 29.6 20 29.6C17.4 29.6 15.4 29 15.4 27.6Z" className={styles.silShorts} />
+      <path className={styles.silLegLeft} d="M16.2 29.8 14 44h3.3l2.4-14.6Z" />
+      <path className={styles.silLegRight} d="M23.8 29.8 26 44h-3.3l-2.4-14.6Z" />
     </svg>
   )
 }
