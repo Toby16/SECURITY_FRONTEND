@@ -225,7 +225,7 @@ function LocationNoticeModal({ onAcknowledge, balance, balanceLoading }) {
   return (
     <div className={styles.modalBackdrop} role="dialog" aria-modal="true">
       <div className={styles.modalCard}>
-        <div className={styles.modalIcon}>🍲</div>
+        <div className={styles.modalIcon}>🥢</div>
         <h2 className={styles.modalTitle}>Before you search</h2>
         <p className={styles.modalBody}>
           BlackGrid depends on accurate device location to find stays and eats near you. Please
