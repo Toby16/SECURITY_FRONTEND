@@ -5,6 +5,7 @@ import { useAuthGuard } from '../../hooks/useAuthGuard.js'
 import { useTokenRefresh } from '../../hooks/useTokenRefresh.js'
 import {
   initializeBlackGridSearch,
+  startBlackGridBarSearch,
   startBlackGridHotelSearch,
   startBlackGridRestaurantSearch,
 } from '../../services/blackGridService.js'
@@ -75,6 +76,14 @@ function splitByDistance(results) {
 
 // ── Category definitions ────────────────────────────────────────────────
 const CATEGORIES = {
+  party: {
+    key: 'party',
+    label: 'Party',
+    tagline: 'Bars, Clubs & Lounges Nearby',
+    accentClass: styles.accentParty,
+    consentBody: 'BlackGrid uses your precise location to find the closest bars, lounges, and clubs — with ratings, hours, contacts, and directions.',
+    start: startBlackGridBarSearch,
+  },
   stay: {
     key: 'stay',
     label: 'Stay',
@@ -129,6 +138,21 @@ function EatGlyph({ size = 22 }) {
     </svg>
   )
 }
+
+// Party glyph — a coupe glass with a "pour" that fills on hover (CSS-driven,
+// no JS): the liquid level and the twist-of-lime garnish are the two
+// animated parts, everything else is a static line icon.
+function PartyGlyph({ size = 22 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={styles.partyGlyphSvg}>
+      <path d="M5 4.5h14l-6.3 7.4v6.6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9.2 21h5.6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M6.4 6.6h11.2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" className={styles.partyGlyphLiquid} />
+      <circle cx="14.6" cy="4.2" r="1.15" className={styles.partyGlyphOlive} />
+    </svg>
+  )
+}
+
 function StarGlyph({ filled }) {
   return (
     <svg width="12" height="12" viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.6">
@@ -137,9 +161,45 @@ function StarGlyph({ filled }) {
   )
 }
 
+// Minimal silhouette used inside the Party scan overlay — a woman walking
+// away through the neon arch, built from a handful of flat shapes rather
+// than a traced path, so it stays lightweight.
+function PartySilhouette({ size = 76 }) {
+  return (
+    <svg width={size} height={size * 1.15} viewBox="0 0 40 46" xmlns="http://www.w3.org/2000/svg" className={styles.silhouetteSvg}>
+      <ellipse cx="20" cy="6.4" rx="7.6" ry="2.6" className={styles.silBrim} />
+      <circle cx="20" cy="8.6" r="4.4" className={styles.silHead} />
+      <path d="M12.5 15c0-3 3.2-4.6 7.5-4.6s7.5 1.6 7.5 4.6l-1.6 12.4a2 2 0 0 1-2 1.8H16.1a2 2 0 0 1-2-1.8Z" className={styles.silTorso} />
+      <path className={styles.silLegLeft} d="M15.4 28.6 13.6 44h3.3l2.4-15.4Z" />
+      <path className={styles.silLegRight} d="M24.6 28.6 26.4 44h-3.3l-2.4-15.4Z" />
+    </svg>
+  )
+}
+
 // ── Status overlay ────────────────────────────────────────────────────
 function SearchOverlay({ phase, category }) {
   const copy = STATUS_COPY(category.label)
+  const label = copy[phase] || 'Working on it…'
+
+  if (category.key === 'party') {
+    return (
+      <div className={styles.overlay}>
+        <div className={styles.archStage}>
+          <div className={styles.archGlowFar} />
+          <div className={`${styles.neonArch} ${styles.neonArchBack}`} />
+          <div className={`${styles.neonArch} ${styles.neonArchFront}`} />
+          <div className={styles.archFloorGlow} />
+          <div className={styles.archWalker}>
+            <PartySilhouette />
+          </div>
+          <span className={styles.archSweep} />
+        </div>
+        <p className={styles.overlayStatus}>{label}</p>
+        <p className={styles.overlayHint}>This takes a few seconds.</p>
+      </div>
+    )
+  }
+
   return (
     <div className={styles.overlay}>
       <div className={`${styles.scannerWrap} ${category.accentClass}`}>
@@ -148,7 +208,7 @@ function SearchOverlay({ phase, category }) {
         </span>
         <span className={styles.scanSweep} />
       </div>
-      <p className={styles.overlayStatus}>{copy[phase] || 'Working on it…'}</p>
+      <p className={styles.overlayStatus}>{label}</p>
       <p className={styles.overlayHint}>This takes a few seconds.</p>
     </div>
   )
@@ -192,9 +252,11 @@ function ConsentModal({ category, onConfirm, onCancel }) {
     <div className={styles.modalBackdrop} role="dialog" aria-modal="true">
       <div className={styles.modalCard}>
         <div className={`${styles.modalIcon} ${category.accentClass}`}>
-          {category.key === 'stay' ? <StayGlyph size={20} /> : <EatGlyph size={20} />}
+          {category.key === 'stay' ? <StayGlyph size={20} /> : category.key === 'eat' ? <EatGlyph size={20} /> : <PartyGlyph size={20} />}
         </div>
-        <h2 className={styles.modalTitle}>Find {category.key === 'stay' ? 'a stay' : 'somewhere to eat'} near you</h2>
+        <h2 className={styles.modalTitle}>
+          {category.key === 'stay' ? 'Find a stay near you' : category.key === 'eat' ? 'Find somewhere to eat near you' : 'Find the night out near you'}
+        </h2>
         <p className={styles.modalBody}>{category.consentBody}</p>
         <p className={styles.modalBody}>Your device will ask you to allow location access.</p>
         <div className={styles.priceTag}>
@@ -231,7 +293,7 @@ function ErrorModal({ message, onRetry, onClose }) {
   )
 }
 
-// ── Copy button + info row (shared by both detail views) ─────────────────
+// ── Copy button + info row (shared by all three detail views) ─────────────
 function CopyButton({ value, fieldKey, copiedKey, onCopy }) {
   const copied = copiedKey === fieldKey
   if (!value) return null
@@ -493,11 +555,131 @@ function EatResults({ results, meta, onClose }) {
   )
 }
 
+/* ══════════════════════ PARTY — the door list ══════════════════════ */
+
+function PartyListItem({ m, index, onView }) {
+  const phone = formatPhone(m)
+  const open = isOpenNow(m.regular_working_hours)
+  return (
+    <div className={styles.partyCard} onClick={() => onView(m)}>
+      <div className={styles.partyStub}>
+        <span className={styles.partyStubNum}>{String(index + 1).padStart(2, '0')}</span>
+      </div>
+      <div className={styles.partyPerf} />
+      <div className={styles.partyBody}>
+        <div className={styles.partyTopRow}>
+          <p className={styles.partyName}>{m.display_name}</p>
+          <span className={styles.partyDistance}>{m.distance_km} km</span>
+        </div>
+        <p className={styles.partyAddress}>{m.short_formatted_address}</p>
+        <div className={styles.partyTagRow}>
+          <span className={styles.partyTypeTag}>{m.label || m.primary_type_name || 'Party'}</span>
+          {m.rating != null && <span className={styles.partyRatingTag}>★ {m.rating}</span>}
+          {open === true && <span className={styles.partyOpenTag}>Open now</span>}
+          {open === false && <span className={styles.partyClosedTag}>Closed</span>}
+          {m.badge_approved && <span className={styles.partyVerifiedTag}>Verified</span>}
+        </div>
+        <div className={styles.partyCardActions}>
+          {phone
+            ? <a className={styles.partyActionBtn} href={`tel:${phone}`} onClick={e => e.stopPropagation()}>Call</a>
+            : <a className={styles.partyActionBtn} href={m.maps_url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}>Maps</a>}
+          <button className={styles.partyActionBtnPrimary} onClick={() => onView(m)}>View spot →</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function PartyDetail({ m, onBack }) {
+  const { copiedKey, onCopy } = useCopy()
+  const phone = formatPhone(m)
+  const address = formattedAddress(m)
+  const open = isOpenNow(m.regular_working_hours)
+  const today = todayHoursLine(m.regular_working_hours)
+
+  return (
+    <div className={styles.detailPage}>
+      <button className={styles.detailBack} onClick={onBack}>← Back to the list</button>
+      <div className={styles.partyHero}>
+        <div className={styles.partyHeroTop}>
+          <span className={styles.partyHeroBadge}>{m.label || m.primary_type_name}</span>
+          {open != null && (open ? <span className={styles.partyOpenTag}>Open now</span> : <span className={styles.partyClosedTag}>Closed now</span>)}
+        </div>
+        <h2 className={styles.detailName}>{m.display_name}</h2>
+        <div className={styles.partyHeroRating}>
+          <span className={styles.partyRatingTag}>★ {m.rating != null ? m.rating : '—'}</span>
+          <span className={styles.statDot}>•</span>
+          <span>{m.distance_km} km away</span>
+          {m.badge_approved && <><span className={styles.statDot}>•</span><span className={styles.partyVerifiedTag}>Verified</span></>}
+        </div>
+        <div className={styles.detailActions}>
+          {phone && <a className={styles.partyActionBtn} href={`tel:${phone}`}>Call {phone}</a>}
+          <a className={styles.partyActionBtnPrimary} href={m.maps_url} target="_blank" rel="noopener noreferrer">Open in Maps →</a>
+        </div>
+      </div>
+
+      <div className={styles.detailSection}>
+        <p className={styles.detailSectionTitle}>Location &amp; contact</p>
+        <InfoRow label="Address" value={address} fieldKey="address" copiedKey={copiedKey} onCopy={onCopy} />
+        {phone && <InfoRow label="Phone" value={phone} fieldKey="phone" copiedKey={copiedKey} onCopy={onCopy} mono />}
+        <InfoRow label="Business status" value={m.business_status ? m.business_status.replaceAll('_', ' ').toLowerCase() : null} />
+      </div>
+
+      {Array.isArray(m.regular_working_hours) && m.regular_working_hours.length > 0 && (
+        <div className={styles.detailSection}>
+          <p className={styles.detailSectionTitle}>Hours {today ? `· Today ${today}` : ''}</p>
+          <ul className={styles.hoursListFull}>
+            {m.regular_working_hours.map(line => {
+              const [day, ...rest] = line.split(': ')
+              const isToday = DAY_NAMES[new Date().getDay()] === day
+              return <li key={line} className={isToday ? styles.hoursRowToday : styles.hoursRow}><span>{day}</span><span>{rest.join(': ')}</span></li>
+            })}
+          </ul>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function PartyResults({ results, meta, onClose }) {
+  const [selected, setSelected] = useState(null)
+  const [showAll, setShowAll] = useState(false)
+  const { nearby, far } = useMemo(() => splitByDistance(results), [results])
+  const visible = showAll ? results : nearby
+
+  if (selected) return <PartyDetail m={selected} onBack={() => setSelected(null)} />
+  return (
+    <div className={styles.resultsPage}>
+      <div className={styles.resultsHeader}>
+        <div>
+          <p className={styles.resultsEyebrow}>Party</p>
+          <h2 className={styles.resultsTitle}>{visible.length} spots for the night nearby</h2>
+        </div>
+        <button className={styles.closeBtn} onClick={onClose} aria-label="Close results">✕</button>
+      </div>
+      <div className={meta?.free ? styles.freeBanner : styles.paidBannerParty}>
+        {meta?.free ? (meta?.message || 'This search was free — no charge applied.') : `Charged $${meta?.charge} ~ ₦${meta?.naira}.`}
+      </div>
+      <div className={styles.partyList}>
+        {visible.map((m, i) => <PartyListItem key={`${m.maps_url}-${i}`} m={m} index={i} onView={setSelected} />)}
+      </div>
+      {!showAll && far.length > 0 && (
+        <button className={styles.showMoreBtn} onClick={() => setShowAll(true)}>
+          Show {far.length} more {far.length === 1 ? 'place' : 'places'} farther away
+        </button>
+      )}
+      <button className={styles.newSearchBtn} onClick={onClose}>Start a new search</button>
+    </div>
+  )
+}
+
 /* ═══════════════════ Category picker tile ═══════════════════ */
 function CategoryTile({ category, onSelect }) {
   return (
     <button className={`${styles.tile} ${category.accentClass}`} onClick={() => onSelect(category.key)}>
-      <span className={styles.tileIcon}>{category.key === 'stay' ? <StayGlyph size={22} /> : <EatGlyph size={22} />}</span>
+      <span className={styles.tileIcon}>
+        {category.key === 'stay' ? <StayGlyph size={22} /> : category.key === 'eat' ? <EatGlyph size={22} /> : <PartyGlyph size={22} />}
+      </span>
       <span className={styles.tileLabel}>{category.label}</span>
       <span className={styles.tileTagline}>{category.tagline}</span>
       <span className={styles.tileRule} />
@@ -587,9 +769,11 @@ export default function BlackGrid() {
       </nav>
 
       {phase === 'results' && category ? (
-        category.key === 'stay'
-          ? <StayResults results={results} meta={meta} onClose={resetToIdle} />
-          : <EatResults results={results} meta={meta} onClose={resetToIdle} />
+        category.key === 'party'
+          ? <PartyResults results={results} meta={meta} onClose={resetToIdle} />
+          : category.key === 'stay'
+            ? <StayResults results={results} meta={meta} onClose={resetToIdle} />
+            : <EatResults results={results} meta={meta} onClose={resetToIdle} />
       ) : (
         <main className={styles.hero}>
           <div className={styles.heroGrid} aria-hidden="true" />
@@ -599,6 +783,7 @@ export default function BlackGrid() {
           <p className={styles.heroTitle}>BlackGrid</p>
           <p className={styles.heroSub}>Choose a category, and we&rsquo;ll locate what&rsquo;s around you.</p>
           <div className={styles.categoryRow}>
+            <CategoryTile category={CATEGORIES.party} onSelect={selectCategory} />
             <CategoryTile category={CATEGORIES.stay} onSelect={selectCategory} />
             <CategoryTile category={CATEGORIES.eat} onSelect={selectCategory} />
           </div>

@@ -6,7 +6,7 @@ async function parseJsonSafe(res) {
 
 /**
  * Step 1 — reserve a search slot for the given coordinates.
- * Shared by both categories (Stay and Eat) — BlackGrid resolves which kind
+ * Shared by all categories (Party, Stay, Eat) — BlackGrid resolves which kind
  * of listing to return at the "start" step, not here at initialize.
  * Returns { search_id, search_dollar_charge, search_naira_charge, ... }
  */
@@ -28,7 +28,33 @@ export async function initializeBlackGridSearch(token, latitude, longitude) {
 }
 
 /**
- * Step 2a — run the reserved search for the 'stay' category and fetch the
+ * Step 2a — run the reserved search for the 'party' category and fetch the
+ * nearest bars, lounges & clubs.
+ * Returns { status_code, message, length, data: [...] }
+ */
+export async function startBlackGridBarSearch(token, searchToken, latitude, longitude) {
+  const res = await fetch(`${BASE_URL}/search/bar/start`, {
+    method: 'POST',
+    headers: {
+      accept: 'application/json',
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      search_token: searchToken,
+      latitude: String(latitude),
+      longitude: String(longitude),
+    }),
+  })
+  const data = await parseJsonSafe(res)
+  if (!res.ok) {
+    throw new Error(data?.detail || 'This search is no longer valid. Please search again.')
+  }
+  return data
+}
+
+/**
+ * Step 2b — run the reserved search for the 'stay' category and fetch the
  * nearest Airbnbs & hotels.
  * Returns { status_code, message, length, data: [...] }
  */
@@ -54,7 +80,7 @@ export async function startBlackGridHotelSearch(token, searchToken, latitude, lo
 }
 
 /**
- * Step 2b — run the reserved search for the 'eat' category and fetch the
+ * Step 2c — run the reserved search for the 'eat' category and fetch the
  * nearest restaurants & fast food spots.
  * Returns { status_code, message, length, data: [...] }
  */
