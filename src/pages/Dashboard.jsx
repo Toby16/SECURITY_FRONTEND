@@ -97,7 +97,7 @@ function ParticleBg() {
 const EVERYDAY_APPS = [
   {
     name: 'BlackGrid — Airbnb, Hotel & Restaurant Finder',
-    desc: 'Discover great hotels, airbnbs, restaurants, and eats wherever you are. 🏨',
+    desc: 'Discover great hotels, bars, airbnbs, restaurants, and eats wherever you are. 🥢',
     color: 'black', live: true, free: true,
     route: '/blackgrid',
     icon: (
