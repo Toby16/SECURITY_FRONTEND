@@ -182,6 +182,8 @@
         .gi-btn{ flex:1; }
       }
     </style>
+    <script type="module" crossorigin src="/assets/index-8KpcKonh.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-D-WWfX5_.css">
   </head>
   <body>
     <div id="root"></div>
@@ -190,6 +192,21 @@
          PWA install-prompt banner markup + logic
          Vanilla JS, independent of the React app — runs regardless of
          how main.jsx mounts.
+
+         NOTE: the install-intent flag is stored in BOTH sessionStorage
+         AND a cookie, redundantly. Reasoning:
+           - sessionStorage is the "normal" mechanism, but a token-expiry
+             auth guard that calls sessionStorage.clear() (or
+             localStorage.clear()) during its redirect to /auth would
+             silently wipe a sessionStorage-only flag before this script
+             gets to act on it.
+           - A cookie is untouched by sessionStorage.clear()/
+             localStorage.clear(), so it survives that specific case.
+           - Some environments (rare privacy modes, certain extensions)
+             restrict cookies but leave sessionStorage alone — the
+             reverse of the above.
+         Writing to both and reading with OR means either one surviving
+         is enough; neither is a single point of failure for the other.
          ══════════════════════════════════════════════════════════════ -->
     <div id="gr-install-root">
       <div class="gi-card">
@@ -208,16 +225,43 @@
     <script>
       (function () {
         var INSTALL_DELAY_MS = 4000; // let the banner breathe instead of slapping it up instantly
+        var INTENT_COOKIE = 'gr_install_intent';
+        var INTENT_KEY = 'gr-install-intent';
+
+        // ── Merged install-intent flag: sessionStorage + cookie ──────
+        function setInstallIntent() {
+          try { sessionStorage.setItem(INTENT_KEY, '1'); } catch (e) {}
+          try { document.cookie = INTENT_COOKIE + '=1; path=/; max-age=300; SameSite=Lax'; } catch (e) {}
+        }
+
+        function hadInstallIntent() {
+          var fromSession = false;
+          try { fromSession = sessionStorage.getItem(INTENT_KEY) === '1'; } catch (e) {}
+
+          var fromCookie = false;
+          try {
+            fromCookie = document.cookie.split('; ').some(function (row) {
+              return row === INTENT_COOKIE + '=1';
+            });
+          } catch (e) {}
+
+          return fromSession || fromCookie;
+        }
+
+        function clearInstallIntent() {
+          try { sessionStorage.removeItem(INTENT_KEY); } catch (e) {}
+          try { document.cookie = INTENT_COOKIE + '=; path=/; max-age=0'; } catch (e) {}
+        }
 
         // Capture install intent from the URL the instant this script runs —
         // before the React app mounts and its auth redirect (e.g. to /auth)
-        // can strip "?install=1" off the URL via history.replaceState.
+        // can strip "?install=1" off the URL.
         try {
           var incomingParams = new URLSearchParams(window.location.search);
           if (incomingParams.get('install') === '1') {
-            sessionStorage.setItem('gr-install-intent', '1');
+            setInstallIntent();
           }
-        } catch (e) { /* sessionStorage unavailable — degrade to manual click only */ }
+        } catch (e) { /* URLSearchParams unavailable — degrade to manual click only */ }
 
         var root = document.getElementById('gr-install-root');
         var titleEl = document.getElementById('gi-title');
@@ -235,15 +279,6 @@
 
         function isIOS() {
           return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
-        }
-
-        function hadInstallIntent() {
-          try { return sessionStorage.getItem('gr-install-intent') === '1'; }
-          catch (e) { return false; }
-        }
-
-        function clearInstallIntent() {
-          try { sessionStorage.removeItem('gr-install-intent'); } catch (e) {}
         }
 
         function show() { root.classList.add('gi-show'); }
@@ -311,6 +346,5 @@
       })();
     </script>
 
-    <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
