@@ -207,6 +207,18 @@
 
     <script>
       (function () {
+        var INSTALL_DELAY_MS = 4000; // let the banner breathe instead of slapping it up instantly
+
+        // Capture install intent from the URL the instant this script runs —
+        // before the React app mounts and its auth redirect (e.g. to /auth)
+        // can strip "?install=1" off the URL via history.replaceState.
+        try {
+          var incomingParams = new URLSearchParams(window.location.search);
+          if (incomingParams.get('install') === '1') {
+            sessionStorage.setItem('gr-install-intent', '1');
+          }
+        } catch (e) { /* sessionStorage unavailable — degrade to manual click only */ }
+
         var root = document.getElementById('gr-install-root');
         var titleEl = document.getElementById('gi-title');
         var subEl = document.getElementById('gi-sub');
@@ -225,55 +237,66 @@
           return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
         }
 
-        function show() {
-          root.classList.add('gi-show');
-        }
-        function hide() {
-          root.classList.remove('gi-show');
+        function hadInstallIntent() {
+          try { return sessionStorage.getItem('gr-install-intent') === '1'; }
+          catch (e) { return false; }
         }
 
-        // Already installed and running as the app — never show the banner.
+        function clearInstallIntent() {
+          try { sessionStorage.removeItem('gr-install-intent'); } catch (e) {}
+        }
+
+        function show() { root.classList.add('gi-show'); }
+        function hide() { root.classList.remove('gi-show'); }
+
         if (isStandalone()) {
-          // no-op
+          // Already installed and running as the app — nothing to do.
+          clearInstallIntent();
         } else if (isIOS()) {
-          // iOS Safari has no beforeinstallprompt API — show manual steps.
+          // iOS Safari has no beforeinstallprompt API — show manual steps,
+          // just delayed so it's not instant.
           titleEl.textContent = 'Install Ghostroute MegaApp';
           subEl.textContent = 'Tap the Share icon, then "Add to Home Screen".';
           installBtn.textContent = 'Got it';
-          installBtn.addEventListener('click', hide);
-          dismissBtn.addEventListener('click', hide);
-          show();
+          installBtn.addEventListener('click', function () { hide(); clearInstallIntent(); });
+          dismissBtn.addEventListener('click', function () { hide(); clearInstallIntent(); });
+          setTimeout(show, INSTALL_DELAY_MS);
         } else {
           // Chrome / Edge / Android / most desktop browsers.
           window.addEventListener('beforeinstallprompt', function (e) {
             e.preventDefault();
             deferredPrompt = e;
-            show();
 
-            // If the user arrived from the home-page "Install" banner
-            // (ghostroute.icu/?install=1), skip straight to the native
-            // prompt instead of making them click twice.
-            var params = new URLSearchParams(window.location.search);
-            if (params.get('install') === '1') {
-              deferredPrompt.prompt();
-            }
+            setTimeout(function () {
+              if (!deferredPrompt) return; // installed/dismissed while we waited
+
+              if (hadInstallIntent()) {
+                // User explicitly asked for this from the home-page banner —
+                // go straight to the native prompt instead of a second click.
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.finally(function () {
+                  deferredPrompt = null;
+                  hide();
+                  clearInstallIntent();
+                });
+              } else {
+                show();
+              }
+            }, INSTALL_DELAY_MS);
           });
 
           installBtn.addEventListener('click', function () {
-            if (!deferredPrompt) {
-              hide();
-              return;
-            }
+            if (!deferredPrompt) { hide(); return; }
             deferredPrompt.prompt();
             deferredPrompt.userChoice.finally(function () {
               deferredPrompt = null;
               hide();
+              clearInstallIntent();
             });
           });
 
-          dismissBtn.addEventListener('click', hide);
-
-          window.addEventListener('appinstalled', hide);
+          dismissBtn.addEventListener('click', function () { hide(); clearInstallIntent(); });
+          window.addEventListener('appinstalled', function () { hide(); clearInstallIntent(); });
         }
 
         // Register the service worker (required by most browsers for
