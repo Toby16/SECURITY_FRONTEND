@@ -11,7 +11,7 @@
          ══════════════════════════════════════════════════════════════ -->
     <title>Ghostroute⚡ — Ultra-Powerful Mini-Apps for Power Users. One Account.</title>
     <meta name="description" content="One account for every everyday and security mini-tool — Find hotels, restaurants, fuel, groceries, care or a mechanic near you. Use BlackGrid, Petro, Cart, MedicNear and MechFind — plus IP lookup, VPN detection and real internet speed tests with ScanOracle and Bolt." />
-    <meta name="keywords" content="Ghostroute, ghostroute, Ghostroute account, Ghostroute icu, Ghostroute security, Blckgrid, hotel finder, restaurant finder, Petro, fuel station finder, gas station near me, Cart, grocery finder, supermarket near me, MedicNear, hospital finder, clinic near me, MechFind, mechanic near me, ScanOracle, IP lookup, IP geolocation, VPN detection, proxy detection, Tor detection, Bolt, internet speed test, network speed checker, one account many apps, pay per search app, Paystack payments" />
+    <meta name="keywords" content="Ghostroute, ghostroute, Ghostroute account, Ghostroute icu, Ghostroute security, Blckgrid, hotel finder, restaurant finder, Petro, fuel station finder, gas station near me, Cart, grocery finder, supermarket near me, MedicNear, hospital finder, clinic near me, MechFind, mechanic near me, ScanOracle, IP lookup, IP geolocation, VPN detection, proxy detection, Tor detection, Bolt, internet speed test, network speed checker, one account many apps, pay per search app, Paystack payments, Ghostroute MegaApp, install Ghostroute, Ghostroute app, Ghostroute PWA" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="googlebot" content="index, follow" />
     <meta name="bingbot" content="index, follow" />
@@ -29,20 +29,22 @@
     <link rel="alternate" hreflang="x-default" href="https://ghostroute.icu/" />
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
 
-    <!-- App identity / PWA-ish metadata -->
-    <meta name="application-name" content="Ghostroute" />
-    <meta name="apple-mobile-web-app-title" content="Ghostroute" />
+    <!-- ══════════════════════════════════════════════════════════════
+         PWA — "Ghostroute MegaApp" installability
+         ══════════════════════════════════════════════════════════════ -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="application-name" content="Ghostroute MegaApp" />
+    <meta name="apple-mobile-web-app-title" content="Ghostroute MegaApp" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="msapplication-TileColor" content="#7c3aed" />
     <meta name="msapplication-config" content="none" />
-    <link rel="manifest" href="/site.webmanifest" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="https://res.cloudinary.com/dtitx4alw/image/upload/v1781535548/trqy7zm3d4n9dsvkkpzq.svg" />
     <link rel="mask-icon" href="/favicon.svg" color="#7c3aed" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
 
@@ -79,8 +81,6 @@
 
     <!-- ══════════════════════════════════════════════════════════════
          SEO — STRUCTURED DATA (JSON-LD)
-         Organization, WebSite, WebPage and an ItemList of all seven
-         Ghostroute mini-apps, mirroring the family this account unlocks.
          ══════════════════════════════════════════════════════════════ -->
     <script type="application/ld+json">
     {
@@ -136,9 +136,158 @@
       ]
     }
     </script>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         PWA install-prompt banner styles
+         Scoped under #gr-install-root so nothing here touches the app.
+         ══════════════════════════════════════════════════════════════ -->
+    <style>
+      #gr-install-root{
+        --gi-bg:#211F2E; --gi-ink:#F3EEE1; --gi-purple:#7C3AED;
+        --gi-line:#F3EEE1;
+        position:fixed; left:16px; right:16px; bottom:16px; z-index:9999;
+        display:none;
+        font-family:'Inter',system-ui,sans-serif;
+      }
+      #gr-install-root.gi-show{ display:flex; justify-content:center; }
+      .gi-card{
+        width:100%; max-width:460px;
+        background:var(--gi-bg); color:var(--gi-ink);
+        border:3px solid var(--gi-line); border-radius:20px;
+        box-shadow:6px 6px 0 var(--gi-line);
+        padding:16px 18px;
+        display:flex; align-items:center; gap:12px;
+        animation:gi-rise .35s ease;
+      }
+      @keyframes gi-rise{ from{ transform:translateY(14px); opacity:0; } to{ transform:translateY(0); opacity:1; } }
+      .gi-icon{
+        flex-shrink:0; width:42px; height:42px; border-radius:12px;
+        border:2px solid var(--gi-line); background:var(--gi-purple);
+        display:flex; align-items:center; justify-content:center; font-size:20px;
+      }
+      .gi-body{ flex:1; min-width:0; }
+      .gi-title{ font-weight:700; font-size:14px; margin-bottom:2px; }
+      .gi-sub{ font-size:12px; opacity:.7; line-height:1.4; }
+      .gi-actions{ display:flex; flex-direction:column; gap:6px; flex-shrink:0; }
+      .gi-btn{
+        font-family:inherit; font-weight:700; font-size:12.5px;
+        border:2px solid var(--gi-line); border-radius:100px; cursor:pointer;
+        padding:8px 14px; white-space:nowrap;
+      }
+      .gi-btn-primary{ background:var(--gi-purple); color:#fff; }
+      .gi-btn-ghost{ background:transparent; color:var(--gi-ink); opacity:.75; }
+      @media (max-width:480px){
+        .gi-card{ flex-wrap:wrap; }
+        .gi-actions{ flex-direction:row; width:100%; }
+        .gi-btn{ flex:1; }
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         PWA install-prompt banner markup + logic
+         Vanilla JS, independent of the React app — runs regardless of
+         how main.jsx mounts.
+         ══════════════════════════════════════════════════════════════ -->
+    <div id="gr-install-root">
+      <div class="gi-card">
+        <div class="gi-icon">⚡</div>
+        <div class="gi-body">
+          <div class="gi-title" id="gi-title">Install Ghostroute MegaApp</div>
+          <div class="gi-sub" id="gi-sub">Add Ghostroute to your device for one-tap access to every tool.</div>
+        </div>
+        <div class="gi-actions">
+          <button type="button" class="gi-btn gi-btn-primary" id="gi-install-btn">Install</button>
+          <button type="button" class="gi-btn gi-btn-ghost" id="gi-dismiss-btn">Not now</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        var root = document.getElementById('gr-install-root');
+        var titleEl = document.getElementById('gi-title');
+        var subEl = document.getElementById('gi-sub');
+        var installBtn = document.getElementById('gi-install-btn');
+        var dismissBtn = document.getElementById('gi-dismiss-btn');
+        var deferredPrompt = null;
+
+        function isStandalone() {
+          return (
+            window.matchMedia('(display-mode: standalone)').matches ||
+            window.navigator.standalone === true
+          );
+        }
+
+        function isIOS() {
+          return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+        }
+
+        function show() {
+          root.classList.add('gi-show');
+        }
+        function hide() {
+          root.classList.remove('gi-show');
+        }
+
+        // Already installed and running as the app — never show the banner.
+        if (isStandalone()) {
+          // no-op
+        } else if (isIOS()) {
+          // iOS Safari has no beforeinstallprompt API — show manual steps.
+          titleEl.textContent = 'Install Ghostroute MegaApp';
+          subEl.textContent = 'Tap the Share icon, then "Add to Home Screen".';
+          installBtn.textContent = 'Got it';
+          installBtn.addEventListener('click', hide);
+          dismissBtn.addEventListener('click', hide);
+          show();
+        } else {
+          // Chrome / Edge / Android / most desktop browsers.
+          window.addEventListener('beforeinstallprompt', function (e) {
+            e.preventDefault();
+            deferredPrompt = e;
+            show();
+
+            // If the user arrived from the home-page "Install" banner
+            // (ghostroute.icu/?install=1), skip straight to the native
+            // prompt instead of making them click twice.
+            var params = new URLSearchParams(window.location.search);
+            if (params.get('install') === '1') {
+              deferredPrompt.prompt();
+            }
+          });
+
+          installBtn.addEventListener('click', function () {
+            if (!deferredPrompt) {
+              hide();
+              return;
+            }
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.finally(function () {
+              deferredPrompt = null;
+              hide();
+            });
+          });
+
+          dismissBtn.addEventListener('click', hide);
+
+          window.addEventListener('appinstalled', hide);
+        }
+
+        // Register the service worker (required by most browsers for
+        // installability, and gives a basic offline fallback).
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', function () {
+            navigator.serviceWorker.register('/sw.js').catch(function () {
+              /* silent — installability just falls back to browser default UI */
+            });
+          });
+        }
+      })();
+    </script>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
