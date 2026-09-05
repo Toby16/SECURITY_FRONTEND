@@ -1,11 +1,11 @@
-/* src/pages/ghostroutevpn/protocols/VpnProtocols.module.css */
+/* src/pages/ghostroutevpn/MyVpns.module.css */
 
 .head {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  margin: 24px 0 40px;
+  margin: 24px 0 36px;
   flex-wrap: wrap;
 }
 
@@ -96,13 +96,6 @@
   color: #0a0a0b;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
-  align-items: stretch;
-}
-
 .state {
   font-family: "Inter", system-ui, sans-serif;
   font-size: 14px;
@@ -110,34 +103,26 @@
   padding: 32px 0;
 }
 
-@media (max-width: 720px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
+.group {
+  margin-bottom: 36px;
 }
 
-@media (max-width: 560px) {
-  /* Once .head wraps, .headRight would otherwise shrink to a narrow column
-     sized to its own content and get dropped at the left edge of the new
-     line (flex-wrap default placement), while its contents stayed
-     right-aligned inside that tiny box — reading as disconnected/floating.
-     Instead, turn it into a full-width row: balance on the left, currency
-     toggle on the right, same spot below the title, properly anchored to
-     the page edges. */
-  .head {
-    flex-direction: column;
-    align-items: stretch;
-  }
+.groupLabel {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #7c7e86;
+  margin: 0 0 14px;
+}
 
-  .headRight {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    margin-top: 6px;
-  }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
 
-  .balance {
-    white-space: normal;
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
   }
 }

@@ -1,0 +1,340 @@
+/* src/pages/ghostroutevpn/myvpns/VpnDetailModal.module.css */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(6, 6, 7, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: fadeIn 0.18s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 65vh;
+  max-height: 65vh;
+  padding: 30px 26px 26px;
+  border-radius: 22px;
+  background:
+    linear-gradient(165deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02) 55%),
+    #101012;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: riseIn 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.scrollArea {
+  overflow-y: auto;
+  padding-right: 4px;
+
+  /* Firefox: thin track, invisible thumb/track by default */
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+/* Chrome / Safari / Edge: thin scrollbar, transparent until scrolling */
+.scrollArea::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollArea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollArea::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 999px;
+  transition: background-color 0.3s ease;
+}
+
+/* Only painted while the JS scroll handler has added this class (i.e. while
+   the user is actively scrolling); it's removed again shortly after they
+   stop, so the bar fades in and back out instead of sitting there always. */
+.scrollArea.isScrolling {
+  scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
+}
+
+.scrollArea.isScrolling::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.28);
+}
+
+.close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: #c7c8ce;
+  cursor: pointer;
+  z-index: 1;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.close:hover {
+  color: #f4f4f6;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.state {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 14px;
+  color: #9a9ca4;
+  padding: 20px 0;
+  text-align: center;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-right: 32px;
+  margin-bottom: 20px;
+}
+
+.name {
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #f4f4f6;
+}
+
+.active {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  background: #e9eaed;
+  color: #0a0a0b;
+  border-radius: 999px;
+  padding: 5px 10px;
+  white-space: nowrap;
+}
+
+.rows {
+  margin: 0 0 22px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 13px;
+  gap: 12px;
+}
+
+.row dt {
+  color: #8c8e96;
+  flex-shrink: 0;
+}
+
+.row dd {
+  margin: 0;
+  color: #e9eaed;
+  font-weight: 500;
+  text-align: right;
+}
+
+.mono {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  word-break: break-all;
+}
+
+.sectionLabel {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #7c7e86;
+  margin: 4px 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.metricBox {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.metricLabel {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 11px;
+  color: #8c8e96;
+}
+
+.metricValue {
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #f4f4f6;
+}
+
+.metricsNote {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 11.5px;
+  color: #7c7e86;
+  margin: 4px 0 18px;
+}
+
+.configState {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 13px;
+  color: #9a9ca4;
+  padding: 16px 0;
+}
+
+.configBlock {
+  max-height: 260px;
+  overflow-y: auto;
+  margin: 0 0 20px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: #c7c8ce;
+  white-space: pre-wrap;
+  word-break: break-all;
+
+  /* Firefox: thin track, invisible thumb/track by default */
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+/* Chrome / Safari / Edge: thin scrollbar, transparent until scrolling */
+.configBlock::-webkit-scrollbar {
+  width: 6px;
+}
+
+.configBlock::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.configBlock::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 999px;
+  transition: background-color 0.3s ease;
+}
+
+.configBlock.isScrolling {
+  scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
+}
+
+.configBlock.isScrolling::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.28);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.download {
+  flex: 1;
+  min-width: 200px;
+  padding: 13px 16px;
+  border-radius: 14px;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #e9eaed;
+  color: #0a0a0b;
+  transition: transform 0.15s ease, background-color 0.2s ease;
+}
+
+.download:hover {
+  background: #f4f4f6;
+}
+
+.download:disabled {
+  background: rgba(233, 234, 237, 0.35);
+  color: rgba(10, 10, 11, 0.6);
+  cursor: not-allowed;
+}
+
+.download:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.howTo {
+  padding: 13px 16px;
+  border-radius: 14px;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #c7c8ce;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  text-decoration: none;
+  text-align: center;
+  transition: background-color 0.2s ease;
+}
+
+.howTo:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+@media (max-width: 420px) {
+  .modal { max-width: 100%; }
+  .metrics { grid-template-columns: 1fr; }
+
+  /* .howTo has no defined width, so on desktop it just sits next to
+     .download (which is flex:1 and stretches). Once the row wraps on
+     mobile, .howTo shrinks to its own text width and is left stranded
+     under the full-width button instead of matching it. Stack both as a
+     full-width pair instead, so they read as one deliberate two-step
+     action group. */
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .download,
+  .howTo {
+    width: 100%;
+    min-width: 0;
+  }
+}

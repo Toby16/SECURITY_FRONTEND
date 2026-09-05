@@ -9,12 +9,45 @@ const LINKS = [
   { to: "/ghostroutevpn/about-us", label: "about us" },
 ];
 
+function ArrowLeftIcon(props) {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <path d="M19 12H5M11 18l-6-6 6-6" />
+    </svg>
+  );
+}
+
 export default function GhostrouteVpnNav() {
   return (
     <header className={styles.header}>
-      <div className={styles.brand}>
-        <span className={styles.brandMark} aria-hidden="true" />
-        Ghostroute VPN
+      <div className={styles.left}>
+        {/* Always present, always the same spot, regardless of which
+            ghostroutevpn page is active — the one constant way back to the
+            dashboard of mini apps. */}
+        <NavLink
+          to="/"
+          className={styles.backLink}
+          title="Back to dashboard"
+          aria-label="Back to dashboard"
+        >
+          <ArrowLeftIcon className={styles.backIcon} />
+          <span>dashboard</span>
+        </NavLink>
+
+        <div className={styles.brand}>
+          <span className={styles.brandMark} aria-hidden="true" />
+          Ghostroute VPN
+        </div>
       </div>
 
       <nav className={styles.nav} aria-label="Ghostroute VPN">

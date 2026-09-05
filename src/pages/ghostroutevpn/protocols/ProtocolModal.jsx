@@ -1,10 +1,10 @@
 // src/pages/ghostroutevpn/protocols/ProtocolModal.jsx
 import { useEffect } from "react";
+import { formatProtocolPrice } from "../../../services/ghostrouteVpnService.js";
 import { iconForFeature } from "./icons.jsx";
 import styles from "./ProtocolModal.module.css";
 
-export default function ProtocolModal({ protocol, onClose, onSelect }) {
-  // Esc closes the modal and returns to the protocols page, same as the X.
+export default function ProtocolModal({ protocol, currency, onClose, onSelect }) {
   useEffect(() => {
     function handleKey(e) {
       if (e.key === "Escape") onClose();
@@ -36,7 +36,7 @@ export default function ProtocolModal({ protocol, onClose, onSelect }) {
         <div className={styles.pricing}>
           {protocol.pricing.map((price) => (
             <span key={price.value} className={styles.priceChip}>
-              {price.label}
+              {formatProtocolPrice(price, currency)}
             </span>
           ))}
         </div>

@@ -1,0 +1,192 @@
+/* src/pages/ghostroutevpn/myvpns/VpnPaymentModal.module.css */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(6, 6, 7, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: fadeIn 0.18s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  padding: 30px 26px 26px;
+  border-radius: 22px;
+  background:
+    linear-gradient(165deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02) 55%),
+    #101012;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: riseIn 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: #c7c8ce;
+  cursor: pointer;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.close:hover {
+  color: #f4f4f6;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.state {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 14px;
+  color: #9a9ca4;
+  padding: 20px 0;
+  text-align: center;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-right: 32px;
+  margin-bottom: 20px;
+}
+
+.name {
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #f4f4f6;
+}
+
+.pending {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #9a9ca4;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  padding: 5px 10px;
+  white-space: nowrap;
+}
+
+.rows {
+  margin: 0 0 20px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 13px;
+}
+
+.row dt {
+  color: #8c8e96;
+}
+
+.row dd {
+  margin: 0;
+  color: #e9eaed;
+  font-weight: 500;
+  text-align: right;
+}
+
+.total {
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-weight: 600;
+  color: #f4f4f6 !important;
+}
+
+.note {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #7c7e86;
+  margin: 0 0 20px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.cancel,
+.verify {
+  flex: 1;
+  padding: 13px 16px;
+  border-radius: 14px;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.2s ease;
+}
+
+.cancel {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #c7c8ce;
+}
+
+.cancel:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.cancel:active {
+  transform: scale(0.98);
+}
+
+
+@media (max-width: 420px) {
+  .modal { max-width: 100%; }
+}
+
+.verify {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #e9eaed;
+  color: #0a0a0b;
+  cursor: pointer;
+}
+
+.verify:hover {
+  background: #f4f4f6;
+}
+
+.verify:disabled {
+  background: rgba(233, 234, 237, 0.35);
+  color: rgba(10, 10, 11, 0.6);
+  cursor: not-allowed;
+}
+
+.verify:active:not(:disabled) {
+  transform: scale(0.98);
+}
