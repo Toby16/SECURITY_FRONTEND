@@ -14,6 +14,12 @@ import Petro from './pages/petro/Petro.jsx'
 import MedicNear from './pages/medicnear/MedicNear.jsx'
 import BlackGrid from './pages/blackgrid/BlackGrid.jsx'
 import CART from './pages/cart/CART.jsx'
+import GhostrouteVpn from "./pages/ghostroutevpn/GhostrouteVpn.jsx";
+import VpnProtocols from "./pages/ghostroutevpn/protocols/VpnProtocols.jsx";
+import MyVpns from "./pages/ghostroutevpn/MyVpns.jsx";
+import HowToUse from "./pages/ghostroutevpn/HowToUse.jsx";
+import AboutUs from "./pages/ghostroutevpn/AboutUs.jsx";
+
 import NotFound    from './pages/NotFound.jsx'
 import PrivateRoute from './components/PrivateRoute.jsx'
 function App() {
@@ -60,6 +66,15 @@ function App() {
 	  <Route path="/cart" element={
 	    <PrivateRoute><CART /></PrivateRoute>
 	  } />
+	  <Route path="/ghostroutevpn" element={
+	    <PrivateRoute><GhostrouteVpn /></PrivateRoute>
+	  }>
+	    <Route index element={<VpnProtocols />}/>
+  	    <Route path="protocols" element={<VpnProtocols />}/>
+  	    <Route path="my-vpns" element={<MyVpns />} />
+	    <Route path="how-to-use" element={<HowToUse />} />
+	    <Route path="about-us" element={<AboutUs />} />
+	  </Route>
           {/* 404 */}
           <Route path="*" element={<NotFound />} />
         </Routes>

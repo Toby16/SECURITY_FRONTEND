@@ -154,6 +154,17 @@ const EVERYDAY_APPS = [
 
 const APPS = [
   {
+    name: 'Ghostroute VPN',
+    desc: 'Private, fast, encrypted browsing powered by Ghostroute. 🔒',
+    color: 'purple', live: true,
+    route: '/ghostroutevpn',
+    icon: (
+      <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
+        <path d="M8 0a8 8 0 100 16A8 8 0 008 0zM4.5 7.5a.5.5 0 000 1h5.793l-2.147 2.146a.5.5 0 00.708.708l3-3a.5.5 0 000-.708l-3-3a.5.5 0 10-.708.708L10.293 7.5H4.5z"/>
+      </svg>
+    ),
+  },
+  {
     name: 'SCANORACLE — IP Lookup',
     desc: 'Geolocate any IP address with full intelligence. 📡',
     color: 'blue', live: true,
@@ -212,16 +223,6 @@ const APPS = [
     icon: (
       <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
         <path d="M4 2a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V3a1 1 0 00-1-1H4zm2 3h4a.5.5 0 010 1H6a.5.5 0 010-1zm0 2h4a.5.5 0 010 1H6a.5.5 0 010-1zm0 2h2a.5.5 0 010 1H6a.5.5 0 010-1z"/>
-      </svg>
-    ),
-  },
-  {
-    name: 'Ghostroute VPN',
-    desc: 'Private, fast, encrypted browsing powered by Ghostroute. 🔒',
-    color: 'purple', live: false,
-    icon: (
-      <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
-        <path d="M8 0a8 8 0 100 16A8 8 0 008 0zM4.5 7.5a.5.5 0 000 1h5.793l-2.147 2.146a.5.5 0 00.708.708l3-3a.5.5 0 000-.708l-3-3a.5.5 0 10-.708.708L10.293 7.5H4.5z"/>
       </svg>
     ),
   },

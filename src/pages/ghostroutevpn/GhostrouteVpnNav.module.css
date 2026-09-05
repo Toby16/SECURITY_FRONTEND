@@ -1,0 +1,68 @@
+/* src/pages/ghostroute/GhostrouteVpnNav.module.css */
+
+.header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 24px;
+  max-width: 1080px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #f2f2f4;
+}
+
+.brandMark {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #e9eaed;
+  box-shadow: 0 0 0 3px rgba(233, 234, 237, 0.14), 0 0 14px rgba(233, 234, 237, 0.45);
+}
+
+.nav {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.link {
+  padding: 9px 16px;
+  border-radius: 999px;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 13.5px;
+  color: #9a9ca4;
+  text-decoration: none;
+  transition: color 0.2s ease, background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.link:hover {
+  color: #e9eaed;
+}
+
+.linkActive {
+  color: #0a0a0b;
+  background: #e9eaed;
+}
+
+@media (max-width: 560px) {
+  .header { justify-content: center; text-align: center; }
+  .nav { width: 100%; justify-content: space-between; }
+  .link { padding: 9px 10px; font-size: 12.5px; }
+}

@@ -1,0 +1,54 @@
+/* src/pages/ghostroute/GhostrouteVpn.module.css */
+
+.page {
+  position: relative;
+  min-height: 100vh;
+  background: #0a0a0b;
+  color: #e9eaed;
+  overflow-x: hidden;
+  isolation: isolate;
+}
+
+/* One slow, orchestrated ambient motion behind everything — not per-card
+   effects. Two soft masses of light drifting past each other, like breath
+   fogging glass. */
+.mist {
+  position: fixed;
+  inset: -20% -10%;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(38% 32% at 24% 28%, rgba(201, 206, 218, 0.10), transparent 70%),
+    radial-gradient(42% 36% at 76% 68%, rgba(255, 255, 255, 0.06), transparent 72%);
+  filter: blur(40px);
+  animation: driftMist 34s ease-in-out infinite;
+}
+
+@keyframes driftMist {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(3%, -4%, 0) scale(1.06); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+
+/* Faint grain so large black areas don't look flat/banded */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  mix-blend-mode: overlay;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px 24px 96px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mist { animation: none; }
+}
