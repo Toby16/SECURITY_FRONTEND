@@ -1,0 +1,84 @@
+/* src/components/GhostRouteMark.module.css */
+
+.mark {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.mark * {
+  box-sizing: border-box;
+}
+
+.ring {
+  position: absolute;
+  inset: 4%;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(233, 234, 237, 0.4);
+  animation: grSpin 12s linear infinite;
+}
+
+.orbit {
+  position: absolute;
+  inset: 4%;
+  animation: grSpin 3.4s linear infinite;
+}
+
+.orbitDot {
+  position: absolute;
+  top: -3%;
+  left: 50%;
+  width: 15%;
+  height: 15%;
+  margin-left: -7.5%;
+  border-radius: 50%;
+  background: #e9eaed;
+  box-shadow: 0 0 6px rgba(233, 234, 237, 0.85);
+}
+
+.shield {
+  position: relative;
+  width: 58%;
+  height: 58%;
+  background: linear-gradient(160deg, #f4f4f6, #b9bac1);
+  clip-path: polygon(50% 0%, 95% 20%, 95% 58%, 50% 100%, 5% 58%, 5% 20%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.eye {
+  position: absolute;
+  top: 36%;
+  width: 15%;
+  height: 15%;
+  border-radius: 50%;
+  background: #0a0a0b;
+}
+
+.eye:first-of-type {
+  left: 23%;
+}
+
+.eye:last-of-type {
+  right: 23%;
+}
+
+.static .ring,
+.static .orbit {
+  animation: none;
+}
+
+@keyframes grSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ring,
+  .orbit {
+    animation: none;
+  }
+}
