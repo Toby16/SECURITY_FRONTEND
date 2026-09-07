@@ -1,5 +1,6 @@
 // src/pages/ghostroutevpn/GhostrouteVpnNav.jsx
 import { NavLink } from "react-router-dom";
+import GhostRouteMark from "../../components/GhostRouteMark.jsx";
 import styles from "./GhostrouteVpnNav.module.css";
 
 const LINKS = [
@@ -45,7 +46,7 @@ export default function GhostrouteVpnNav() {
         </NavLink>
 
         <div className={styles.brand}>
-          <span className={styles.brandMark} aria-hidden="true" />
+          <GhostRouteMark size={22} className={styles.brandMark} />
           Ghostroute VPN
         </div>
       </div>

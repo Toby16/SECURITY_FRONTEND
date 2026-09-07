@@ -52,7 +52,7 @@
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
   font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
   font-size: 18px;
   font-weight: 600;
@@ -61,11 +61,7 @@
 }
 
 .brandMark {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: #e9eaed;
-  box-shadow: 0 0 0 3px rgba(233, 234, 237, 0.14), 0 0 14px rgba(233, 234, 237, 0.45);
+  flex-shrink: 0;
 }
 
 .nav {

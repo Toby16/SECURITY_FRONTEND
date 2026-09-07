@@ -49,6 +49,5 @@ export function formatBytes(bytes) {
 }
 
 export function howToUsePath(vpnType) {
-  // TODO: wire to real "How to use" routing once that page exists
-  return `/how-to-use?type=${vpnType}`;
+  return `/ghostroutevpn/how-to-use?protocol=${vpnType}`;
 }

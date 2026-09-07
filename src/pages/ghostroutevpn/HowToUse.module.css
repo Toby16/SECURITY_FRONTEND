@@ -1,0 +1,471 @@
+/* src/pages/ghostroutevpn/HowToUse.module.css */
+
+.head {
+  margin: 24px 0 28px;
+  max-width: 480px;
+}
+
+.title {
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-size: clamp(28px, 4vw, 36px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0 0 10px;
+  color: #f4f4f6;
+}
+
+.subtitle {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #9a9ca4;
+  margin: 0;
+}
+
+.protocolTabs {
+  display: inline-flex;
+  gap: 2px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 18px;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.protocolTab,
+.protocolTabActive {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  border: none;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.protocolTab {
+  background: transparent;
+  color: #9a9ca4;
+}
+
+.protocolTab:hover {
+  color: #e9eaed;
+}
+
+.protocolTabActive {
+  background: #e9eaed;
+  color: #0a0a0b;
+}
+
+.protocolTabIcon {
+  width: 15px;
+  height: 15px;
+  color: #8c8e96;
+  flex-shrink: 0;
+}
+
+.protocolTabActive .protocolTabIcon {
+  color: #0a0a0b;
+}
+
+.deviceRail {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+  margin-bottom: 32px;
+  scrollbar-width: none;
+}
+
+.deviceRail::-webkit-scrollbar {
+  display: none;
+}
+
+.deviceTab,
+.deviceTabActive {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  padding: 10px 16px;
+  border-radius: 14px;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+}
+
+.deviceTab {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #9a9ca4;
+}
+
+.deviceTab:hover {
+  color: #e9eaed;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.deviceTabActive {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  color: #f4f4f6;
+}
+
+.deviceTabIcon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.empty {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 14px;
+  color: #9a9ca4;
+  padding: 32px 0;
+}
+
+.panel {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 30px 28px 32px;
+  border-radius: 22px;
+  background:
+    linear-gradient(165deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015) 55%),
+    rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.panelHead {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 26px;
+}
+
+.panelIcon {
+  width: 26px;
+  height: 26px;
+  color: #c7c8ce;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.panelTitle {
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #f4f4f6;
+  margin: 0 0 6px;
+}
+
+.panelSubtitle {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #9a9ca4;
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
+.sectionLabel {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #7c7e86;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.prereq {
+  margin-bottom: 24px;
+}
+
+.prereqList {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 13px;
+  color: #c7c8ce;
+  overflow-wrap: break-word;
+}
+
+.linkRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.linkChip {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.03);
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #e9eaed;
+  text-decoration: none;
+  overflow-wrap: break-word;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.linkChip:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+.linkChipIcon {
+  width: 13px;
+  height: 13px;
+  color: #9a9ca4;
+  flex-shrink: 0;
+}
+
+.stepsHead {
+  margin-bottom: 16px;
+}
+
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.step {
+  display: flex;
+  gap: 16px;
+}
+
+.stepMarker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.stepNode {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.04);
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #e9eaed;
+}
+
+.stepLine {
+  flex: 1;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.12);
+  margin: 4px 0;
+  min-height: 14px;
+}
+
+.stepBody {
+  flex: 1;
+  min-width: 0;
+  padding-bottom: 26px;
+}
+
+.stepTitle {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #f4f4f6;
+  margin: 2px 0 6px;
+}
+
+.stepText {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.65;
+  color: #9a9ca4;
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
+.note {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 12.5px;
+  color: #7c7e86;
+  margin: 4px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  overflow-wrap: break-word;
+}
+
+.redirectLink {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 14px 22px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #e9eaed;
+  color: #0a0a0b;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.redirectLink:hover {
+  background: #ffffff;
+}
+
+.redirectLink:active {
+  transform: scale(0.98);
+}
+
+.redirectLinkIcon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .head {
+    margin: 18px 0 22px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+
+  .protocolTabs {
+    margin-bottom: 14px;
+  }
+
+  .protocolTab,
+  .protocolTabActive {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
+  .deviceRail {
+    margin-bottom: 22px;
+  }
+
+  .deviceTab,
+  .deviceTabActive {
+    padding: 9px 14px;
+    font-size: 12.5px;
+  }
+
+  .panel {
+    padding: 22px 16px 24px;
+    border-radius: 18px;
+  }
+
+  .panelHead {
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .panelIcon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .panelTitle {
+    font-size: 19px;
+  }
+
+  .panelSubtitle {
+    font-size: 13px;
+  }
+
+  .prereq {
+    margin-bottom: 20px;
+  }
+
+  .linkRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .linkChip {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    padding: 12px 16px;
+  }
+
+  .stepsHead {
+    margin-bottom: 14px;
+  }
+
+  .step {
+    gap: 12px;
+  }
+
+  .stepNode {
+    width: 24px;
+    height: 24px;
+    font-size: 11.5px;
+  }
+
+  .stepTitle {
+    font-size: 14px;
+  }
+
+  .stepText {
+    font-size: 12.5px;
+  }
+
+  .stepBody {
+    padding-bottom: 20px;
+  }
+
+  .redirectLink {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 400px) {
+  .panel {
+    padding: 18px 14px 20px;
+  }
+
+  .panelTitle {
+    font-size: 18px;
+  }
+
+  .linkChip {
+    font-size: 12px;
+    padding: 11px 14px;
+  }
+}

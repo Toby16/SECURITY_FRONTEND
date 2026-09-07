@@ -8,6 +8,7 @@ import {
 import { useAuthGuard } from '../hooks/useAuthGuard.js'
 import { useTokenRefresh } from '../hooks/useTokenRefresh.js'
 import GhostLogo from '../components/GhostLogo.jsx'
+import GhostRouteMark from '../components/GhostRouteMark.jsx'
 import DepositModal from './DepositModal.jsx'
 import DonateModal from './DonateModal.jsx'
 import SupportModal from './SupportModal.jsx'
@@ -155,14 +156,10 @@ const EVERYDAY_APPS = [
 const APPS = [
   {
     name: 'Ghostroute VPN',
-    desc: 'Private, fast, encrypted browsing powered by Ghostroute. 🔒',
+    desc: 'Private, fast, encrypted browsing on Wireguard or OpenVPN powered by Ghostroute. 🛡',
     color: 'purple', live: true,
     route: '/ghostroutevpn',
-    icon: (
-      <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
-        <path d="M8 0a8 8 0 100 16A8 8 0 008 0zM4.5 7.5a.5.5 0 000 1h5.793l-2.147 2.146a.5.5 0 00.708.708l3-3a.5.5 0 000-.708l-3-3a.5.5 0 10-.708.708L10.293 7.5H4.5z"/>
-      </svg>
-    ),
+    icon: <GhostRouteMark size={24} />,
   },
   {
     name: 'SCANORACLE — IP Lookup',
@@ -566,6 +563,24 @@ export default function Dashboard() {
               Make an Impact →
             </button>
           </div>
+
+          <button
+            type="button"
+            className={styles.vpnBanner}
+            onClick={() => navigate('/ghostroutevpn/protocols')}
+          >
+            <div className={styles.vpnBannerGlow} aria-hidden="true" />
+            <div className={styles.vpnBannerLeft}>
+              <GhostRouteMark size={40} />
+              <div>
+                <p className={styles.vpnBannerTitle}>Ghostroute VPN</p>
+                <p className={styles.vpnBannerSub}>
+                  Private, encrypted browsing on WireGuard or OpenVPN - open and connect in minutes.
+                </p>
+              </div>
+            </div>
+            <span className={styles.vpnBannerCta}>Explore protocols →</span>
+          </button>
 
 	  <section className={`${styles.section} ${styles.everydaySection}`}>
   	    <div className={styles.everydayHeader}>
