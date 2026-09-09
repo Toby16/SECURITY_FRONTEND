@@ -22,8 +22,8 @@
 .modal {
   position: relative;
   width: 100%;
-  max-width: 65vh;
-  max-height: 65vh;
+  max-width: 460px;
+  max-height: 85vh;
   padding: 30px 26px 26px;
   border-radius: 22px;
   background:
@@ -33,6 +33,7 @@
   animation: riseIn 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
   display: flex;
   flex-direction: column;
+  container-type: inline-size;
 }
 
 @keyframes riseIn {
@@ -317,16 +318,18 @@
   background: rgba(255, 255, 255, 0.05);
 }
 
-@media (max-width: 420px) {
-  .modal { max-width: 100%; }
-  .metrics { grid-template-columns: 1fr; }
+/* Bound to .modal's own rendered width (via container-type: inline-size
+   on .modal above) instead of the viewport. A viewport media query was
+   wrong here because .modal's width used to derive from `vh` — mixing
+   width and height units — so viewport-width breakpoints and the modal's
+   actual width could disagree depending on device aspect ratio and mobile
+   toolbar collapse/expand state. Querying the modal's own box removes
+   that mismatch entirely. */
+@container (max-width: 420px) {
+  .metrics {
+    grid-template-columns: 1fr;
+  }
 
-  /* .howTo has no defined width, so on desktop it just sits next to
-     .download (which is flex:1 and stretches). Once the row wraps on
-     mobile, .howTo shrinks to its own text width and is left stranded
-     under the full-width button instead of matching it. Stack both as a
-     full-width pair instead, so they read as one deliberate two-step
-     action group. */
   .actions {
     flex-direction: column;
     align-items: stretch;
