@@ -3,7 +3,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: 1000;   /* was: 50 — must outrank GhostrouteVpnNav's sticky/fixed z-index */
   display: flex;
   align-items: center;
   justify-content: center;
