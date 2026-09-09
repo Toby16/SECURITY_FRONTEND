@@ -28,7 +28,7 @@ export function getConfigDisplayText(configData) {
 export function downloadVpnConfig(configData) {
   if (!configData) return;
   const text = getConfigDisplayText(configData);
-  const blob = new Blob([text], { type: "text/plain" });
+  const blob = new Blob([text], { type: "application/octet-stream" });
   const url = URL.createObjectURL(blob);
 
   const a = document.createElement("a");
@@ -39,6 +39,7 @@ export function downloadVpnConfig(configData) {
   a.remove();
   URL.revokeObjectURL(url);
 }
+
 
 export function formatBytes(bytes) {
   if (!bytes) return "0 B";
