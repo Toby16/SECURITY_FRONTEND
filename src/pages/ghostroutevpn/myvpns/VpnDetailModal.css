@@ -214,11 +214,79 @@
   margin: 4px 0 18px;
 }
 
+.configHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 4px 0 10px;
+}
+
+.configHeader .sectionLabel {
+  margin: 0;
+}
+
+.configToggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.copyBtn,
+.viewToggle {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #c7c8ce;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  padding: 5px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.copyBtn:hover,
+.viewToggle:hover {
+  color: #f4f4f6;
+  background: rgba(255, 255, 255, 0.08);
+}
+
 .configState {
   font-family: "Inter", system-ui, sans-serif;
   font-size: 13px;
   color: #9a9ca4;
   padding: 16px 0;
+}
+
+.qrWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 16px 20px;
+  margin: 0 0 20px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.qrImage {
+  width: 200px;
+  height: 200px;
+  border-radius: 10px;
+  background: #e9eaed;
+  padding: 10px;
+}
+
+.qrHint {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: #7c7e86;
+  text-align: center;
 }
 
 .configBlock {
@@ -269,7 +337,6 @@
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-  margin-top: 10px;
 }
 
 .download {
@@ -338,34 +405,4 @@
     width: 100%;
     min-width: 0;
   }
-}
-
-.configToggle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 5px 0 15px 0;
-  border-radius: 14px;
-}
-
-.copyBtn,
-.viewToggle {
-  font-family: "Inter", system-ui, sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: #c7c8ce;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 999px;
-  padding: 6px 14px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
-}
-
-.copyBtn:hover,
-.viewToggle:hover {
-  color: #f4f4f6;
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.24);
 }

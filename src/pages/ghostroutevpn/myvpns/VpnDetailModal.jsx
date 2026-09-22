@@ -8,6 +8,7 @@ import {
 import {
   getConfigDisplayText,
   downloadVpnConfig,
+  generateConfigQrDataUrl,
   formatBytes,
   howToUsePath,
 } from "./vpnConfigUtils.js";
@@ -15,6 +16,7 @@ import styles from "./VpnDetailModal.module.css";
 
 const POLL_INTERVAL_MS = 10000;
 const SCROLLBAR_FADE_MS = 900;
+const COPY_RESET_MS = 1500;
 
 export default function VpnDetailModal({ paymentId, onClose }) {
   const [detail, setDetail] = useState(null);
@@ -25,6 +27,14 @@ export default function VpnDetailModal({ paymentId, onClose }) {
 
   const [metrics, setMetrics] = useState(null);
   const [metricsError, setMetricsError] = useState(null);
+
+  // "qr" is the default view — a phone can scan straight into the
+  // WireGuard/OpenVPN app without ever touching the downloaded file.
+  // "text" shows the raw config for reading or copying.
+  const [viewMode, setViewMode] = useState("qr");
+  const [qrDataUrl, setQrDataUrl] = useState(null);
+  const [qrError, setQrError] = useState(null);
+  const [copied, setCopied] = useState(false);
 
   // payment / vpn detail
   useEffect(() => {
@@ -56,6 +66,24 @@ export default function VpnDetailModal({ paymentId, onClose }) {
       cancelled = true;
     };
   }, [detail, paymentId]);
+
+  // Generate the QR code as soon as the config arrives, regardless of which
+  // view is currently active, so toggling between "QR code" and "view file"
+  // is instant instead of re-generating on every click.
+  useEffect(() => {
+    if (!config) return;
+    let cancelled = false;
+    generateConfigQrDataUrl(config)
+      .then((dataUrl) => {
+        if (!cancelled) setQrDataUrl(dataUrl);
+      })
+      .catch((err) => {
+        if (!cancelled) setQrError(err);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [config]);
 
   // data metrics — only runs while this modal is mounted, keyed on client_id.
   // Unmounting (closing the modal) clears the interval, which is what stops
@@ -99,6 +127,22 @@ export default function VpnDetailModal({ paymentId, onClose }) {
 
   function handleOverlayClose() {
     onClose();
+  }
+
+  function toggleView() {
+    setViewMode((mode) => (mode === "qr" ? "text" : "qr"));
+  }
+
+  async function handleCopy() {
+    if (!config) return;
+    try {
+      await navigator.clipboard.writeText(getConfigDisplayText(config));
+      setCopied(true);
+      setTimeout(() => setCopied(false), COPY_RESET_MS);
+    } catch {
+      // Clipboard API blocked/unavailable — the text is still selectable by
+      // hand in "view file" mode, so this just silently no-ops.
+    }
   }
 
   // Scroll-activated scrollbar: adds an "isScrolling" class while the element
@@ -198,14 +242,48 @@ export default function VpnDetailModal({ paymentId, onClose }) {
               <p className={styles.metricsNote}>Couldn't refresh data usage — retrying…</p>
             )}
 
-            <div className={styles.sectionLabel}>Configuration</div>
+            <div className={styles.configHeader}>
+              <span className={styles.sectionLabel}>Configuration</span>
+              {config && (
+                <div className={styles.configToggle}>
+                  <button type="button" className={styles.copyBtn} onClick={handleCopy}>
+                    {copied ? "copied" : "Copy"}
+                  </button>
+                  <button type="button" className={styles.viewToggle} onClick={toggleView}>
+                    {viewMode === "qr" ? "View File" : "QR Code"}
+                  </button>
+                </div>
+              )}
+            </div>
+
             {!config && !configError && (
               <div className={styles.configState}>Loading configuration…</div>
             )}
             {configError && (
               <div className={styles.configState}>Couldn't load the configuration file.</div>
             )}
-            {config && (
+
+            {config && viewMode === "qr" && (
+              qrDataUrl ? (
+                <div className={styles.qrWrap}>
+                  <img
+                    src={qrDataUrl}
+                    alt="Scan to connect in the WireGuard app"
+                    className={styles.qrImage}
+                  />
+                  <p className={styles.qrHint}>
+                  </p>
+                </div>
+              ) : qrError ? (
+                <div className={styles.configState}>
+                  Couldn't generate a QR code — try "view file" instead.
+                </div>
+              ) : (
+                <div className={styles.configState}>Generating QR code…</div>
+              )
+            )}
+
+            {config && viewMode === "text" && (
               <pre className={styles.configBlock} onScroll={handleScrollFade}>
                 {getConfigDisplayText(config)}
               </pre>

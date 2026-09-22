@@ -55,11 +55,11 @@ export const HOW_TO_USE_CONTENT = {
         },
         {
           title: "Download your configuration file",
-          text: "In 'my vpns', tap your newly verified WireGuard configuration, then tap download configuration file. It saves to your phone as a .conf file, usually in your Downloads folder.",
+          text: "Open your verified WireGuard configuration under 'my vpns', then either scan the QR code or download the configuration file (.conf) using the Wireguard app.",
         },
         {
           title: "Import it into WireGuard app",
-          text: "Back in the WireGuard app, tap the + in the bottom right corner, choose Import from file or archive, and select the .conf file you just downloaded. Give the tunnel any preferred name only if it asks for one.",
+          text: "If scanning, use 'Scan from QR code'; if importing the file, use 'Import from file' and select the downloaded .conf file; if asked for a tunnel name, enter 'ghostroute'",
         },
         {
           title: "Turn the tunnel on",

@@ -1,4 +1,5 @@
 // src/pages/ghostroutevpn/myvpns/vpnConfigUtils.js
+import QRCode from "qrcode";
 
 export function formatWireguardConfig(configuration) {
   const { Interface = {}, Peer = {} } = configuration ?? {};
@@ -40,6 +41,24 @@ export function downloadVpnConfig(configData) {
   URL.revokeObjectURL(url);
 }
 
+// Renders the config text as a scannable QR code (data URL) so a phone's
+// WireGuard/OpenVPN app can import the tunnel directly by scanning, without
+// needing the downloaded file at all. These configs are small enough to fit
+// comfortably within a QR code's capacity even at a low error-correction
+// level, so we don't need to pin a version — the library picks one.
+export async function generateConfigQrDataUrl(configData) {
+  const text = getConfigDisplayText(configData);
+  if (!text) return null;
+  return QRCode.toDataURL(text, {
+    errorCorrectionLevel: "L",
+    margin: 1,
+    width: 320,
+    color: {
+      dark: "#0a0a0b",
+      light: "#e9eaed",
+    },
+  });
+}
 
 export function formatBytes(bytes) {
   if (!bytes) return "0 B";
