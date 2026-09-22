@@ -1096,7 +1096,7 @@ export default function IPLookup() {
       if (!r.ok || json.error || !json.data) {
         throw new Error(json.message || json.detail || 'Unable to resolve IP address.')
       }
-      return 'Sorry, could not resolve your ip address!'//json
+      return json
     })
     .then(json => { setLiveData(json); setLiveError(null); setLiveLoading(false) })
     .catch(e => { setLiveError(e.message); setLiveData(null); setLiveLoading(false) })
