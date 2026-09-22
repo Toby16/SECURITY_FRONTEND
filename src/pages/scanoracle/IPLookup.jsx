@@ -176,6 +176,8 @@ function LiveIPPanel({ data, loading, error, lookupMeta }) {
   if (!data) return null
 
   const d = data.data
+  if (!d) return <div className={styles.liveError}><span>⚠</span> Unable to load IP data.</div>
+
   const threatNum = parseInt(d.threat_score) || 0
   const vpnNum    = parseInt(d.vpn_score)    || 0
   const proxyNum  = parseInt(d.proxy_score)  || 0
@@ -1085,12 +1087,20 @@ export default function IPLookup() {
   }, [token])
 
   useEffect(() => {
-    setLiveLoading(true)
-    fetch('https://secure.ghostroute.icu/api/v1.0/scanoracle/get/ip_address', { headers: { 'accept': 'application/json' } })
-      .then(r => r.json())
-      .then(json => { setLiveData(json); setLiveLoading(false) })
-      .catch(() => { setLiveLoading(false) })
-  }, [])
+  setLiveLoading(true)
+  fetch('https://secure.ghostroute.icu/api/v1.0/scanoracle/get/ip_address', {
+    headers: { accept: 'application/json' },
+  })
+    .then(async r => {
+      const json = await r.json()
+      if (!r.ok || json.error || !json.data) {
+        throw new Error(json.message || json.detail || 'Unable to resolve IP address.')
+      }
+      return json
+    })
+    .then(json => { setLiveData(json); setLiveError(null); setLiveLoading(false) })
+    .catch(e => { setLiveError(e.message); setLiveData(null); setLiveLoading(false) })
+}, [])
 
   useEffect(() => {
     if (!token) { setLookupsLoading(false); return }
@@ -1221,7 +1231,7 @@ export default function IPLookup() {
             <LiveIPPanel
               data={liveData}
               loading={liveLoading}
-              error={null}
+              error={liveError}
               lookupMeta={lookupMeta}
             />
           </div>
